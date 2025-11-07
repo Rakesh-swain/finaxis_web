@@ -3,7 +3,10 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
+  flutter_tts
   printing
+  rive_common
+  webview_windows
 )
 
 list(APPEND FLUTTER_FFI_PLUGIN_LIST

@@ -1,42 +1,84 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-/// Premium 5-Theme System for Dubai/Oman Fintech Platform
-/// Themes: Light, Dark, Gold, Emerald, Royal
+/// Futuristic 2050 Theme System - Gen-Z AI-First Design Language
+/// Themes: Classic Light, Emerald Luxe, Royal Gold, Aurora Green, Cyber Violet
 class AppTheme {
-  // ==================== THEME 1: LIGHT (Arabic Fintech) ====================
-  static const Color lightPrimary = Color(0xFF0A5C4F); // Deep Emerald
-  static const Color lightSecondary = Color(0xFFD4AF37); // Gold
-  static const Color lightAccent = Color(0xFF14B8A6); // Turquoise
-  static const Color lightBackground = Color(0xFFFAF8F5); // Warm Cream
-  static const Color lightSurface = Color(0xFFFFFFFF); // Pure White
-  static const Color lightCardBg = Color(0xFFFFFBF5); // Soft Cream
+  // ==================== THEME 1: CLASSIC LIGHT (White + Mist Gray / Navy + Deep Blue) ====================
+  static const Color classicLightPrimary = Color(0xFF1E3A8A); // Deep Navy Blue
+  static const Color classicLightSecondary = Color(0xFF64748B); // Mist Gray
+  static const Color classicLightAccent = Color(0xFF3B82F6); // Electric Blue
+  static const Color classicLightBackground = Color(0xFFFAFBFC); // Pure White
+  static const Color classicLightSurface = Color(0xFFFFFFFF); // Clean White
+  static const Color classicLightCardBg = Color(0xFFF8FAFC); // Soft White
+
+  // ==================== THEME 2: EMERALD LUXE (Mint + Emerald / Teal + Black Jade) ====================
+  static const Color emeraldLuxePrimary = Color(0xFF0F766E); // Deep Teal
+  static const Color emeraldLuxeSecondary = Color(0xFF14B8A6); // Mint Emerald
+  static const Color emeraldLuxeAccent = Color(0xFF10B981); // Bright Green
+  static const Color emeraldLuxeBackground = Color(0xFFF0FDF4); // Mint White
+  static const Color emeraldLuxeSurface = Color(0xFFECFDF5); // Light Mint
+  static const Color emeraldLuxeCardBg = Color(0xFFD1FAE5); // Jade Card
+
+  // ==================== THEME 3: ROYAL GOLD (Cream + Gold / Charcoal + Amber) ====================
+  static const Color royalGoldPrimary = Color(0xFFD97706); // Rich Amber
+  static const Color royalGoldSecondary = Color(0xFFEAB308); // Golden Yellow
+  static const Color royalGoldAccent = Color(0xFFFBBF24); // Bright Gold
+  static const Color royalGoldBackground = Color(0xFFFEFCF3); // Cream
+  static const Color royalGoldSurface = Color(0xFFFEF3C7); // Light Cream
+  static const Color royalGoldCardBg = Color(0xFFFEF3C7); // Gold Card
+
+  // ==================== THEME 4: AURORA GREEN (Ice Blue + Jade / Deep Teal + Green Glow) ====================
+  static const Color auroraGreenPrimary = Color(0xFF059669); // Deep Teal Green
+  static const Color auroraGreenSecondary = Color(0xFF06B6D4); // Ice Blue
+  static const Color auroraGreenAccent = Color(0xFF10B981); // Aurora Green
+  static const Color auroraGreenBackground = Color(0xFFECFEFF); // Ice White
+  static const Color auroraGreenSurface = Color(0xFFCFFAFE); // Light Ice Blue
+  static const Color auroraGreenCardBg = Color(0xFFA7F3D0); // Green Aurora Card
+
+  // ==================== THEME 5: CYBER VIOLET (Lilac + Silver / Midnight + Electric Violet) ====================
+  static const Color cyberVioletPrimary = Color(0xFF7C3AED); // Electric Violet
+  static const Color cyberVioletSecondary = Color(0xFFA855F7); // Bright Violet
+  static const Color cyberVioletAccent = Color(0xFF8B5CF6); // Cyber Purple
+  static const Color cyberVioletBackground = Color(0xFFFAF5FF); // Lilac White
+  static const Color cyberVioletSurface = Color(0xFFF3E8FF); // Light Lilac
+  static const Color cyberVioletCardBg = Color(0xFFE9D5FF); // Violet Card
   
-  // ==================== THEME 2: DARK ====================
+  // ==================== RAG STATUS COLORS ====================
+  static const Color ragRed = Color(0xFFDC2626); // High Risk
+  static const Color ragAmber = Color(0xFFF59E0B); // Medium Risk
+  static const Color ragGreen = Color(0xFF10B981); // Low Risk
+  
+  // ==================== BACKWARD COMPATIBILITY COLORS ====================
+  // Legacy color properties for existing components
+  static const Color lightPrimary = classicLightPrimary;
+  static const Color lightSecondary = classicLightSecondary;
+  static const Color lightAccent = classicLightAccent;
+  static const Color lightBackground = classicLightBackground;
+  static const Color lightSurface = classicLightSurface;
+  static const Color lightCardBg = classicLightCardBg;
+  
   static const Color darkPrimary = Color(0xFF0A1F3D); // Dark Navy
   static const Color darkSecondary = Color(0xFFB87333); // Copper
   static const Color darkAccent = Color(0xFF06B6D4); // Cyan/Turquoise
   static const Color darkBackground = Color(0xFF0F172A); // Deep Navy
   static const Color darkSurface = Color(0xFF1E293B); // Slate
   static const Color darkCardBg = Color(0xFF1E2A3A); // Navy Card
-
-  // ==================== THEME 3: GOLD ====================
-  static const Color goldPrimary = Color(0xFFC8A951); // Rich Gold
-  static const Color goldSecondary = Color(0xFFE4C590); // Light Gold
-  static const Color goldAccent = Color(0xFFB8860B); // Dark Gold
-  static const Color goldBackground = Color(0xFFFFFDF6); // Cream
-  static const Color goldSurface = Color(0xFFFAF3E0); // Light Beige
-  static const Color goldCardBg = Color(0xFFFAF3E0); // Beige Card
-
-  // ==================== THEME 4: EMERALD ====================
-  static const Color emeraldPrimary = Color(0xFF1C6758); // Deep Emerald
-  static const Color emeraldSecondary = Color(0xFF3D8361); // Medium Green
-  static const Color emeraldAccent = Color(0xFF10B981); // Bright Green
-  static const Color emeraldBackground = Color(0xFFEEF2E6); // Soft Gray-Green
-  static const Color emeraldSurface = Color(0xFFE0E6DA); // Light Green-Gray
-  static const Color emeraldCardBg = Color(0xFFE0E6DA); // Card Green-Gray
-
-  // ==================== THEME 5: ROYAL ====================
+  
+  static const Color goldPrimary = royalGoldPrimary;
+  static const Color goldSecondary = royalGoldSecondary;
+  static const Color goldAccent = royalGoldAccent;
+  static const Color goldBackground = royalGoldBackground;
+  static const Color goldSurface = royalGoldSurface;
+  static const Color goldCardBg = royalGoldCardBg;
+  
+  static const Color emeraldPrimary = emeraldLuxePrimary;
+  static const Color emeraldSecondary = emeraldLuxeSecondary;
+  static const Color emeraldAccent = emeraldLuxeAccent;
+  static const Color emeraldBackground = emeraldLuxeBackground;
+  static const Color emeraldSurface = emeraldLuxeSurface;
+  static const Color emeraldCardBg = emeraldLuxeCardBg;
+  
   static const Color royalPrimary = Color(0xFF14213D); // Deep Navy Blue
   static const Color royalSecondary = Color(0xFF1F2A44); // Dark Blue
   static const Color royalAccent = Color(0xFF5B7BB4); // Royal Blue
@@ -44,44 +86,54 @@ class AppTheme {
   static const Color royalSurface = Color(0xFFF5F6FA); // Almost White
   static const Color royalCardBg = Color(0xFFF5F6FA); // White Card
   
-  // ==================== RAG STATUS COLORS ====================
-  static const Color ragRed = Color(0xFFDC2626); // High Risk
-  static const Color ragAmber = Color(0xFFF59E0B); // Medium Risk
-  static const Color ragGreen = Color(0xFF10B981); // Low Risk
-  
-  // ==================== GRADIENT DEFINITIONS ====================
-  static const LinearGradient lightPrimaryGradient = LinearGradient(
-    colors: [Color.fromARGB(255, 159, 161, 202), Color.fromARGB(255, 153, 182, 178)],
+  // ==================== FUTURISTIC 2050 GRADIENT DEFINITIONS ====================
+  static const LinearGradient classicLightGradient = LinearGradient(
+    colors: [Color(0xFF1E3A8A), Color(0xFF3B82F6)], // Navy to Electric Blue
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
   
-  static const LinearGradient darkPrimaryGradient = LinearGradient(
-    colors: [Color(0xFF0A1F3D), Color(0xFF06B6D4)],
+  static const LinearGradient emeraldLuxeGradient = LinearGradient(
+    colors: [Color(0xFF0F766E), Color(0xFF10B981)], // Deep Teal to Bright Green
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
   
-  static const LinearGradient goldGradient = LinearGradient(
-    colors: [Color(0xFFC8A951), Color(0xFFF4E4C1)],
+  static const LinearGradient royalGoldGradient = LinearGradient(
+    colors: [Color(0xFFD97706), Color(0xFFFBBF24)], // Rich Amber to Bright Gold
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
 
-  static const LinearGradient emeraldGradient = LinearGradient(
-    colors: [Color(0xFF1C6758), Color(0xFF10B981)],
+  static const LinearGradient auroraGreenGradient = LinearGradient(
+    colors: [Color(0xFF059669), Color(0xFF06B6D4)], // Deep Teal Green to Ice Blue
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
 
-  static const LinearGradient royalGradient = LinearGradient(
-    colors: [Color(0xFF14213D), Color(0xFF5B7BB4)],
+  static const LinearGradient cyberVioletGradient = LinearGradient(
+    colors: [Color(0xFF7C3AED), Color(0xFF8B5CF6)], // Electric Violet to Cyber Purple
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
   
   static const LinearGradient copperGradient = LinearGradient(
     colors: [Color(0xFFB87333), Color(0xFFCD7F32)],
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+  );
+  
+  // Legacy gradient names for backward compatibility
+  static const LinearGradient lightPrimaryGradient = classicLightGradient;
+  static const LinearGradient darkPrimaryGradient = LinearGradient(
+    colors: [Color(0xFF0A1F3D), Color(0xFF06B6D4)],
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+  );
+  static const LinearGradient goldGradient = royalGoldGradient;
+  static const LinearGradient emeraldGradient = emeraldLuxeGradient;
+  static const LinearGradient royalGradient = LinearGradient(
+    colors: [Color(0xFF14213D), Color(0xFF5B7BB4)],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
@@ -145,6 +197,17 @@ class AppTheme {
   /// Get theme by name
   static ThemeData getThemeByName(String themeName) {
     switch (themeName) {
+      case 'Classic Light':
+        return lightTheme; // Using backward compatible theme
+      case 'Emerald Luxe':
+        return emeraldTheme; // Using backward compatible theme
+      case 'Royal Gold':
+        return goldTheme; // Using backward compatible theme
+      case 'Aurora Green':
+        return emeraldTheme; // Fallback to emerald for now
+      case 'Cyber Violet':
+        return royalTheme; // Fallback to royal for now
+      // Legacy theme names
       case 'Light':
         return lightTheme;
       case 'Dark':

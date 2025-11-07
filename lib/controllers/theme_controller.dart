@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../theme/app_theme.dart';
+import '../theme/futuristic_themes.dart';
 
-/// Global Theme Controller with 5 Premium Themes
+/// Global Theme Controller with 5 Futuristic 2050 Themes
 class ThemeController extends GetxController {
-  // Available themes
+  // Available themes - Gen-Z 2050 Design Language
   static const List<String> availableThemes = [
-    'Light',
-    'Dark',
-    'Gold',
-    'Emerald',
-    'Royal',
+    'Classic Light',     // White + Mist Gray / Navy Blue + Deep Blue
+    'Emerald Luxe',      // Mint + Emerald / Teal + Black Jade
+    'Royal Gold',        // Cream + Gold / Charcoal + Amber
+    'Aurora Green',      // Ice Blue + Jade / Deep Teal + Green Glow
+    'Cyber Violet',      // Lilac + Silver / Midnight + Electric Violet
   ];
 
   // Current theme index
@@ -75,17 +76,17 @@ class ThemeController extends GetxController {
 
   /// Get current theme data
   ThemeData getThemeData() {
-    return AppTheme.getThemeByName(currentThemeName);
+    return FuturisticThemes.getThemeByName(currentThemeName);
   }
 
   /// Get chart colors for current theme
   List<Color> getChartColors() {
-    return AppTheme.getChartColorsByTheme(currentThemeName);
+    return FuturisticThemes.getChartColorsByTheme(currentThemeName);
   }
 
   /// Get gradient for current theme
   LinearGradient getPrimaryGradient() {
-    return AppTheme.getGradientByTheme(currentThemeName);
+    return FuturisticThemes.getGradientByTheme(currentThemeName);
   }
 
   /// Get background gradient with opacity for pages

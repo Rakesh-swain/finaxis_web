@@ -55,7 +55,50 @@ dependencies:
   printing: ^5.11.1
   
   # Date Formatting
-  intl: ^0.19.0
+  intl: ^0.18.1
+  
+  # AI & Chat Integration
+  http: ^1.1.0
+  
+  # Advanced Animations & Effects
+  lottie: ^2.7.0
+  rive: ^0.12.4
+  flutter_animate: ^4.3.0
+  animated_text_kit: ^4.2.2
+  
+  # Markdown Support for ChatGPT Responses
+  flutter_markdown: ^0.6.18
+  markdown: ^7.1.1
+  
+  # Glassmorphism & Advanced UI
+  glassmorphism: ^3.0.0
+  shimmer: ^3.0.0
+  
+  # Particle System for Backgrounds
+  simple_animations: ^5.0.2
+  
+  # Advanced Chart Libraries
+  syncfusion_flutter_charts: ^24.1.47
+  
+  # Local Storage for Chat History & Preferences
+  get_storage: ^2.1.1
+  
+  # Speech Recognition & TTS for AI Chat
+  speech_to_text: ^6.6.0
+  flutter_tts: ^3.8.5
+  
+  # WebSocket Support for Real-time Chat
+  web_socket_channel: ^2.4.0
+  
+  # JSON Parsing & Serialization
+  json_annotation: ^4.8.1
+  
+  # Advanced Physics & Gestures
+  flutter_staggered_animations: ^1.1.1
+  
+  # Screen Size & Responsive Design
+  responsive_framework: ^1.1.1
+  webview_all: ^0.5.2
 
 dev_dependencies:
   flutter_test:

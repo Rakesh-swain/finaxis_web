@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import '../bindings/login_binding.dart';
 import '../bindings/dashboard_binding.dart';
 import '../bindings/applicant_binding.dart';
+import '../bindings/ai_chat_binding.dart';
 import '../views/login/login_view.dart';
 import '../views/dashboard/dashboard_view.dart';
 import '../views/applicant/applicant_detail_view.dart';
@@ -11,11 +12,18 @@ import '../views/analytics/analytics_view.dart';
 import '../views/audit/audit_log_view.dart';
 import '../views/reports/reports_view.dart';
 import '../views/settings/settings_view.dart';
+import '../views/ai_chat/ai_chat_view.dart';
 
 class AppPages {
-  static const initial = '/login';
+  static const initial = '/ai-chat'; // AI Chat Hub is now the primary entry point
 
   static final routes = [
+    // 🤖 AI Chat Hub - Primary Feature
+    GetPage(
+      name: '/ai-chat',
+      page: () => const AiChatView(),
+      binding: AiChatBinding(),
+    ),
     GetPage(
       name: '/login',
       page: () => const LoginView(),

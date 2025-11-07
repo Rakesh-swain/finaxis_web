@@ -1,10 +1,17 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'theme/app_theme.dart';
+import 'package:get_storage/get_storage.dart';
+import 'theme/futuristic_themes.dart';
 import 'routes/app_pages.dart';
 import 'controllers/theme_controller.dart';
 
-void main() {
+void main() async {
+  // Ensure Flutter binding is initialized
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  // Initialize GetStorage for persistent data
+  await GetStorage.init();
   runApp(const FinaxisApp());
 }
 

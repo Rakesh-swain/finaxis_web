@@ -4,6 +4,8 @@
     "totalApplicantsMoM": 12.5,
     "activeConsents": 892,
     "activeConsentsMoM": 8.3,
+    "pendingConsents": 355,
+    "pendingConsentsMoM": -5.2,
     "avgCreditScore": 742.5,
     "avgCreditScoreMoM": 2.1,
     "totalDisbursed": 45600000.0,

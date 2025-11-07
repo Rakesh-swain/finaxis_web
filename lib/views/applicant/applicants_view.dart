@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import '../../controllers/theme_controller.dart';
 import '../../models/applicant_model.dart';
 import '../../services/applicant_service.dart';
 import '../../theme/app_theme.dart';
-import '../../widgets/animated_sidebar.dart';
-import '../../widgets/responsive_layout.dart';
+import '../../widgets/futuristic_layout.dart';
+import '../../widgets/futuristic_table.dart';
 
 class ApplicantsBinding extends Bindings {
   @override
@@ -167,58 +168,782 @@ class ApplicantsView extends GetView<ApplicantsController> {
   @override
   Widget build(BuildContext context) {
     final themeController = Get.find<ThemeController>();
-    final gradient = themeController.getBackgroundGradient();
-    return Scaffold(
-      body: Row(
+
+    return FuturisticLayout(
+      selectedIndex: 2, // Applicants index
+      pageTitle: 'Applicant Portfolio',
+      headerActions: [
+        _buildFilterButton(context, themeController),
+        _buildViewToggleButton(context, themeController),
+      ],
+      child: Obx(() {
+        if (controller.isLoading.value) {
+          return Center(
+            child: _buildLoadingState(context, themeController),
+          );
+        }
+        
+        return _buildFloatingCardShelf(context, themeController);
+      }),
+    );
+  }
+
+  /// Build floating card shelf - vertical column of stacked applicant cards
+  Widget _buildFloatingCardShelf(BuildContext context, ThemeController themeController) {
+    return Container(
+      height: double.infinity,
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // 📊 Stats Row
+            _buildStatsRow(context, themeController),
+            
+            const SizedBox(height: 32),
+            
+            // 🔍 Search & Filters
+            _buildSearchAndFilters(context, themeController),
+            
+            const SizedBox(height: 24),
+            
+            // 📊 Futuristic Sortable Table
+            Obx(() => SizedBox(
+              height: 600,
+              child: FuturisticTable(
+                columns: [
+                  const FuturisticTableColumn(
+                    title: 'CIF',
+                    icon: Icons.fingerprint_rounded,
+                  ),
+                  const FuturisticTableColumn(
+                    title: 'Name',
+                    icon: Icons.person_rounded,
+                  ),
+                  const FuturisticTableColumn(
+                    title: 'Credit Score',
+                    icon: Icons.star_rounded,
+                  ),
+                  const FuturisticTableColumn(
+                    title: 'Risk Score',
+                    icon: Icons.analytics_rounded,
+                  ),
+                  const FuturisticTableColumn(
+                    title: 'Risk Status',
+                    icon: Icons.security_rounded,
+                  ),
+                  const FuturisticTableColumn(
+                    title: 'Bank',
+                    icon: Icons.account_balance_rounded,
+                  ),
+                  const FuturisticTableColumn(
+                    title: 'Loan Type',
+                    icon: Icons.category_rounded,
+                  ),
+                  const FuturisticTableColumn(
+                    title: 'Last Updated',
+                    icon: Icons.schedule_rounded,
+                  ),
+                  const FuturisticTableColumn(
+                    title: 'Action',
+                    sortable: false,
+                  ),
+                ],
+                rows: controller.filtered
+                    .map(
+                      (applicant) => FuturisticTableRow(
+                        cells: [
+                          FuturisticTableCell(text: applicant.cif,),
+                          FuturisticTableCell(text: applicant.name),
+                          FuturisticTableCell(
+                            text: applicant.creditScore.toString(),
+                            widget: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 4,
+                              ),
+                              decoration: BoxDecoration(
+                                gradient: themeController.getPrimaryGradient(),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Text(
+                                applicant.creditScore.toString(),
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 13,
+                                ),
+                              ),
+                            ),
+                          ),
+                          FuturisticTableCell(
+                            text: applicant.riskScore.toStringAsFixed(1),
+                            widget: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 4,
+                              ),
+                              decoration: BoxDecoration(
+                                color: AppTheme.getRagColor(applicant.ragStatus).withOpacity(0.2),
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(
+                                  color: AppTheme.getRagColor(applicant.ragStatus),
+                                  width: 1,
+                                ),
+                              ),
+                              child: Text(
+                                applicant.riskScore.toStringAsFixed(1),
+                                style: TextStyle(
+                                  color: AppTheme.getRagColor(applicant.ragStatus),
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 13,
+                                ),
+                              ),
+                            ),
+                          ),
+                          FuturisticTableCell(
+                            text: applicant.ragStatus,
+                            widget: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 6,
+                              ),
+                              decoration: BoxDecoration(
+                                color: AppTheme.getRagColor(
+                                  applicant.ragStatus,
+                                ).withOpacity(0.2),
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                  color: AppTheme.getRagColor(
+                                    applicant.ragStatus,
+                                  ),
+                                  width: 1.5,
+                                ),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Container(
+                                    width: 8,
+                                    height: 8,
+                                    decoration: BoxDecoration(
+                                      color: AppTheme.getRagColor(
+                                        applicant.ragStatus,
+                                      ),
+                                      shape: BoxShape.circle,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 6),
+                                  Text(
+                                    applicant.ragStatus.toUpperCase(),
+                                    style: TextStyle(
+                                      color: AppTheme.getRagColor(
+                                        applicant.ragStatus,
+                                      ),
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 11,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          FuturisticTableCell(text: applicant.bankName),
+                          FuturisticTableCell(
+                            text: controller.loanTypeByCif[applicant.cif] ?? 'Unknown',
+                            widget: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 4,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Theme.of(context).primaryColor.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(
+                                  color: Theme.of(context).primaryColor.withOpacity(0.3),
+                                  width: 1,
+                                ),
+                              ),
+                              child: Text(
+                                controller.loanTypeByCif[applicant.cif] ?? 'Unknown',
+                                style: TextStyle(
+                                  color: Theme.of(context).primaryColor,
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ),
+                          ),
+                          FuturisticTableCell(
+                            text: DateFormat('MMM dd, yy').format(applicant.lastUpdated),
+                            widget: Text(
+                              DateFormat('MMM dd, yy').format(applicant.lastUpdated),
+                              style: TextStyle(
+                                color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.7),
+                                fontSize: 13,
+                              ),
+                            ),
+                          ),
+                          FuturisticTableCell(
+                            text: 'Open',
+                            widget: ElevatedButton.icon(
+                              onPressed: () => controller.navigateToDetail(applicant.cif),
+                              icon: const Icon(
+                                Icons.auto_stories_rounded,
+                                size: 16,
+                              ),
+                              label: const Text('Open'),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: themeController
+                                    .getThemeData()
+                                    .primaryColor,
+                                foregroundColor: Colors.white,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 8,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                textStyle: const TextStyle(fontSize: 12),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                    .toList(),
+                onRowTap: (index) => controller.navigateToDetail(controller.filtered[index].cif),
+                isLoading: controller.isLoading.value,
+                emptyMessage: 'No applicants found',
+                sortColumnIndex: controller.sortColumnIndex.value,
+                sortAscending: controller.sortAscending.value,
+                onSort: (columnIndex, ascending) {
+                  controller.sortColumnIndex.value = columnIndex;
+                  controller.sortAscending.value = ascending;
+                  controller._sortByIndex(columnIndex, ascending);
+                },
+              ),
+            )),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Build stats row with key metrics
+  Widget _buildStatsRow(BuildContext context, ThemeController themeController) {
+    return Obx(() {
+      final total = controller.filtered.length;
+      final greenCount = controller.filtered.where((a) => a.ragStatus.toLowerCase() == 'green').length;
+      final amberCount = controller.filtered.where((a) => a.ragStatus.toLowerCase() == 'amber').length;
+      final redCount = controller.filtered.where((a) => a.ragStatus.toLowerCase() == 'red').length;
+      final avgCreditScore = controller.filtered.isEmpty 
+          ? 0.0 
+          : controller.filtered.map((a) => a.creditScore).reduce((a, b) => a + b) / controller.filtered.length;
+
+      return Row(
         children: [
-          AnimatedSidebar(
-            selectedIndex: 1,
-            onItemSelected: (index) {
-              switch (index) {
-                case 0:
-                  Get.offNamed('/dashboard');
-                  break;
-                case 1:
-                  Get.offNamed('/consent');
-                  break;
-                case 2:
-                  break;
-                
-              }
-            },
-          ),
           Expanded(
-            child: Column(
+            child: _buildStatCard(
+              'Total Applicants',
+              total.toString(),
+              Icons.people_rounded,
+              themeController.getPrimaryGradient(),
+              context,
+              themeController,
+              0,
+            ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: _buildStatCard(
+              'Low Risk',
+              greenCount.toString(),
+              Icons.check_circle_rounded,
+              LinearGradient(colors: [Colors.green.shade400, Colors.green.shade600]),
+              context,
+              themeController,
+              1,
+            ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: _buildStatCard(
+              'Medium Risk',
+              amberCount.toString(),
+              Icons.warning_rounded,
+              LinearGradient(colors: [Colors.amber.shade400, Colors.amber.shade600]),
+              context,
+              themeController,
+              2,
+            ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: _buildStatCard(
+              'High Risk',
+              redCount.toString(),
+              Icons.error_rounded,
+              LinearGradient(colors: [Colors.red.shade400, Colors.red.shade600]),
+              context,
+              themeController,
+              3,
+            ),
+          ),
+          const SizedBox(width: 16),
+          
+          // Expanded(
+          //   child: _buildStatCard(
+          //     'Avg Credit Score',
+          //     avgCreditScore.toStringAsFixed(0),
+          //     Icons.star_rounded,
+          //     LinearGradient(colors: [Colors.purple.shade400, Colors.purple.shade600]),
+          //     context,
+          //     themeController,
+          //     4,
+          //   ),
+          // ),
+        ],
+      );
+    });
+  }
+
+  /// Build individual stat card
+  Widget _buildStatCard(
+    String title,
+    String value,
+    IconData icon,
+    LinearGradient gradient,
+    BuildContext context,
+    ThemeController themeController,
+    int index,
+  ) {
+    return FuturisticCard(
+      height: 130,
+      isElevated: true,
+      gradient: gradient,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(icon, color: Colors.white, size: 26),
+          const SizedBox(height: 12),
+          Text(
+            value,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 22,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            title,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    ).animate(delay: (index * 150).ms)
+      .fadeIn(duration: 600.ms)
+      .slideY(begin: 0.3, end: 0)
+      .then()
+      .shimmer(duration: 1500.ms, delay: 800.ms);
+  }
+
+  /// Build search and filters section
+  Widget _buildSearchAndFilters(BuildContext context, ThemeController themeController) {
+    return Row(
+      children: [
+        // 🔍 Search Bar
+        Expanded(
+          flex: 2,
+          child: FuturisticCard(
+            height: 60,
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+            child: Row(
               children: [
-                _buildTopBar(context, themeController),
+                Icon(
+                  Icons.search_rounded,
+                  color: themeController.getThemeData().primaryColor,
+                  size: 24,
+                ),
+                const SizedBox(width: 16),
                 Expanded(
-                  child: Obx(() {
-                    if (controller.isLoading.value) {
-                      return const Center(child: CircularProgressIndicator());
-                    }
-                    return Container(
-                      decoration: BoxDecoration(
-                        gradient: gradient,
+                  child: TextField(
+                    decoration: InputDecoration(
+                      hintText: 'Search by CIF, name, or bank...',
+                      border: InputBorder.none,
+                      hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.6),
                       ),
-                      child: SingleChildScrollView(
-                        padding: Responsive.getPadding(context),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('Applicants',
-                                style: Theme.of(context).textTheme.displayMedium!),
-                            SizedBox(height: Responsive.getSpacing(context)),
-                            _buildFilters(context),
-                            SizedBox(height: Responsive.getSpacing(context)),
-                            _buildTable(context),
-                          ],
-                        ),
-                      ),
-                    );
-                  }),
+                    ),
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
                 ),
               ],
             ),
+          ),
+        ),
+        
+        const SizedBox(width: 16),
+        
+        // 🎛️ Filter Chips
+        Expanded(
+          flex: 3,
+          child: Obx(() => Wrap(
+            spacing: 12,
+            children: [
+              _buildFilterChip('All', 'all', controller.ragFilter.value, (v) => controller.setRagFilter(v), themeController),
+              _buildFilterChip('Low Risk', 'green', controller.ragFilter.value, (v) => controller.setRagFilter(v), themeController, Colors.green),
+              _buildFilterChip('Medium Risk', 'amber', controller.ragFilter.value, (v) => controller.setRagFilter(v), themeController, Colors.amber),
+              _buildFilterChip('High Risk', 'red', controller.ragFilter.value, (v) => controller.setRagFilter(v), themeController, Colors.red),
+            ],
+          )),
+        ),
+      ],
+    );
+  }
+
+  /// Build filter chip
+  Widget _buildFilterChip(
+    String label,
+    String value,
+    String selectedValue,
+    Function(String) onTap,
+    ThemeController themeController, [
+    Color? color,
+  ]) {
+    final isSelected = selectedValue == value;
+    final chipColor = color ?? themeController.getThemeData().primaryColor;
+    
+    return GestureDetector(
+      onTap: () => onTap(value),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: BoxDecoration(
+          color: isSelected ? chipColor.withOpacity(0.2) : Colors.transparent,
+          border: Border.all(
+            color: isSelected ? chipColor : chipColor.withOpacity(0.3),
+            width: 1.5,
+          ),
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            color: isSelected ? chipColor : Theme.of(Get.context!).textTheme.bodyMedium?.color?.withOpacity(0.8),
+            fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+            fontSize: 13,
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Build floating applicant card with stacked depth effect
+  Widget _buildFloatingApplicantCard(
+    ApplicantModel applicant,
+    int index,
+    BuildContext context,
+    ThemeController themeController,
+  ) {
+    final loanType = controller.loanTypeByCif[applicant.cif] ?? 'Unknown';
+    
+    return FuturisticCard(
+      onTap: () => controller.navigateToDetail(applicant.cif),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 🏷️ Header with RAG status and score
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: AppTheme.getRagColor(applicant.ragStatus).withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(
+                    color: AppTheme.getRagColor(applicant.ragStatus),
+                    width: 1.5,
+                  ),
+                ),
+                child: Text(
+                  applicant.ragStatus.toUpperCase(),
+                  style: TextStyle(
+                    color: AppTheme.getRagColor(applicant.ragStatus),
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                decoration: BoxDecoration(
+                  gradient: themeController.getPrimaryGradient(),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  applicant.creditScore.toString(),
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          
+          const SizedBox(height: 16),
+          
+          // 🏦 CIF and Name
+          Text(
+            applicant.cif,
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+              color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.7),
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            applicant.name,
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+              fontWeight: FontWeight.w700,
+              fontSize: 18,
+            ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+          
+          const SizedBox(height: 12),
+          
+          // 🏪 Bank and Loan Type
+          Text(
+            applicant.bankName,
+            style: Theme.of(context).textTheme.titleSmall?.copyWith(
+              color: themeController.getThemeData().primaryColor,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            loanType,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.7),
+            ),
+          ),
+          
+          const Spacer(),
+          
+          // 📊 Risk Score and Last Updated
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Risk Score',
+                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                      color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.6),
+                    ),
+                  ),
+                  Text(
+                    applicant.riskScore.toStringAsFixed(1),
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: AppTheme.getRagColor(applicant.ragStatus),
+                    ),
+                  ),
+                ],
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    'Last Updated',
+                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                      color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.6),
+                    ),
+                  ),
+                  Text(
+                    DateFormat('dd MMM').format(applicant.lastUpdated),
+                    style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          
+          const SizedBox(height: 16),
+          
+          // 🔗 Open Button with Flip Handle
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton.icon(
+              onPressed: () => controller.navigateToDetail(applicant.cif),
+              icon: const Icon(Icons.auto_stories_rounded, size: 18),
+              label: const Text('Open Book'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: themeController.getThemeData().primaryColor,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                padding: const EdgeInsets.symmetric(vertical: 12),
+              ),
+            ),
+          ),
+        ],
+      ),
+    ).animate(delay: (index * 100).ms)
+      .fadeIn(duration: 600.ms)
+      .slideY(begin: 0.5, end: 0)
+      .scale();
+  }
+
+  /// Build loading state
+  Widget _buildLoadingState(BuildContext context, ThemeController themeController) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Container(
+          width: 80,
+          height: 80,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            gradient: themeController.getPrimaryGradient(),
+          ),
+          child: const Icon(
+            Icons.people_rounded,
+            color: Colors.white,
+            size: 40,
+          ),
+        ).animate()
+          .scale(duration: 800.ms)
+          .then()
+          .shimmer(duration: 1500.ms, colors: [
+            Colors.white.withOpacity(0.3),
+            Colors.white.withOpacity(0.8),
+            Colors.white.withOpacity(0.3),
+          ]),
+        const SizedBox(height: 24),
+        Text(
+          'Loading Applicant Portfolio...',
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.w600,
+          ),
+        ).animate()
+          .fadeIn(delay: 300.ms, duration: 600.ms),
+      ],
+    );
+  }
+
+  /// Build filter button
+  Widget _buildFilterButton(BuildContext context, ThemeController themeController) {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [Colors.amber.shade400, Colors.amber.shade600],
+        ),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: IconButton(
+        onPressed: () {
+          // Show advanced filters dialog
+          _showAdvancedFilters(context, themeController);
+        },
+        icon: const Icon(Icons.filter_list_rounded, color: Colors.white),
+        tooltip: 'Advanced Filters',
+      ),
+    );
+  }
+
+  /// Build view toggle button  
+  Widget _buildViewToggleButton(BuildContext context, ThemeController themeController) {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [Colors.green.shade400, Colors.green.shade600],
+        ),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: IconButton(
+        onPressed: () {
+          // Toggle between card and table view
+        },
+        icon: const Icon(Icons.view_module_rounded, color: Colors.white),
+        tooltip: 'Toggle View',
+      ),
+    );
+  }
+
+  /// Show advanced filters dialog
+  void _showAdvancedFilters(BuildContext context, ThemeController themeController) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Advanced Filters'),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Loan type filter
+              Obx(() => DropdownButtonFormField<String>(
+                value: controller.loanTypeFilter.value,
+                decoration: const InputDecoration(labelText: 'Loan Type'),
+                items: [
+                  const DropdownMenuItem(value: 'all', child: Text('All Types')),
+                  ...ApplicantsController.loanTypes
+                      .map((t) => DropdownMenuItem(value: t, child: Text(t))),
+                ],
+                onChanged: (v) => controller.setLoanTypeFilter(v ?? 'all'),
+              )),
+              
+              const SizedBox(height: 16),
+              
+              // Date range
+              Obx(() => ListTile(
+                leading: const Icon(Icons.date_range),
+                title: Text(
+                  controller.dateRange.value == null
+                      ? 'Select Date Range'
+                      : '${DateFormat('dd MMM yyyy').format(controller.dateRange.value!.start)} - ${DateFormat('dd MMM yyyy').format(controller.dateRange.value!.end)}',
+                ),
+                onTap: () async {
+                  final now = DateTime.now();
+                  final picked = await showDateRangePicker(
+                    context: context,
+                    firstDate: DateTime(now.year - 5),
+                    lastDate: DateTime(now.year + 1),
+                  );
+                  if (picked != null) {
+                    controller.setDateRange(picked);
+                  }
+                },
+              )),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              controller.clearFilters();
+              Navigator.of(context).pop();
+            },
+            child: const Text('Clear All'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Apply'),
           ),
         ],
       ),

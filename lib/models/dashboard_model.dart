@@ -33,6 +33,8 @@ class KpiData {
   final double totalApplicantsMoM;
   final int activeConsents;
   final double activeConsentsMoM;
+  final int pendingConsents;
+  final double pendingConsentsMoM;
   final double avgCreditScore;
   final double avgCreditScoreMoM;
   final double totalDisbursed;
@@ -43,6 +45,8 @@ class KpiData {
     required this.totalApplicantsMoM,
     required this.activeConsents,
     required this.activeConsentsMoM,
+    required this.pendingConsents,
+    required this.pendingConsentsMoM,
     required this.avgCreditScore,
     required this.avgCreditScoreMoM,
     required this.totalDisbursed,
@@ -55,6 +59,8 @@ class KpiData {
       totalApplicantsMoM: json['totalApplicantsMoM'].toDouble(),
       activeConsents: json['activeConsents'],
       activeConsentsMoM: json['activeConsentsMoM'].toDouble(),
+      pendingConsents: json['pendingConsents'],
+      pendingConsentsMoM: json['pendingConsentsMoM'].toDouble(),
       avgCreditScore: json['avgCreditScore'].toDouble(),
       avgCreditScoreMoM: json['avgCreditScoreMoM'].toDouble(),
       totalDisbursed: json['totalDisbursed'].toDouble(),
@@ -68,6 +74,8 @@ class KpiData {
       'totalApplicantsMoM': totalApplicantsMoM,
       'activeConsents': activeConsents,
       'activeConsentsMoM': activeConsentsMoM,
+      'pendingConsents': pendingConsents,
+      'pendingConsentsMoM': pendingConsentsMoM,
       'avgCreditScore': avgCreditScore,
       'avgCreditScoreMoM': avgCreditScoreMoM,
       'totalDisbursed': totalDisbursed,
