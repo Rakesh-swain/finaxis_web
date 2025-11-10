@@ -2,6 +2,7 @@ import 'dart:math' as Math;
 import 'dart:ui';
 
 import 'package:finaxis_web/a.dart';
+import 'package:finaxis_web/widgets/futuristic_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -115,7 +116,7 @@ class ApplicantDetailView extends GetView<ApplicantDetailController> {
     ThemeController themeController,
   ) {
     return Container(
-      height: 160,
+      height: 230,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(32),
         gradient: _buildProfileGradient(themeController),
@@ -253,7 +254,7 @@ class ApplicantDetailView extends GetView<ApplicantDetailController> {
                     _pillChip(Icons.badge_outlined, detail.applicant.cif),
                     _pillChip(
                       Icons.shield_outlined,
-                      'Risk: ${detail.applicant.ragStatus.toUpperCase()}',
+                      'Risk: ${detail.applicant.ragStatus.toUpperCase() == "AMBER" ? "Medium" : detail.applicant.ragStatus.toUpperCase()}',
                     ),
                     _pillChip(
                       Icons.score_rounded,
@@ -268,10 +269,58 @@ class ApplicantDetailView extends GetView<ApplicantDetailController> {
                   )
                   .toList(),
         ),
+        const SizedBox(height: 25),
+        _buildQuickChatBar(context, themeController)
       ],
     );
   }
-
+ Widget _buildQuickChatBar(
+    BuildContext context,
+    ThemeController themeController,
+  ) {
+    return FuturisticCard(
+          width: 600,
+          height: 64,
+          padding: const EdgeInsets.all(8),
+          onTap: () => Get.toNamed('/ai-chat'),
+          child: Row(
+            children: [
+              Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  gradient: themeController.getPrimaryGradient(),
+                ),
+                child: const Icon(
+                  Icons.smart_toy_rounded,
+                  color: Colors.white,
+                  size: 24,
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Text(
+                  'Ask AI about your customer...',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    color: Theme.of(
+                      context,
+                    ).textTheme.bodyMedium?.color?.withOpacity(0.7),
+                  ),
+                ),
+              ),
+              Icon(
+                Icons.arrow_forward_rounded,
+                color: themeController.getThemeData().primaryColor,
+                size: 20,
+              ),
+            ],
+          ),
+        )
+        .animate()
+        .fadeIn(duration: 600.ms, delay: 1800.ms)
+        .slideY(begin: 0.3, end: 0);
+  }
   /// 📊 Build floating score cards
   Widget _buildFloatingScoreCards(
     dynamic detail,
@@ -312,14 +361,14 @@ class ApplicantDetailView extends GetView<ApplicantDetailController> {
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                Colors.white.withOpacity(0.15),
-                Colors.white.withOpacity(0.05),
+                const Color.fromARGB(255, 3, 3, 3).withOpacity(0.15),
+                const Color.fromARGB(255, 20, 20, 20).withOpacity(0.05),
               ],
             ),
             border: Border.all(color: Colors.white.withOpacity(0.2), width: 1),
             boxShadow: [
               BoxShadow(
-                color: color.withOpacity(0.2),
+                color: color.withOpacity(0.1),
                 blurRadius: 20,
                 spreadRadius: 2,
                 offset: const Offset(0, 8),
@@ -328,32 +377,29 @@ class ApplicantDetailView extends GetView<ApplicantDetailController> {
           ),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(20),
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      value,
-                      style: TextStyle(
-                        fontSize: 28,
-                        fontWeight: FontWeight.w900,
-                        color: color,
-                      ),
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    value,
+                    style: TextStyle(
+                      fontSize: 28,
+                      fontWeight: FontWeight.w900,
+                      color: color,
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      title,
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: Colors.white70,
-                        fontWeight: FontWeight.w600,
-                      ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: Colors.white70,
+                      fontWeight: FontWeight.w600,
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ),

@@ -42,7 +42,7 @@ class FuturisticLayout extends StatelessWidget {
             FuturisticSidebar(
               selectedIndex: selectedIndex,
               onItemSelected: _handleNavigation,
-              isCollapsed: isMobile ? false : Get.width < 1200,
+              // isCollapsed: isMobile ? false : Get.width < 1200,
             ),
             
             // 📱 Main Content Area
@@ -224,7 +224,6 @@ class FuturisticLayout extends StatelessWidget {
       '/audit-log',   // 6: Audit Log
       '/settings',    // 7: Settings
     ];
-    
     if (index < routes.length) {
       Get.offNamed(routes[index]);
     }
@@ -310,7 +309,7 @@ class _FuturisticCardState extends State<FuturisticCard>
         setState(() => _isHovered = false);
         _animationController.reverse();
       },
-      child: GestureDetector(
+      child: InkWell(
         onTap: widget.onTap,
         child: AnimatedBuilder(
           animation: _animationController,

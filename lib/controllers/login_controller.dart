@@ -58,7 +58,7 @@ class LoginController extends GetxController {
     // Mock authentication - accept any valid email/password
     if (emailController.text.isNotEmpty && passwordController.text.isNotEmpty) {
       isLoading.value = false;
-      Get.offNamed('/dashboard');
+      Get.offNamed('/ai-chat');
     } else {
       isLoading.value = false;
       Get.snackbar(

@@ -234,13 +234,13 @@ Guidelines:
         icon: '📊',
         category: 'Portfolio',
       ),
-      QuickAction(
-        id: 'quarterly_trends',
-        title: 'What trends should I watch this quarter?',
-        prompt: 'Analyze the current loan portfolio and market conditions. What key trends and risk factors should I monitor this quarter?',
-        icon: '📈',
-        category: 'Analytics',
-      ),
+      // QuickAction(
+      //   id: 'quarterly_trends',
+      //   title: 'What trends should I watch this quarter?',
+      //   prompt: 'Analyze the current loan portfolio and market conditions. What key trends and risk factors should I monitor this quarter?',
+      //   icon: '📈',
+      //   category: 'Analytics',
+      // ),
       QuickAction(
         id: 'approval_rates',
         title: 'Analyze loan approval rates',
@@ -248,20 +248,20 @@ Guidelines:
         icon: '✅',
         category: 'Performance',
       ),
-      QuickAction(
-        id: 'risk_distribution',
-        title: 'Review risk distribution trends',
-        prompt: 'Review the current risk distribution across our loan portfolio. Are we seeing any concerning shifts in risk levels?',
-        icon: '⚖️',
-        category: 'Risk Analysis',
-      ),
-      QuickAction(
-        id: 'compliance_check',
-        title: 'Regulatory compliance overview',
-        prompt: 'Provide an overview of our regulatory compliance status and any areas that need attention.',
-        icon: '🛡️',
-        category: 'Compliance',
-      ),
+      // QuickAction(
+      //   id: 'risk_distribution',
+      //   title: 'Review risk distribution trends',
+      //   prompt: 'Review the current risk distribution across our loan portfolio. Are we seeing any concerning shifts in risk levels?',
+      //   icon: '⚖️',
+      //   category: 'Risk Analysis',
+      // ),
+      // QuickAction(
+      //   id: 'compliance_check',
+      //   title: 'Regulatory compliance overview',
+      //   prompt: 'Provide an overview of our regulatory compliance status and any areas that need attention.',
+      //   icon: '🛡️',
+      //   category: 'Compliance',
+      // ),
     ];
   }
 }

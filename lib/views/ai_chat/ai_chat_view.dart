@@ -1,3 +1,4 @@
+import 'package:finaxis_web/widgets/futuristic_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -19,33 +20,44 @@ class AiChatView extends GetView<AiChatController> {
   @override
   Widget build(BuildContext context) {
     final themeController = Get.find<ThemeController>();
-    final screenWidth = MediaQuery.of(context).size.width;
-    final isMobile = screenWidth < 768;
 
-    return Scaffold(
-      backgroundColor: Colors.transparent,
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: _buildBackgroundGradient(themeController),
+    return FuturisticLayout(
+      selectedIndex: 0, // AI Chat Hub
+      pageTitle: 'AI Chat Hub',
+      headerActions: [
+        _buildHeaderAction(
+          icon: Icons.settings,
+          label: 'Settings',
+          onTap: () => Get.snackbar('AI Chat Settings', 'Coming soon'),
+          color: Colors.blue,
         ),
-        child: Row(
-          children: [
-            // 🎯 Futuristic Sidebar
-            FuturisticSidebar(
-              selectedIndex: 0, // AI Chat Hub is first
-              onItemSelected: _handleNavigation,
-              isCollapsed: isMobile ? false : Get.width < 1200,
-            ),
-            
-            // 💬 Main Chat Interface
-            Expanded(
-              child: _buildChatInterface(context, themeController),
-            ),
-          ],
-        ),
+      ],
+      child: _buildChatInterface(context, themeController),
+    );
+  }
+
+  // Optional helper to create header actions (like in ConsentView)
+  Widget _buildHeaderAction({
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+    required Color color,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      child: Row(
+        children: [
+          Icon(icon, color: color),
+          const SizedBox(width: 6),
+          Text(
+            label,
+            style: TextStyle(fontWeight: FontWeight.bold, color: color),
+          ),
+        ],
       ),
     );
   }
+
 
   /// Build background gradient with particle effects
   // Widget _buildBackgroundGradient(ThemeController themeController) {
@@ -67,25 +79,39 @@ class AiChatView extends GetView<AiChatController> {
   // }
 
   /// Build main chat interface
-  Widget _buildChatInterface(BuildContext context, ThemeController themeController) {
-    return Column(
-      children: [
-        // 🎨 Glowing Header
-        _buildGlowingHeader(context, themeController),
-        
-        // 📜 Chat Messages Area
-        Expanded(
-          child: _buildMessagesArea(context, themeController),
+Widget _buildChatInterface(BuildContext context, ThemeController themeController) {
+  return Column(
+    children: [
+      // 🎨 Glowing Header (top, full width)
+      _buildGlowingHeader(context, themeController),
+
+      // 🧱 Main chat area: Messages + Quick Actions (side by side)
+      Expanded(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // Left: Messages
+            Expanded(
+              flex: 3,
+              child: _buildMessagesArea(context, themeController),
+            ),
+
+            // Right: Quick Actions
+            _buildQuickActions(context, themeController),
+          ],
         ),
-        
-        // 🚀 Quick Actions (above input)
-        _buildQuickActions(context, themeController),
-        
-        // ⌨️ Chat Input Area
-        _buildChatInput(context, themeController),
-      ],
-    );
-  }
+      ),
+
+      // ⌨️ Chat Input
+      _buildChatInput(context, themeController),
+    ],
+  );
+}
+
+
+
+
+
 
   /// Build glowing header with Finaxis branding
   Widget _buildGlowingHeader(BuildContext context, ThemeController themeController) {
@@ -186,74 +212,77 @@ class AiChatView extends GetView<AiChatController> {
   /// Build empty state with welcome animation
   Widget _buildEmptyState(BuildContext context, ThemeController themeController) {
     return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          // 🤖 AI Robot Icon
-          Container(
-            width: 120,
-            height: 120,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(30),
-              gradient: themeController.getPrimaryGradient(),
-              boxShadow: [
-                BoxShadow(
-                  color: themeController.getThemeData().primaryColor.withOpacity(0.3),
-                  blurRadius: 40,
-                  spreadRadius: 10,
-                ),
-              ],
-            ),
-            child: const Icon(
-              Icons.smart_toy_rounded,
-              size: 60,
-              color: Colors.white,
-            ),
-          ).animate()
-            .scale(delay: 300.ms, duration: 800.ms)
-            .then()
-            .shake(hz: 1, curve: Curves.easeInOutCubic)
-            .then()
-            .shimmer(duration: 3000.ms),
-          
-          const SizedBox(height: 32),
-          
-          // 💭 Welcome Text
-          Text(
-            'Ask me anything about your',
-            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-              color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.8),
-            ),
-          ).animate(delay: 800.ms)
-            .fadeIn(duration: 600.ms)
-            .slideY(begin: 0.3, end: 0),
-          
-          ShaderMask(
-            shaderCallback: (bounds) => themeController.getPrimaryGradient()
-                .createShader(bounds),
-            child: Text(
-              'Financial Portfolio',
-              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                fontWeight: FontWeight.w700,
+      child: Padding(
+        padding: const EdgeInsets.only(left: 100.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // 🤖 AI Robot Icon
+            Container(
+              width: 120,
+              height: 120,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(30),
+                gradient: themeController.getPrimaryGradient(),
+                boxShadow: [
+                  BoxShadow(
+                    color: themeController.getThemeData().primaryColor.withOpacity(0.3),
+                    blurRadius: 40,
+                    spreadRadius: 10,
+                  ),
+                ],
+              ),
+              child: const Icon(
+                Icons.smart_toy_rounded,
+                size: 60,
                 color: Colors.white,
               ),
-            ),
-          ).animate(delay: 1000.ms)
-            .fadeIn(duration: 600.ms)
-            .slideY(begin: 0.3, end: 0),
-          
-          const SizedBox(height: 16),
-          
-          Text(
-            'Get instant insights on risk analysis, loan portfolios, and market trends',
-            textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.6),
-            ),
-          ).animate(delay: 1200.ms)
-            .fadeIn(duration: 600.ms)
-            .slideY(begin: 0.3, end: 0),
-        ],
+            ).animate()
+              .scale(delay: 300.ms, duration: 800.ms)
+              .then()
+              .shake(hz: 1, curve: Curves.easeInOutCubic)
+              .then()
+              .shimmer(duration: 3000.ms),
+            
+            const SizedBox(height: 32),
+            
+            // 💭 Welcome Text
+            Text(
+              'Ask me anything about your',
+              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.8),
+              ),
+            ).animate(delay: 800.ms)
+              .fadeIn(duration: 600.ms)
+              .slideY(begin: 0.3, end: 0),
+            
+            ShaderMask(
+              shaderCallback: (bounds) => themeController.getPrimaryGradient()
+                  .createShader(bounds),
+              child: Text(
+                'Customer',
+                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                  fontWeight: FontWeight.w700,
+                  color: Colors.white,
+                ),
+              ),
+            ).animate(delay: 1000.ms)
+              .fadeIn(duration: 600.ms)
+              .slideY(begin: 0.3, end: 0),
+            
+            const SizedBox(height: 16),
+            
+            Text(
+              'Get instant risk and oppotunity insights',
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.6),
+              ),
+            ).animate(delay: 1200.ms)
+              .fadeIn(duration: 600.ms)
+              .slideY(begin: 0.3, end: 0),
+          ],
+        ),
       ),
     );
   }
@@ -461,43 +490,81 @@ class AiChatView extends GetView<AiChatController> {
   }
 
   /// Build quick actions panel
-  Widget _buildQuickActions(BuildContext context, ThemeController themeController) {
-    return Obx(() {
-      final quickActions = controller.quickActions;
-      if (quickActions.isEmpty) return const SizedBox.shrink();
-      
-      return Container(
-        height: 120,
-        margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Quick Actions',
-              style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                fontWeight: FontWeight.w600,
-                color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.7),
-              ),
+ Widget _buildQuickActions(BuildContext context, ThemeController themeController) {
+  return Obx(() {
+    final quickActions = controller.quickActions;
+    if (quickActions.isEmpty) return const SizedBox.shrink();
+
+    return Container(
+      width: 200, // right panel width
+      margin: const EdgeInsets.only(right: 16, top: 8, bottom: 8),
+      // decoration: BoxDecoration(
+      //   color: Theme.of(context).colorScheme.surface.withOpacity(0.9),
+      //   borderRadius: BorderRadius.circular(16),
+      //   border: Border.all(
+      //     color: Theme.of(context).colorScheme.outline.withOpacity(0.2),
+      //   ),
+      //   boxShadow: [
+      //     BoxShadow(
+      //       color: Colors.black.withOpacity(0.05),
+      //       blurRadius: 8,
+      //       offset: const Offset(0, 4),
+      //     ),
+      //   ],
+      // ),
+      child: Column(
+        children: [
+          // Padding(
+          //   padding: const EdgeInsets.all(12.0),
+          //   child: Text(
+          //     'Quick Actions',
+          //     style: Theme.of(context).textTheme.titleMedium?.copyWith(
+          //           fontWeight: FontWeight.w600,
+          //           color: Theme.of(context)
+          //               .textTheme
+          //               .bodyMedium
+          //               ?.color
+          //               ?.withOpacity(0.8),
+          //         ),
+          //   ),
+          // ),
+          // const Divider(height: 1),
+          Expanded(
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final availableHeight = constraints.maxHeight;
+                final itemCount = quickActions.length;
+                final itemHeight = availableHeight / itemCount; // 👈 evenly divide space
+
+                return Column(
+                  children: [
+                    for (int index = 0; index < itemCount; index++)
+                      SizedBox(
+                        height: itemHeight,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 6),
+                          child: _buildQuickActionCard(
+                                  quickActions[index], themeController, context)
+                              .animate(delay: (index * 100).ms)
+                              .fadeIn(duration: 500.ms)
+                              .slideY(begin: 0.2, end: 0),
+                        ),
+                      ),
+                  ],
+                );
+              },
             ),
-            const SizedBox(height: 8),
-            Expanded(
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: quickActions.length,
-                itemBuilder: (context, index) {
-                  final action = quickActions[index];
-                  return _buildQuickActionCard(action, themeController,context)
-                      .animate(delay: (index * 100).ms)
-                      .fadeIn(duration: 600.ms)
-                      .slideX(begin: 0.3, end: 0);
-                },
-              ),
-            ),
-          ],
-        ),
-      );
-    });
-  }
+          ),
+        ],
+      ),
+    );
+  });
+}
+
+
+
+
 
   /// Build quick action card
   Widget _buildQuickActionCard(QuickAction action, ThemeController themeController, BuildContext context) {
@@ -645,7 +712,7 @@ class AiChatView extends GetView<AiChatController> {
         maxLines: null,
         textInputAction: TextInputAction.newline,
         decoration: InputDecoration(
-          hintText: 'Ask Finaxis AI about your financial portfolio...',
+          hintText: 'Ask Finaxis AI about your your customer...',
           hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
             color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.5),
           ),

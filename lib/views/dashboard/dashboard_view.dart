@@ -54,9 +54,9 @@ class DashboardView extends GetView<DashboardController> {
               const SizedBox(height: 32),
 
               // 🔍 AI Insights Carousel
-              _buildAIInsightsCarousel(context, themeController),
+              // _buildAIInsightsCarousel(context, themeController),
 
-              const SizedBox(height: 32),
+              // const SizedBox(height: 32),
 
               // 👥 Recent Applicants Grid (Futuristic)
               _buildRecentApplicants(context, themeController),
@@ -86,7 +86,7 @@ class DashboardView extends GetView<DashboardController> {
                     fontWeight: FontWeight.w900,
                     color: Colors.white,
                     letterSpacing: 4.0,
-                    fontSize: 48,
+                    fontSize: 35,
                   ),
                 ),
               )
@@ -171,7 +171,7 @@ class DashboardView extends GetView<DashboardController> {
               const SizedBox(width: 16),
               Expanded(
                 child: Text(
-                  'Ask AI about your portfolio insights...',
+                  'Ask AI about your customer...',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     color: Theme.of(
                       context,
@@ -206,10 +206,10 @@ class DashboardView extends GetView<DashboardController> {
           final crossAxisCount = isLargeScreen ? 5 : 2;
 
           return GridView.count(
-            crossAxisCount: crossAxisCount,
+            crossAxisCount: 3,
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            childAspectRatio: 1.8,
+            childAspectRatio: 2,
             crossAxisSpacing: 24,
             mainAxisSpacing: 24,
             children: [
@@ -238,18 +238,18 @@ class DashboardView extends GetView<DashboardController> {
                 themeController,
                 index: 1,
               ),
-              _buildFloatingMetricCard(
-                'Risk Score',
-                '${dashboardData?.kpis.avgCreditScore.toStringAsFixed(1) ?? '0.0'}',
-                Icons.shield_rounded,
-                LinearGradient(
-                  colors: [Colors.amber.shade400, Colors.orange.shade500],
-                ),
-                'Low Risk',
-                context,
-                themeController,
-                index: 2,
-              ),
+              // _buildFloatingMetricCard(
+              //   'Risk Score',
+              //   '${dashboardData?.kpis.avgCreditScore.toStringAsFixed(1) ?? '0.0'}',
+              //   Icons.shield_rounded,
+              //   LinearGradient(
+              //     colors: [Colors.amber.shade400, Colors.orange.shade500],
+              //   ),
+              //   'Low Risk',
+              //   context,
+              //   themeController,
+              //   index: 2,
+              // ),
               _buildFloatingMetricCard(
                 'Pending Consents',
                 '${dashboardData?.kpis.pendingConsents ?? 0}',
@@ -293,6 +293,7 @@ class DashboardView extends GetView<DashboardController> {
     required int index,
   }) {
     return FuturisticCard(
+          height: 100,
           isElevated: true,
           gradient: gradient,
           child: Column(
@@ -343,7 +344,7 @@ class DashboardView extends GetView<DashboardController> {
                 value,
                 style: const TextStyle(
                   color: Colors.white,
-                  fontSize: 28,
+                  fontSize: 25,
                   fontWeight: FontWeight.w700,
                 ),
               ),
@@ -404,7 +405,7 @@ class DashboardView extends GetView<DashboardController> {
                   child: PieChart(
                     PieChartData(
                       sectionsSpace: 4,
-                      centerSpaceRadius: 80,
+                      centerSpaceRadius: 70,
                       sections: [
                         PieChartSectionData(
                           color: AppTheme.ragGreen,
@@ -448,7 +449,7 @@ class DashboardView extends GetView<DashboardController> {
                 ),
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 20),
             Wrap(
               spacing: 16,
               runSpacing: 8,
@@ -505,18 +506,26 @@ class DashboardView extends GetView<DashboardController> {
                     );
                   }),
                   titlesData: FlTitlesData(
-                    leftTitles: const AxisTitles(
-                      sideTitles: SideTitles(showTitles: false),
-                    ),
-                    topTitles: const AxisTitles(
-                      sideTitles: SideTitles(showTitles: false),
-                    ),
-                    rightTitles: const AxisTitles(
-                      sideTitles: SideTitles(showTitles: false),
+                    leftTitles: AxisTitles(
+                      sideTitles: SideTitles(
+                        showTitles: true,
+                        reservedSize: 40,
+                        getTitlesWidget: (value, meta) {
+                          // Show only integer labels on Y-axis
+                          if (value % 1 == 0) {
+                            return Text(
+                              value.toInt().toString(),
+                              style: Theme.of(context).textTheme.labelSmall,
+                            );
+                          }
+                          return const SizedBox.shrink();
+                        },
+                      ),
                     ),
                     bottomTitles: AxisTitles(
                       sideTitles: SideTitles(
                         showTitles: true,
+                        reservedSize: 36,
                         getTitlesWidget: (value, meta) {
                           final index = value.toInt();
                           if (index >= 0 && index < funnel.length) {
@@ -528,14 +537,29 @@ class DashboardView extends GetView<DashboardController> {
                               ),
                             );
                           }
-                          return const SizedBox();
+                          return const SizedBox.shrink();
                         },
-                        reservedSize: 32,
                       ),
                     ),
+                    topTitles: const AxisTitles(
+                      sideTitles: SideTitles(showTitles: false),
+                    ),
+                    rightTitles: const AxisTitles(
+                      sideTitles: SideTitles(showTitles: false),
+                    ),
                   ),
-                  gridData: const FlGridData(show: false),
-                  borderData: FlBorderData(show: false),
+                  gridData: FlGridData(
+                    show: false, // ✅ enable grid lines
+                    drawVerticalLine: false, // only horizontal grid lines
+                    horizontalInterval: 5, // adjust based on your data scale
+                  ),
+                  borderData: FlBorderData(
+                    show: true,
+                    border: const Border(
+                      left: BorderSide(color: Colors.grey, width: 1),
+                      bottom: BorderSide(color: Colors.grey, width: 1),
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -708,152 +732,299 @@ class DashboardView extends GetView<DashboardController> {
           const SizedBox(height: 16),
           SizedBox(
             height: 500,
-            child: Obx(() => FuturisticTable(
-              columns: [
-                const FuturisticTableColumn(
-                  title: 'CIF',
-                  icon: Icons.fingerprint_rounded,
-                  flex: 1,
-                ),
-                const FuturisticTableColumn(
-                  title: 'Name',
-                  icon: Icons.person_rounded,
-                  flex: 2,
-                ),
-                const FuturisticTableColumn(
-                  title: 'Credit Score',
-                  icon: Icons.star_rounded,
-                  flex: 1,
-                ),
-                const FuturisticTableColumn(
-                  title: 'Risk Status',
-                  icon: Icons.security_rounded,
-                  flex: 1,
-                ),
-                const FuturisticTableColumn(
-                  title: 'Bank',
-                  icon: Icons.account_balance_rounded,
-                  flex: 2,
-                ),
-                const FuturisticTableColumn(
-                  title: 'Action',
-                  sortable: false,
-                  flex: 1,
-                ),
-              ],
-              rows: applicants
-                  .map(
-                    (applicant) => FuturisticTableRow(
-                      cells: [
-                        FuturisticTableCell(text: applicant.cif),
-                        FuturisticTableCell(text: applicant.name),
-                        FuturisticTableCell(
-                          text: applicant.creditScore.toString(),
-                          widget: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 4,
-                            ),
-                            decoration: BoxDecoration(
-                              gradient: themeController.getPrimaryGradient(),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Text(
-                              applicant.creditScore.toString(),
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w600,
-                                fontSize: 13,
-                              ),
-                            ),
-                          ),
-                        ),
-                        FuturisticTableCell(
-                          text: applicant.ragStatus,
-                          widget: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 10,
-                              vertical: 6,
-                            ),
-                            decoration: BoxDecoration(
-                              color: AppTheme.getRagColor(
-                                applicant.ragStatus,
-                              ).withOpacity(0.2),
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(
-                                color: AppTheme.getRagColor(
-                                  applicant.ragStatus,
-                                ),
-                                width: 1.5,
-                              ),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Container(
-                                  width: 8,
-                                  height: 8,
-                                  decoration: BoxDecoration(
-                                    color: AppTheme.getRagColor(
-                                      applicant.ragStatus,
+            child: Obx(
+              () => FuturisticTable(
+                columns: [
+                  const FuturisticTableColumn(
+                    title: 'CIF',
+                    // icon: Icons.fingerprint_rounded,
+                    flex: 1,
+                  ),
+                  const FuturisticTableColumn(
+                    title: 'Name',
+                    // icon: Icons.person_rounded,
+                    flex: 2,
+                  ),
+                  const FuturisticTableColumn(
+                    title: 'Credit Score',
+                    // icon: Icons.star_rounded,
+                    flex: 1,
+                  ),
+                  const FuturisticTableColumn(
+                    title: 'Risk Score',
+                    // icon: Icons.star_rounded,
+                    flex: 1,
+                  ),
+                  const FuturisticTableColumn(
+                    title: 'Risk Status',
+                    // icon: Icons.security_rounded,
+                    flex: 1,
+                  ),
+                  const FuturisticTableColumn(
+                    title: 'Bank',
+                    // icon: Icons.account_balance_rounded,
+                    flex: 2,
+                  ),
+                  const FuturisticTableColumn(
+                    title: 'Action',
+                    sortable: false,
+                    flex: 1,
+                  ),
+                ],
+                rows: applicants
+                    .map(
+                      (applicant) => FuturisticTableRow(
+                        cells: [
+                          FuturisticTableCell(text: applicant.cif),
+                          FuturisticTableCell(text: applicant.name),
+                          FuturisticTableCell(
+                            text: applicant.creditScore.toString() == '0'
+                                ? ''
+                                : applicant.creditScore.toString(),
+                            widget: applicant.creditScore.toString() == '0'
+                                ? Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 8,
+                                      vertical: 4,
                                     ),
-                                    shape: BoxShape.circle,
-                                  ),
-                                ),
-                                const SizedBox(width: 6),
-                                Text(
-                                  applicant.ragStatus.toUpperCase(),
-                                  style: TextStyle(
-                                    color: AppTheme.getRagColor(
-                                      applicant.ragStatus,
+
+                                    child: Text(
+                                      applicant.creditScore.toString() == '0'
+                                          ? '_'
+                                          : applicant.creditScore.toString(),
+                                      style: const TextStyle(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 13,
+                                      ),
                                     ),
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: 11,
+                                  )
+                                : Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 8,
+                                      vertical: 4,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      gradient: themeController
+                                          .getPrimaryGradient(),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Text(
+                                      applicant.creditScore.toString(),
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 13,
+                                      ),
+                                    ),
                                   ),
+                          ),
+                          FuturisticTableCell(
+                            text: applicant.riskScore.toString() == '0'
+                                ? ''
+                                : applicant.riskScore.toString(),
+                            widget: applicant.riskScore.toString() == '0'
+                                ? Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 8,
+                                      vertical: 4,
+                                    ),
+
+                                    child: Text(
+                                      applicant.riskScore.toString() == '0'
+                                          ? '_'
+                                          : applicant.riskScore.toString(),
+                                      style: const TextStyle(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 13,
+                                      ),
+                                    ),
+                                  )
+                                : Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 8,
+                                      vertical: 4,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      gradient: themeController
+                                          .getPrimaryGradient(),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Text(
+                                      applicant.riskScore.toString(),
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 13,
+                                      ),
+                                    ),
+                                  ),
+                          ),
+                          FuturisticTableCell(
+                            text: applicant.ragStatus.isEmpty
+                                ? ''
+                                : applicant.ragStatus,
+                            widget: applicant.ragStatus.isEmpty
+                                ? Text(
+                                    applicant.ragStatus.isEmpty
+                                        ? '_'
+                                        : applicant.ragStatus,
+                                    style: const TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 13,
+                                    ),
+                                  )
+                                : Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 10,
+                                      vertical: 6,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: AppTheme.getRagColor(
+                                        applicant.ragStatus,
+                                      ).withOpacity(0.2),
+                                      borderRadius: BorderRadius.circular(12),
+                                      border: Border.all(
+                                        color: AppTheme.getRagColor(
+                                          applicant.ragStatus,
+                                        ),
+                                        width: 1.5,
+                                      ),
+                                    ),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Container(
+                                          width: 8,
+                                          height: 8,
+                                          decoration: BoxDecoration(
+                                            color: AppTheme.getRagColor(
+                                              applicant.ragStatus,
+                                            ),
+                                            shape: BoxShape.circle,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 6),
+                                        Text(
+                                          applicant.ragStatus.toUpperCase() ==
+                                                  "GREEN"
+                                              ? "Low"
+                                              : applicant.ragStatus
+                                                        .toUpperCase() ==
+                                                    "AMBER"
+                                              ? "Medium"
+                                              : "High",
+                                          style: TextStyle(
+                                            color: AppTheme.getRagColor(
+                                              applicant.ragStatus,
+                                            ),
+                                            fontWeight: FontWeight.w700,
+                                            fontSize: 11,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                          ),
+                          FuturisticTableCell(
+                            text: applicant.bankName.isEmpty
+                                ? ''
+                                : applicant.bankName,
+                            widget: applicant.creditScore.toString() == '0'
+                                ? Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 8,
+                                      vertical: 4,
+                                    ),
+
+                                    child: Text(
+                                      applicant.bankName.toString() == ''
+                                          ? '_'
+                                          : applicant.bankName.toString(),
+                                      style: const TextStyle(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 13,
+                                      ),
+                                    ),
+                                  )
+                                : Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 8,
+                                      vertical: 4,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      gradient: themeController
+                                          .getPrimaryGradient(),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Text(
+                                      applicant.bankName.toString(),
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 13,
+                                      ),
+                                    ),
+                                  ),
+                          ),
+                          FuturisticTableCell(
+                            text: applicant.mobile?.isEmpty ?? true
+                                ? 'Pending'
+                                : 'Open',
+                            widget: ElevatedButton.icon(
+                              onPressed: (applicant.mobile?.isEmpty ?? true)
+                                  ? null // disable button if mobile is empty
+                                  : () => controller.navigateToApplicantDetail(
+                                      applicant.cif,
+                                    ),
+                              icon: Icon(
+                                (applicant.mobile?.isEmpty ?? true)
+                                    ? Icons.hourglass_empty_rounded
+                                    : Icons.auto_stories_rounded,
+                                size: 16,
+                              ),
+                              label: Text(
+                                (applicant.mobile?.isEmpty ?? true)
+                                    ? 'Pending'
+                                    : 'Open',
+                              ),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor:
+                                    (applicant.mobile?.isEmpty ?? true)
+                                    ? Colors.grey
+                                    : themeController
+                                          .getThemeData()
+                                          .primaryColor,
+                                foregroundColor: Colors.white,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 8,
                                 ),
-                              ],
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                textStyle: const TextStyle(fontSize: 12),
+                              ),
                             ),
                           ),
-                        ),
-                        FuturisticTableCell(text: applicant.bankName),
-                        FuturisticTableCell(
-                          text: 'Open',
-                          widget: ElevatedButton.icon(
-                            onPressed: () => controller
-                                .navigateToApplicantDetail(applicant.cif),
-                            icon: const Icon(
-                              Icons.auto_stories_rounded,
-                              size: 16,
-                            ),
-                            label: const Text('Open'),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: themeController
-                                  .getThemeData()
-                                  .primaryColor,
-                              foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 8,
-                              ),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              textStyle: const TextStyle(fontSize: 12),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  )
-                  .toList(),
-              onRowTap: (index) =>
-                  controller.navigateToApplicantDetail(applicants[index].cif),
-              isLoading: controller.isLoading.value,
-              emptyMessage: 'No recent applicants found',
-              sortColumnIndex: controller.recentApplicantsSortColumnIndex.value,
-              sortAscending: controller.recentApplicantsSortAscending.value,
-              onSort: (columnIndex, ascending) => controller.sortRecentApplicants(columnIndex, ascending),
-            )),
+                        ],
+                      ),
+                    )
+                    .toList(),
+                onRowTap: (index) =>
+                    controller.navigateToApplicantDetail(applicants[index].cif),
+                isLoading: controller.isLoading.value,
+                emptyMessage: 'No recent applicants found',
+                sortColumnIndex:
+                    controller.recentApplicantsSortColumnIndex.value,
+                sortAscending: controller.recentApplicantsSortAscending.value,
+                onSort: (columnIndex, ascending) =>
+                    controller.sortRecentApplicants(columnIndex, ascending),
+              ),
+            ),
           ),
         ],
       );
@@ -993,24 +1164,24 @@ class DashboardView extends GetView<DashboardController> {
     }
   }
 
-  Widget _buildSidebar(BuildContext context) {
-    return FuturisticSidebar(
-      selectedIndex: 0,
-      onItemSelected: (index) {
-        switch (index) {
-          case 0:
-            if (Get.currentRoute != '/dashboard') Get.offNamed('/dashboard');
-            break;
-          case 1:
-            Get.offNamed('/consent');
-            break;
-          case 2:
-            Get.offNamed('/applicants');
-            break;
-        }
-      },
-    );
-  }
+  // Widget _buildSidebar(BuildContext context) {
+  //   return FuturisticSidebar(
+  //     selectedIndex: 0,
+  //     onItemSelected: (index) {
+  //       switch (index) {
+  //         case 0:
+  //           if (Get.currentRoute != '/dashboard') Get.offNamed('/dashboard');
+  //           break;
+  //         case 1:
+  //           Get.offNamed('/consent');
+  //           break;
+  //         case 2:
+  //           Get.offNamed('/applicants');
+  //           break;
+  //       }
+  //     },
+  //   );
+  // }
 
   Widget _buildTopNavbar(
     BuildContext context,

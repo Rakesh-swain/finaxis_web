@@ -38,7 +38,11 @@ class ApplicantsController extends GetxController {
   // Derived Loan Type (simulated)
   final Map<String, String> loanTypeByCif = {};
   static const List<String> loanTypes = [
-    'Personal Loan', 'Home Loan', 'Auto Loan', 'Credit Card', 'Business Loan'
+    'Personal Loan',
+    'Home Loan',
+    'Auto Loan',
+    'Credit Card',
+    'Business Loan',
   ];
 
   @override
@@ -95,19 +99,26 @@ class ApplicantsController extends GetxController {
 
     // RAG filter
     if (ragFilter.value != 'all') {
-      result = result.where((a) => a.ragStatus.toLowerCase() == ragFilter.value);
+      result = result.where(
+        (a) => a.ragStatus.toLowerCase() == ragFilter.value,
+      );
     }
 
     // Loan Type filter
     if (loanTypeFilter.value != 'all') {
-      result = result.where((a) => loanTypeByCif[a.cif] == loanTypeFilter.value);
+      result = result.where(
+        (a) => loanTypeByCif[a.cif] == loanTypeFilter.value,
+      );
     }
 
     // Date range filter (based on lastUpdated)
     final range = dateRange.value;
     if (range != null) {
-      result = result.where((a) =>
-          !a.lastUpdated.isBefore(range.start) && !a.lastUpdated.isAfter(range.end));
+      result = result.where(
+        (a) =>
+            !a.lastUpdated.isBefore(range.start) &&
+            !a.lastUpdated.isAfter(range.end),
+      );
     }
 
     filtered.assignAll(result.toList());
@@ -116,11 +127,17 @@ class ApplicantsController extends GetxController {
     _sortByIndex(idx, sortAscending.value);
   }
 
-  void sortBy<T>(Comparable Function(ApplicantModel a) getField, int columnIndex, bool ascending) {
+  void sortBy<T>(
+    Comparable Function(ApplicantModel a) getField,
+    int columnIndex,
+    bool ascending,
+  ) {
     filtered.sort((a, b) {
       final aValue = getField(a);
       final bValue = getField(b);
-      return ascending ? Comparable.compare(aValue, bValue) : Comparable.compare(bValue, aValue);
+      return ascending
+          ? Comparable.compare(aValue, bValue)
+          : Comparable.compare(bValue, aValue);
     });
     sortColumnIndex.value = columnIndex;
     sortAscending.value = ascending;
@@ -178,18 +195,19 @@ class ApplicantsView extends GetView<ApplicantsController> {
       ],
       child: Obx(() {
         if (controller.isLoading.value) {
-          return Center(
-            child: _buildLoadingState(context, themeController),
-          );
+          return Center(child: _buildLoadingState(context, themeController));
         }
-        
+
         return _buildFloatingCardShelf(context, themeController);
       }),
     );
   }
 
   /// Build floating card shelf - vertical column of stacked applicant cards
-  Widget _buildFloatingCardShelf(BuildContext context, ThemeController themeController) {
+  Widget _buildFloatingCardShelf(
+    BuildContext context,
+    ThemeController themeController,
+  ) {
     return Container(
       height: double.infinity,
       child: SingleChildScrollView(
@@ -198,232 +216,397 @@ class ApplicantsView extends GetView<ApplicantsController> {
           children: [
             // 📊 Stats Row
             _buildStatsRow(context, themeController),
-            
+
             const SizedBox(height: 32),
-            
+
             // 🔍 Search & Filters
             _buildSearchAndFilters(context, themeController),
-            
+
             const SizedBox(height: 24),
-            
+
             // 📊 Futuristic Sortable Table
-            Obx(() => SizedBox(
-              height: 600,
-              child: FuturisticTable(
-                columns: [
-                  const FuturisticTableColumn(
-                    title: 'CIF',
-                    icon: Icons.fingerprint_rounded,
-                  ),
-                  const FuturisticTableColumn(
-                    title: 'Name',
-                    icon: Icons.person_rounded,
-                  ),
-                  const FuturisticTableColumn(
-                    title: 'Credit Score',
-                    icon: Icons.star_rounded,
-                  ),
-                  const FuturisticTableColumn(
-                    title: 'Risk Score',
-                    icon: Icons.analytics_rounded,
-                  ),
-                  const FuturisticTableColumn(
-                    title: 'Risk Status',
-                    icon: Icons.security_rounded,
-                  ),
-                  const FuturisticTableColumn(
-                    title: 'Bank',
-                    icon: Icons.account_balance_rounded,
-                  ),
-                  const FuturisticTableColumn(
-                    title: 'Loan Type',
-                    icon: Icons.category_rounded,
-                  ),
-                  const FuturisticTableColumn(
-                    title: 'Last Updated',
-                    icon: Icons.schedule_rounded,
-                  ),
-                  const FuturisticTableColumn(
-                    title: 'Action',
-                    sortable: false,
-                  ),
-                ],
-                rows: controller.filtered
-                    .map(
-                      (applicant) => FuturisticTableRow(
-                        cells: [
-                          FuturisticTableCell(text: applicant.cif,),
-                          FuturisticTableCell(text: applicant.name),
-                          FuturisticTableCell(
-                            text: applicant.creditScore.toString(),
-                            widget: Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 4,
-                              ),
-                              decoration: BoxDecoration(
-                                gradient: themeController.getPrimaryGradient(),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Text(
-                                applicant.creditScore.toString(),
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w600,
+            Obx(
+              () => SizedBox(
+                height: 600,
+                child: FuturisticTable(
+                  columns: [
+                    const FuturisticTableColumn(
+                      title: 'CIF',
+                      // icon: Icons.fingerprint_rounded,
+                    ),
+                    const FuturisticTableColumn(
+                      title: 'Name',
+                      // icon: Icons.person_rounded,
+                    ),
+                    const FuturisticTableColumn(
+                      title: 'Credit Score',
+                      // icon: Icons.star_rounded,
+                    ),
+                    const FuturisticTableColumn(
+                      title: 'Risk Score',
+                      // icon: Icons.analytics_rounded,
+                    ),
+                    const FuturisticTableColumn(
+                      title: 'Risk Status',
+                      // icon: Icons.security_rounded,
+                    ),
+                    const FuturisticTableColumn(
+                      title: 'Bank',
+                      // icon: Icons.account_balance_rounded,
+                    ),
+                    // const FuturisticTableColumn(
+                    //   title: 'Loan Type',
+                    //   // icon: Icons.category_rounded,
+                    // ),
+                    const FuturisticTableColumn(
+                      title: 'Last Updated',
+                      // icon: Icons.schedule_rounded,
+                    ),
+                    const FuturisticTableColumn(
+                      title: 'Action',
+                      sortable: false,
+                    ),
+                  ],
+                  rows: controller.filtered
+                      .map(
+                        (applicant) => FuturisticTableRow(
+                          cells: [
+                            FuturisticTableCell(text: applicant.cif),
+                            FuturisticTableCell(text: applicant.name),
+                            FuturisticTableCell(
+                              text: applicant.creditScore.toString() == '0'
+                                  ? ''
+                                  : applicant.creditScore.toString(),
+                              widget: applicant.creditScore.toString() == '0'
+                                  ? Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 8,
+                                        vertical: 4,
+                                      ),
+
+                                      child: Text(
+                                        applicant.creditScore.toString() == '0'
+                                            ? '_'
+                                            : applicant.creditScore.toString(),
+                                        style: const TextStyle(
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 13,
+                                        ),
+                                      ),
+                                    )
+                                  : Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 8,
+                                        vertical: 4,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        gradient: themeController
+                                            .getPrimaryGradient(),
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: Text(
+                                        applicant.creditScore.toString(),
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 13,
+                                        ),
+                                      ),
+                                    ),
+                            ),
+                                                        FuturisticTableCell(
+                              text: applicant.riskScore.toString() == '0'
+                                  ? ''
+                                  : applicant.riskScore.toString(),
+                              widget: applicant.riskScore.toString() == '0'
+                                  ? Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 8,
+                                        vertical: 4,
+                                      ),
+
+                                      child: Text(
+                                        applicant.riskScore.toString() == '0'
+                                            ? '_'
+                                            : applicant.riskScore.toString(),
+                                        style: const TextStyle(
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 13,
+                                        ),
+                                      ),
+                                    )
+                                  : Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 8,
+                                        vertical: 4,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        gradient: themeController
+                                            .getPrimaryGradient(),
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: Text(
+                                        applicant.riskScore.toString(),
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 13,
+                                        ),
+                                      ),
+                                    ),
+                            ),
+                            // FuturisticTableCell(
+                            //   text: applicant.riskScore.toStringAsFixed(1),
+                            //   widget: Container(
+                            //     padding: const EdgeInsets.symmetric(
+                            //       horizontal: 8,
+                            //       vertical: 4,
+                            //     ),
+                            //     decoration: BoxDecoration(
+                            //       color: AppTheme.getRagColor(
+                            //         applicant.ragStatus,
+                            //       ).withOpacity(0.2),
+                            //       borderRadius: BorderRadius.circular(8),
+                            //       border: Border.all(
+                            //         color: AppTheme.getRagColor(
+                            //           applicant.ragStatus,
+                            //         ),
+                            //         width: 1,
+                            //       ),
+                            //     ),
+                            //     child: Text(
+                            //       applicant.riskScore.toStringAsFixed(1),
+                            //       style: TextStyle(
+                            //         color: AppTheme.getRagColor(
+                            //           applicant.ragStatus,
+                            //         ),
+                            //         fontWeight: FontWeight.w600,
+                            //         fontSize: 13,
+                            //       ),
+                            //     ),
+                            //   ),
+                            // ),
+                            FuturisticTableCell(
+                              text: applicant.ragStatus.isEmpty
+                                  ? ''
+                                  : applicant.ragStatus,
+                              widget: applicant.ragStatus.isEmpty
+                                  ? Text(
+                                      applicant.ragStatus.isEmpty
+                                          ? '_'
+                                          : applicant.ragStatus,
+                                      style: const TextStyle(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 13,
+                                      ),
+                                    )
+                                  : Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 10,
+                                        vertical: 6,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: AppTheme.getRagColor(
+                                          applicant.ragStatus,
+                                        ).withOpacity(0.2),
+                                        borderRadius: BorderRadius.circular(12),
+                                        border: Border.all(
+                                          color: AppTheme.getRagColor(
+                                            applicant.ragStatus,
+                                          ),
+                                          width: 1.5,
+                                        ),
+                                      ),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Container(
+                                            width: 8,
+                                            height: 8,
+                                            decoration: BoxDecoration(
+                                              color: AppTheme.getRagColor(
+                                                applicant.ragStatus,
+                                              ),
+                                              shape: BoxShape.circle,
+                                            ),
+                                          ),
+                                          const SizedBox(width: 6),
+                                          Text(
+                                            applicant.ragStatus.toUpperCase() ==
+                                                    "GREEN"
+                                                ? "Low"
+                                                : applicant.ragStatus
+                                                          .toUpperCase() ==
+                                                      "AMBER"
+                                                ? "Medium"
+                                                : "High",
+                                            style: TextStyle(
+                                              color: AppTheme.getRagColor(
+                                                applicant.ragStatus,
+                                              ),
+                                              fontWeight: FontWeight.w700,
+                                              fontSize: 11,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                            ),
+                            FuturisticTableCell(
+                              text: applicant.bankName.isEmpty
+                                  ? ''
+                                  : applicant.bankName,
+                              widget: applicant.creditScore.toString() == '0'
+                                  ? Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 8,
+                                        vertical: 4,
+                                      ),
+
+                                      child: Text(
+                                        applicant.bankName.toString() == ''
+                                            ? '_'
+                                            : applicant.bankName.toString(),
+                                        style: const TextStyle(
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 13,
+                                        ),
+                                      ),
+                                    )
+                                  : Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 8,
+                                        vertical: 4,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        gradient: themeController
+                                            .getPrimaryGradient(),
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: Text(
+                                        applicant.bankName.toString(),
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 13,
+                                        ),
+                                      ),
+                                    ),
+                            ),
+                            // FuturisticTableCell(
+                            //   text:
+                            //       controller.loanTypeByCif[applicant.cif] ??
+                            //       'Unknown',
+                            //   widget: Container(
+                            //     padding: const EdgeInsets.symmetric(
+                            //       horizontal: 8,
+                            //       vertical: 4,
+                            //     ),
+                            //     decoration: BoxDecoration(
+                            //       color: Theme.of(
+                            //         context,
+                            //       ).primaryColor.withOpacity(0.1),
+                            //       borderRadius: BorderRadius.circular(8),
+                            //       border: Border.all(
+                            //         color: Theme.of(
+                            //           context,
+                            //         ).primaryColor.withOpacity(0.3),
+                            //         width: 1,
+                            //       ),
+                            //     ),
+                            //     child: Text(
+                            //       controller.loanTypeByCif[applicant.cif] ??
+                            //           'Unknown',
+                            //       style: TextStyle(
+                            //         color: Theme.of(context).primaryColor,
+                            //         fontWeight: FontWeight.w500,
+                            //         fontSize: 12,
+                            //       ),
+                            //     ),
+                            //   ),
+                            // ),
+                            FuturisticTableCell(
+                              text: DateFormat(
+                                'MMM dd, yy',
+                              ).format(applicant.lastUpdated),
+                              widget: Text(
+                                DateFormat(
+                                  'MMM dd, yy',
+                                ).format(applicant.lastUpdated),
+                                style: TextStyle(
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium
+                                      ?.color
+                                      ?.withOpacity(0.7),
                                   fontSize: 13,
                                 ),
                               ),
                             ),
-                          ),
-                          FuturisticTableCell(
-                            text: applicant.riskScore.toStringAsFixed(1),
-                            widget: Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 4,
-                              ),
-                              decoration: BoxDecoration(
-                                color: AppTheme.getRagColor(applicant.ragStatus).withOpacity(0.2),
-                                borderRadius: BorderRadius.circular(8),
-                                border: Border.all(
-                                  color: AppTheme.getRagColor(applicant.ragStatus),
-                                  width: 1,
+                            FuturisticTableCell(
+                              text: applicant.mobile?.isEmpty ?? true
+                                  ? 'Pending'
+                                  : 'Open',
+                              widget: ElevatedButton.icon(
+                                onPressed: (applicant.mobile?.isEmpty ?? true)
+                                    ? null // disable button if mobile is empty
+                                    : () =>
+                                          controller.navigateToDetail(
+                                            applicant.cif,
+                                          ),
+                                icon: Icon(
+                                  (applicant.mobile?.isEmpty ?? true)
+                                      ? Icons.hourglass_empty_rounded
+                                      : Icons.auto_stories_rounded,
+                                  size: 16,
                                 ),
-                              ),
-                              child: Text(
-                                applicant.riskScore.toStringAsFixed(1),
-                                style: TextStyle(
-                                  color: AppTheme.getRagColor(applicant.ragStatus),
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 13,
+                                label: Text(
+                                  (applicant.mobile?.isEmpty ?? true)
+                                      ? 'Pending'
+                                      : 'Open',
                                 ),
-                              ),
-                            ),
-                          ),
-                          FuturisticTableCell(
-                            text: applicant.ragStatus,
-                            widget: Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 10,
-                                vertical: 6,
-                              ),
-                              decoration: BoxDecoration(
-                                color: AppTheme.getRagColor(
-                                  applicant.ragStatus,
-                                ).withOpacity(0.2),
-                                borderRadius: BorderRadius.circular(12),
-                                border: Border.all(
-                                  color: AppTheme.getRagColor(
-                                    applicant.ragStatus,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor:
+                                      (applicant.mobile?.isEmpty ?? true)
+                                      ? Colors.grey
+                                      : themeController
+                                            .getThemeData()
+                                            .primaryColor,
+                                  foregroundColor: Colors.white,
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                    vertical: 8,
                                   ),
-                                  width: 1.5,
-                                ),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Container(
-                                    width: 8,
-                                    height: 8,
-                                    decoration: BoxDecoration(
-                                      color: AppTheme.getRagColor(
-                                        applicant.ragStatus,
-                                      ),
-                                      shape: BoxShape.circle,
-                                    ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
                                   ),
-                                  const SizedBox(width: 6),
-                                  Text(
-                                    applicant.ragStatus.toUpperCase(),
-                                    style: TextStyle(
-                                      color: AppTheme.getRagColor(
-                                        applicant.ragStatus,
-                                      ),
-                                      fontWeight: FontWeight.w700,
-                                      fontSize: 11,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          FuturisticTableCell(text: applicant.bankName),
-                          FuturisticTableCell(
-                            text: controller.loanTypeByCif[applicant.cif] ?? 'Unknown',
-                            widget: Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 4,
-                              ),
-                              decoration: BoxDecoration(
-                                color: Theme.of(context).primaryColor.withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(8),
-                                border: Border.all(
-                                  color: Theme.of(context).primaryColor.withOpacity(0.3),
-                                  width: 1,
-                                ),
-                              ),
-                              child: Text(
-                                controller.loanTypeByCif[applicant.cif] ?? 'Unknown',
-                                style: TextStyle(
-                                  color: Theme.of(context).primaryColor,
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 12,
+                                  textStyle: const TextStyle(fontSize: 12),
                                 ),
                               ),
                             ),
-                          ),
-                          FuturisticTableCell(
-                            text: DateFormat('MMM dd, yy').format(applicant.lastUpdated),
-                            widget: Text(
-                              DateFormat('MMM dd, yy').format(applicant.lastUpdated),
-                              style: TextStyle(
-                                color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.7),
-                                fontSize: 13,
-                              ),
-                            ),
-                          ),
-                          FuturisticTableCell(
-                            text: 'Open',
-                            widget: ElevatedButton.icon(
-                              onPressed: () => controller.navigateToDetail(applicant.cif),
-                              icon: const Icon(
-                                Icons.auto_stories_rounded,
-                                size: 16,
-                              ),
-                              label: const Text('Open'),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: themeController
-                                    .getThemeData()
-                                    .primaryColor,
-                                foregroundColor: Colors.white,
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                  vertical: 8,
-                                ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                textStyle: const TextStyle(fontSize: 12),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    )
-                    .toList(),
-                onRowTap: (index) => controller.navigateToDetail(controller.filtered[index].cif),
-                isLoading: controller.isLoading.value,
-                emptyMessage: 'No applicants found',
-                sortColumnIndex: controller.sortColumnIndex.value,
-                sortAscending: controller.sortAscending.value,
-                onSort: (columnIndex, ascending) {
-                  controller.sortColumnIndex.value = columnIndex;
-                  controller.sortAscending.value = ascending;
-                  controller._sortByIndex(columnIndex, ascending);
-                },
+                          ],
+                        ),
+                      )
+                      .toList(),
+                  onRowTap: (index) => controller.navigateToDetail(
+                    controller.filtered[index].cif,
+                  ),
+                  isLoading: controller.isLoading.value,
+                  emptyMessage: 'No applicants found',
+                  sortColumnIndex: controller.sortColumnIndex.value,
+                  sortAscending: controller.sortAscending.value,
+                  onSort: (columnIndex, ascending) {
+                    controller.sortColumnIndex.value = columnIndex;
+                    controller.sortAscending.value = ascending;
+                    controller._sortByIndex(columnIndex, ascending);
+                  },
+                ),
               ),
-            )),
+            ),
           ],
         ),
       ),
@@ -434,12 +617,21 @@ class ApplicantsView extends GetView<ApplicantsController> {
   Widget _buildStatsRow(BuildContext context, ThemeController themeController) {
     return Obx(() {
       final total = controller.filtered.length;
-      final greenCount = controller.filtered.where((a) => a.ragStatus.toLowerCase() == 'green').length;
-      final amberCount = controller.filtered.where((a) => a.ragStatus.toLowerCase() == 'amber').length;
-      final redCount = controller.filtered.where((a) => a.ragStatus.toLowerCase() == 'red').length;
-      final avgCreditScore = controller.filtered.isEmpty 
-          ? 0.0 
-          : controller.filtered.map((a) => a.creditScore).reduce((a, b) => a + b) / controller.filtered.length;
+      final greenCount = controller.filtered
+          .where((a) => a.ragStatus.toLowerCase() == 'green')
+          .length;
+      final amberCount = controller.filtered
+          .where((a) => a.ragStatus.toLowerCase() == 'amber')
+          .length;
+      final redCount = controller.filtered
+          .where((a) => a.ragStatus.toLowerCase() == 'red')
+          .length;
+      final avgCreditScore = controller.filtered.isEmpty
+          ? 0.0
+          : controller.filtered
+                    .map((a) => a.creditScore)
+                    .reduce((a, b) => a + b) /
+                controller.filtered.length;
 
       return Row(
         children: [
@@ -460,7 +652,9 @@ class ApplicantsView extends GetView<ApplicantsController> {
               'Low Risk',
               greenCount.toString(),
               Icons.check_circle_rounded,
-              LinearGradient(colors: [Colors.green.shade400, Colors.green.shade600]),
+              LinearGradient(
+                colors: [Colors.green.shade400, Colors.green.shade600],
+              ),
               context,
               themeController,
               1,
@@ -472,7 +666,9 @@ class ApplicantsView extends GetView<ApplicantsController> {
               'Medium Risk',
               amberCount.toString(),
               Icons.warning_rounded,
-              LinearGradient(colors: [Colors.amber.shade400, Colors.amber.shade600]),
+              LinearGradient(
+                colors: [Colors.amber.shade400, Colors.amber.shade600],
+              ),
               context,
               themeController,
               2,
@@ -484,14 +680,16 @@ class ApplicantsView extends GetView<ApplicantsController> {
               'High Risk',
               redCount.toString(),
               Icons.error_rounded,
-              LinearGradient(colors: [Colors.red.shade400, Colors.red.shade600]),
+              LinearGradient(
+                colors: [Colors.red.shade400, Colors.red.shade600],
+              ),
               context,
               themeController,
               3,
             ),
           ),
           const SizedBox(width: 16),
-          
+
           // Expanded(
           //   child: _buildStatCard(
           //     'Avg Credit Score',
@@ -519,43 +717,47 @@ class ApplicantsView extends GetView<ApplicantsController> {
     int index,
   ) {
     return FuturisticCard(
-      height: 130,
-      isElevated: true,
-      gradient: gradient,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(icon, color: Colors.white, size: 26),
-          const SizedBox(height: 12),
-          Text(
-            value,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 22,
-              fontWeight: FontWeight.w700,
-            ),
+          height: 130,
+          isElevated: true,
+          gradient: gradient,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(icon, color: Colors.white, size: 26),
+              const SizedBox(height: 12),
+              Text(
+                value,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 22,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                title,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
           ),
-          const SizedBox(height: 4),
-          Text(
-            title,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
-    ).animate(delay: (index * 150).ms)
-      .fadeIn(duration: 600.ms)
-      .slideY(begin: 0.3, end: 0)
-      .then()
-      .shimmer(duration: 1500.ms, delay: 800.ms);
+        )
+        .animate(delay: (index * 150).ms)
+        .fadeIn(duration: 600.ms)
+        .slideY(begin: 0.3, end: 0)
+        .then()
+        .shimmer(duration: 1500.ms, delay: 800.ms);
   }
 
   /// Build search and filters section
-  Widget _buildSearchAndFilters(BuildContext context, ThemeController themeController) {
+  Widget _buildSearchAndFilters(
+    BuildContext context,
+    ThemeController themeController,
+  ) {
     return Row(
       children: [
         // 🔍 Search Bar
@@ -577,9 +779,12 @@ class ApplicantsView extends GetView<ApplicantsController> {
                     decoration: InputDecoration(
                       hintText: 'Search by CIF, name, or bank...',
                       border: InputBorder.none,
-                      hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.6),
-                      ),
+                      hintStyle: Theme.of(context).textTheme.bodyMedium
+                          ?.copyWith(
+                            color: Theme.of(
+                              context,
+                            ).textTheme.bodyMedium?.color?.withOpacity(0.6),
+                          ),
                     ),
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
@@ -588,21 +793,50 @@ class ApplicantsView extends GetView<ApplicantsController> {
             ),
           ),
         ),
-        
+
         const SizedBox(width: 16),
-        
+
         // 🎛️ Filter Chips
         Expanded(
           flex: 3,
-          child: Obx(() => Wrap(
-            spacing: 12,
-            children: [
-              _buildFilterChip('All', 'all', controller.ragFilter.value, (v) => controller.setRagFilter(v), themeController),
-              _buildFilterChip('Low Risk', 'green', controller.ragFilter.value, (v) => controller.setRagFilter(v), themeController, Colors.green),
-              _buildFilterChip('Medium Risk', 'amber', controller.ragFilter.value, (v) => controller.setRagFilter(v), themeController, Colors.amber),
-              _buildFilterChip('High Risk', 'red', controller.ragFilter.value, (v) => controller.setRagFilter(v), themeController, Colors.red),
-            ],
-          )),
+          child: Obx(
+            () => Wrap(
+              spacing: 12,
+              children: [
+                _buildFilterChip(
+                  'All',
+                  'all',
+                  controller.ragFilter.value,
+                  (v) => controller.setRagFilter(v),
+                  themeController,
+                ),
+                _buildFilterChip(
+                  'Low Risk',
+                  'green',
+                  controller.ragFilter.value,
+                  (v) => controller.setRagFilter(v),
+                  themeController,
+                  Colors.green,
+                ),
+                _buildFilterChip(
+                  'Medium Risk',
+                  'amber',
+                  controller.ragFilter.value,
+                  (v) => controller.setRagFilter(v),
+                  themeController,
+                  Colors.amber,
+                ),
+                _buildFilterChip(
+                  'High Risk',
+                  'red',
+                  controller.ragFilter.value,
+                  (v) => controller.setRagFilter(v),
+                  themeController,
+                  Colors.red,
+                ),
+              ],
+            ),
+          ),
         ),
       ],
     );
@@ -619,7 +853,7 @@ class ApplicantsView extends GetView<ApplicantsController> {
   ]) {
     final isSelected = selectedValue == value;
     final chipColor = color ?? themeController.getThemeData().primaryColor;
-    
+
     return GestureDetector(
       onTap: () => onTap(value),
       child: AnimatedContainer(
@@ -636,7 +870,11 @@ class ApplicantsView extends GetView<ApplicantsController> {
         child: Text(
           label,
           style: TextStyle(
-            color: isSelected ? chipColor : Theme.of(Get.context!).textTheme.bodyMedium?.color?.withOpacity(0.8),
+            color: isSelected
+                ? chipColor
+                : Theme.of(
+                    Get.context!,
+                  ).textTheme.bodyMedium?.color?.withOpacity(0.8),
             fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
             fontSize: 13,
           ),
@@ -653,202 +891,230 @@ class ApplicantsView extends GetView<ApplicantsController> {
     ThemeController themeController,
   ) {
     final loanType = controller.loanTypeByCif[applicant.cif] ?? 'Unknown';
-    
+
     return FuturisticCard(
-      onTap: () => controller.navigateToDetail(applicant.cif),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // 🏷️ Header with RAG status and score
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          onTap: () => controller.navigateToDetail(applicant.cif),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                decoration: BoxDecoration(
-                  color: AppTheme.getRagColor(applicant.ragStatus).withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(
-                    color: AppTheme.getRagColor(applicant.ragStatus),
-                    width: 1.5,
+              // 🏷️ Header with RAG status and score
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppTheme.getRagColor(
+                        applicant.ragStatus,
+                      ).withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: AppTheme.getRagColor(applicant.ragStatus),
+                        width: 1.5,
+                      ),
+                    ),
+                    child: Text(
+                      applicant.ragStatus.toUpperCase(),
+                      style: TextStyle(
+                        color: AppTheme.getRagColor(applicant.ragStatus),
+                        fontSize: 11,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
                   ),
-                ),
-                child: Text(
-                  applicant.ragStatus.toUpperCase(),
-                  style: TextStyle(
-                    color: AppTheme.getRagColor(applicant.ragStatus),
-                    fontSize: 11,
-                    fontWeight: FontWeight.w700,
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 6,
+                    ),
+                    decoration: BoxDecoration(
+                      gradient: themeController.getPrimaryGradient(),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(
+                      applicant.creditScore.toString(),
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
                   ),
+                ],
+              ),
+
+              const SizedBox(height: 16),
+
+              // 🏦 CIF and Name
+              Text(
+                applicant.cif,
+                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  color: Theme.of(
+                    context,
+                  ).textTheme.bodySmall?.color?.withOpacity(0.7),
+                  fontWeight: FontWeight.w500,
                 ),
               ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                decoration: BoxDecoration(
-                  gradient: themeController.getPrimaryGradient(),
-                  borderRadius: BorderRadius.circular(12),
+              const SizedBox(height: 4),
+              Text(
+                applicant.name,
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 18,
                 ),
-                child: Text(
-                  applicant.creditScore.toString(),
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w700,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+
+              const SizedBox(height: 12),
+
+              // 🏪 Bank and Loan Type
+              Text(
+                applicant.bankName,
+                style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                  color: themeController.getThemeData().primaryColor,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                loanType,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: Theme.of(
+                    context,
+                  ).textTheme.bodyMedium?.color?.withOpacity(0.7),
+                ),
+              ),
+
+              const Spacer(),
+
+              // 📊 Risk Score and Last Updated
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Risk Score',
+                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                          color: Theme.of(
+                            context,
+                          ).textTheme.bodySmall?.color?.withOpacity(0.6),
+                        ),
+                      ),
+                      Text(
+                        applicant.riskScore.toStringAsFixed(1),
+                        style: Theme.of(context).textTheme.titleMedium
+                            ?.copyWith(
+                              fontWeight: FontWeight.w600,
+                              color: AppTheme.getRagColor(applicant.ragStatus),
+                            ),
+                      ),
+                    ],
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(
+                        'Last Updated',
+                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                          color: Theme.of(
+                            context,
+                          ).textTheme.bodySmall?.color?.withOpacity(0.6),
+                        ),
+                      ),
+                      Text(
+                        DateFormat('dd MMM').format(applicant.lastUpdated),
+                        style: Theme.of(context).textTheme.labelMedium
+                            ?.copyWith(fontWeight: FontWeight.w500),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 16),
+
+              // 🔗 Open Button with Flip Handle
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: () => controller.navigateToDetail(applicant.cif),
+                  icon: const Icon(Icons.auto_stories_rounded, size: 18),
+                  label: const Text('Open Book'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: themeController
+                        .getThemeData()
+                        .primaryColor,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
                   ),
                 ),
               ),
             ],
           ),
-          
-          const SizedBox(height: 16),
-          
-          // 🏦 CIF and Name
-          Text(
-            applicant.cif,
-            style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.7),
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            applicant.name,
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.w700,
-              fontSize: 18,
-            ),
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-          ),
-          
-          const SizedBox(height: 12),
-          
-          // 🏪 Bank and Loan Type
-          Text(
-            applicant.bankName,
-            style: Theme.of(context).textTheme.titleSmall?.copyWith(
-              color: themeController.getThemeData().primaryColor,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            loanType,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.7),
-            ),
-          ),
-          
-          const Spacer(),
-          
-          // 📊 Risk Score and Last Updated
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Risk Score',
-                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                      color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.6),
-                    ),
-                  ),
-                  Text(
-                    applicant.riskScore.toStringAsFixed(1),
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w600,
-                      color: AppTheme.getRagColor(applicant.ragStatus),
-                    ),
-                  ),
-                ],
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Text(
-                    'Last Updated',
-                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                      color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.6),
-                    ),
-                  ),
-                  Text(
-                    DateFormat('dd MMM').format(applicant.lastUpdated),
-                    style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-          
-          const SizedBox(height: 16),
-          
-          // 🔗 Open Button with Flip Handle
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton.icon(
-              onPressed: () => controller.navigateToDetail(applicant.cif),
-              icon: const Icon(Icons.auto_stories_rounded, size: 18),
-              label: const Text('Open Book'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: themeController.getThemeData().primaryColor,
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                padding: const EdgeInsets.symmetric(vertical: 12),
-              ),
-            ),
-          ),
-        ],
-      ),
-    ).animate(delay: (index * 100).ms)
-      .fadeIn(duration: 600.ms)
-      .slideY(begin: 0.5, end: 0)
-      .scale();
+        )
+        .animate(delay: (index * 100).ms)
+        .fadeIn(duration: 600.ms)
+        .slideY(begin: 0.5, end: 0)
+        .scale();
   }
 
   /// Build loading state
-  Widget _buildLoadingState(BuildContext context, ThemeController themeController) {
+  Widget _buildLoadingState(
+    BuildContext context,
+    ThemeController themeController,
+  ) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Container(
-          width: 80,
-          height: 80,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
-            gradient: themeController.getPrimaryGradient(),
-          ),
-          child: const Icon(
-            Icons.people_rounded,
-            color: Colors.white,
-            size: 40,
-          ),
-        ).animate()
-          .scale(duration: 800.ms)
-          .then()
-          .shimmer(duration: 1500.ms, colors: [
-            Colors.white.withOpacity(0.3),
-            Colors.white.withOpacity(0.8),
-            Colors.white.withOpacity(0.3),
-          ]),
+              width: 80,
+              height: 80,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                gradient: themeController.getPrimaryGradient(),
+              ),
+              child: const Icon(
+                Icons.people_rounded,
+                color: Colors.white,
+                size: 40,
+              ),
+            )
+            .animate()
+            .scale(duration: 800.ms)
+            .then()
+            .shimmer(
+              duration: 1500.ms,
+              colors: [
+                Colors.white.withOpacity(0.3),
+                Colors.white.withOpacity(0.8),
+                Colors.white.withOpacity(0.3),
+              ],
+            ),
         const SizedBox(height: 24),
         Text(
           'Loading Applicant Portfolio...',
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.w600,
-          ),
-        ).animate()
-          .fadeIn(delay: 300.ms, duration: 600.ms),
+          style: Theme.of(
+            context,
+          ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w600),
+        ).animate().fadeIn(delay: 300.ms, duration: 600.ms),
       ],
     );
   }
 
   /// Build filter button
-  Widget _buildFilterButton(BuildContext context, ThemeController themeController) {
+  Widget _buildFilterButton(
+    BuildContext context,
+    ThemeController themeController,
+  ) {
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -867,8 +1133,11 @@ class ApplicantsView extends GetView<ApplicantsController> {
     );
   }
 
-  /// Build view toggle button  
-  Widget _buildViewToggleButton(BuildContext context, ThemeController themeController) {
+  /// Build view toggle button
+  Widget _buildViewToggleButton(
+    BuildContext context,
+    ThemeController themeController,
+  ) {
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -887,7 +1156,10 @@ class ApplicantsView extends GetView<ApplicantsController> {
   }
 
   /// Show advanced filters dialog
-  void _showAdvancedFilters(BuildContext context, ThemeController themeController) {
+  void _showAdvancedFilters(
+    BuildContext context,
+    ThemeController themeController,
+  ) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -897,39 +1169,47 @@ class ApplicantsView extends GetView<ApplicantsController> {
             mainAxisSize: MainAxisSize.min,
             children: [
               // Loan type filter
-              Obx(() => DropdownButtonFormField<String>(
-                value: controller.loanTypeFilter.value,
-                decoration: const InputDecoration(labelText: 'Loan Type'),
-                items: [
-                  const DropdownMenuItem(value: 'all', child: Text('All Types')),
-                  ...ApplicantsController.loanTypes
-                      .map((t) => DropdownMenuItem(value: t, child: Text(t))),
-                ],
-                onChanged: (v) => controller.setLoanTypeFilter(v ?? 'all'),
-              )),
-              
-              const SizedBox(height: 16),
-              
-              // Date range
-              Obx(() => ListTile(
-                leading: const Icon(Icons.date_range),
-                title: Text(
-                  controller.dateRange.value == null
-                      ? 'Select Date Range'
-                      : '${DateFormat('dd MMM yyyy').format(controller.dateRange.value!.start)} - ${DateFormat('dd MMM yyyy').format(controller.dateRange.value!.end)}',
+              Obx(
+                () => DropdownButtonFormField<String>(
+                  value: controller.loanTypeFilter.value,
+                  decoration: const InputDecoration(labelText: 'Loan Type'),
+                  items: [
+                    const DropdownMenuItem(
+                      value: 'all',
+                      child: Text('All Types'),
+                    ),
+                    ...ApplicantsController.loanTypes.map(
+                      (t) => DropdownMenuItem(value: t, child: Text(t)),
+                    ),
+                  ],
+                  onChanged: (v) => controller.setLoanTypeFilter(v ?? 'all'),
                 ),
-                onTap: () async {
-                  final now = DateTime.now();
-                  final picked = await showDateRangePicker(
-                    context: context,
-                    firstDate: DateTime(now.year - 5),
-                    lastDate: DateTime(now.year + 1),
-                  );
-                  if (picked != null) {
-                    controller.setDateRange(picked);
-                  }
-                },
-              )),
+              ),
+
+              const SizedBox(height: 16),
+
+              // Date range
+              Obx(
+                () => ListTile(
+                  leading: const Icon(Icons.date_range),
+                  title: Text(
+                    controller.dateRange.value == null
+                        ? 'Select Date Range'
+                        : '${DateFormat('dd MMM yyyy').format(controller.dateRange.value!.start)} - ${DateFormat('dd MMM yyyy').format(controller.dateRange.value!.end)}',
+                  ),
+                  onTap: () async {
+                    final now = DateTime.now();
+                    final picked = await showDateRangePicker(
+                      context: context,
+                      firstDate: DateTime(now.year - 5),
+                      lastDate: DateTime(now.year + 1),
+                    );
+                    if (picked != null) {
+                      controller.setDateRange(picked);
+                    }
+                  },
+                ),
+              ),
             ],
           ),
         ),
@@ -965,11 +1245,12 @@ class ApplicantsView extends GetView<ApplicantsController> {
       ),
       child: Row(
         children: [
-          Text('Finaxis',
-              style: Theme.of(context)
-                  .textTheme
-                  .titleLarge
-                  ?.copyWith(fontWeight: FontWeight.w700)),
+          Text(
+            'Finaxis',
+            style: Theme.of(
+              context,
+            ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700),
+          ),
           const SizedBox(width: 24),
           Expanded(
             child: Container(
@@ -984,7 +1265,7 @@ class ApplicantsView extends GetView<ApplicantsController> {
                     color: Colors.black.withOpacity(0.05),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
-                  )
+                  ),
                 ],
               ),
               child: const TextField(
@@ -992,7 +1273,10 @@ class ApplicantsView extends GetView<ApplicantsController> {
                   prefixIcon: Icon(Icons.search),
                   hintText: 'Search applicants...',
                   border: InputBorder.none,
-                  contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 12,
+                  ),
                 ),
               ),
             ),
@@ -1009,6 +1293,7 @@ class ApplicantsView extends GetView<ApplicantsController> {
       ),
     );
   }
+
   Widget _buildThemeDropdown(BuildContext context, ThemeController themeCtrl) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -1028,9 +1313,9 @@ class ApplicantsView extends GetView<ApplicantsController> {
             size: 16,
             color: Theme.of(context).primaryColor,
           ),
-          style: Theme.of(context).textTheme.labelMedium?.copyWith(
-            fontWeight: FontWeight.w600,
-          ),
+          style: Theme.of(
+            context,
+          ).textTheme.labelMedium?.copyWith(fontWeight: FontWeight.w600),
           items: ThemeController.availableThemes.map((theme) {
             return DropdownMenuItem(
               value: theme,
@@ -1057,7 +1342,11 @@ class ApplicantsView extends GetView<ApplicantsController> {
       case 'Light':
         return const Icon(Icons.wb_sunny, size: 14, color: Colors.orange);
       case 'Dark':
-        return const Icon(Icons.nightlight_round, size: 14, color: Colors.indigo);
+        return const Icon(
+          Icons.nightlight_round,
+          size: 14,
+          color: Colors.indigo,
+        );
       case 'Gold':
         return const Icon(Icons.star, size: 14, color: Colors.amber);
       case 'Emerald':
@@ -1068,6 +1357,7 @@ class ApplicantsView extends GetView<ApplicantsController> {
         return const Icon(Icons.palette, size: 14);
     }
   }
+
   Widget _buildFilters(BuildContext context) {
     final theme = Theme.of(context);
     return Card(
@@ -1099,7 +1389,10 @@ class ApplicantsView extends GetView<ApplicantsController> {
                 child: DropdownButton<String>(
                   value: controller.loanTypeFilter.value,
                   items: [
-                    const DropdownMenuItem(value: 'all', child: Text('Loan Type: All')),
+                    const DropdownMenuItem(
+                      value: 'all',
+                      child: Text('Loan Type: All'),
+                    ),
                     ...ApplicantsController.loanTypes
                         .map((t) => DropdownMenuItem(value: t, child: Text(t)))
                         .toList(),
@@ -1170,37 +1463,48 @@ class ApplicantsView extends GetView<ApplicantsController> {
             columns: [
               DataColumn(
                 label: const Text('CIF'),
-                onSort: (i, asc) => controller.sortBy<String>((a) => a.cif, i, asc),
+                onSort: (i, asc) =>
+                    controller.sortBy<String>((a) => a.cif, i, asc),
               ),
               DataColumn(
                 label: const Text('Name'),
-                onSort: (i, asc) => controller.sortBy<String>((a) => a.name, i, asc),
+                onSort: (i, asc) =>
+                    controller.sortBy<String>((a) => a.name, i, asc),
               ),
               DataColumn(
                 numeric: true,
                 label: const Text('Credit Score'),
-                onSort: (i, asc) => controller.sortBy<int>((a) => a.creditScore, i, asc),
+                onSort: (i, asc) =>
+                    controller.sortBy<int>((a) => a.creditScore, i, asc),
               ),
               DataColumn(
                 numeric: true,
                 label: const Text('Risk Score'),
-                onSort: (i, asc) => controller.sortBy<double>((a) => a.riskScore, i, asc),
+                onSort: (i, asc) =>
+                    controller.sortBy<double>((a) => a.riskScore, i, asc),
               ),
               DataColumn(
                 label: const Text('RAG Status'),
-                onSort: (i, asc) => controller.sortBy<String>((a) => a.ragStatus, i, asc),
+                onSort: (i, asc) =>
+                    controller.sortBy<String>((a) => a.ragStatus, i, asc),
               ),
               DataColumn(
                 label: const Text('Bank'),
-                onSort: (i, asc) => controller.sortBy<String>((a) => a.bankName, i, asc),
+                onSort: (i, asc) =>
+                    controller.sortBy<String>((a) => a.bankName, i, asc),
               ),
               DataColumn(
                 label: const Text('Loan Type'),
-                onSort: (i, asc) => controller.sortBy<String>((a) => controller.loanTypeByCif[a.cif] ?? '', i, asc),
+                onSort: (i, asc) => controller.sortBy<String>(
+                  (a) => controller.loanTypeByCif[a.cif] ?? '',
+                  i,
+                  asc,
+                ),
               ),
               DataColumn(
                 label: const Text('Last Updated'),
-                onSort: (i, asc) => controller.sortBy<DateTime>((a) => a.lastUpdated, i, asc),
+                onSort: (i, asc) =>
+                    controller.sortBy<DateTime>((a) => a.lastUpdated, i, asc),
               ),
               const DataColumn(label: Text('Action')),
             ],
@@ -1215,12 +1519,21 @@ class ApplicantsView extends GetView<ApplicantsController> {
                     Chip(
                       label: Text(a.ragStatus.toUpperCase()),
                       backgroundColor: AppTheme.getRagColor(a.ragStatus),
-                      labelStyle: const TextStyle(color: Colors.white, fontSize: 12),
+                      labelStyle: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 12,
+                      ),
                     ),
                   ),
                   DataCell(Text(a.bankName)),
                   DataCell(Text(controller.loanTypeByCif[a.cif] ?? '-')),
-                  DataCell(Text(DateFormat('dd MMM yyyy, HH:mm').format(a.lastUpdated.toLocal()))),
+                  DataCell(
+                    Text(
+                      DateFormat(
+                        'dd MMM yyyy, HH:mm',
+                      ).format(a.lastUpdated.toLocal()),
+                    ),
+                  ),
                   DataCell(
                     ElevatedButton(
                       onPressed: () => controller.navigateToDetail(a.cif),

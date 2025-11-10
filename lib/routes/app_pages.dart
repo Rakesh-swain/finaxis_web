@@ -15,7 +15,7 @@ import '../views/settings/settings_view.dart';
 import '../views/ai_chat/ai_chat_view.dart';
 
 class AppPages {
-  static const initial = '/ai-chat'; // AI Chat Hub is now the primary entry point
+  static const initial = '/login'; // AI Chat Hub is now the primary entry point
 
   static final routes = [
     // 🤖 AI Chat Hub - Primary Feature

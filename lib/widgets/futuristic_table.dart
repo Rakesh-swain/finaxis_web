@@ -83,23 +83,21 @@ class _FuturisticTableState extends State<FuturisticTable>
           children: [
             // 🌌 Particle Background
             _buildParticleBackground(),
-            
+
             // 📊 Main Table Content
             Column(
               children: [
                 // 🎯 Holographic Header
                 _buildHolographicHeader(),
-                
+
                 // 📋 Table Body
                 widget.isLoading
                     ? _buildLoadingState()
                     : widget.rows.isEmpty
-                        ? _buildEmptyState()
-                        : _buildTableBody(),
+                    ? _buildEmptyState()
+                    : _buildTableBody(),
               ],
             ),
-            
-
           ],
         ),
       ),
@@ -162,100 +160,147 @@ class _FuturisticTableState extends State<FuturisticTable>
                     )
                   : null,
               borderRadius: BorderRadius.circular(12),
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  gradient: isActive
-                      ? LinearGradient(
-                          colors: [
-                            Theme.of(context).primaryColor.withOpacity(0.2),
-                            Theme.of(context).primaryColor.withOpacity(0.1),
-                          ],
-                        )
-                      : null,
-                  border: isActive
-                      ? Border.all(
-                          color: Theme.of(context).primaryColor.withOpacity(0.4),
-                          width: 1,
-                        )
-                      : null,
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // Holographic Icon
-                    if (column.icon != null) ...[
-                      Container(
-                        padding: const EdgeInsets.all(6),
+              child:
+                  Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 8,
+                        ),
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          gradient: LinearGradient(
-                            colors: [
-                              Theme.of(context).primaryColor.withOpacity(0.3),
-                              Theme.of(context).primaryColor.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(12),
+                          gradient: isActive
+                              ? LinearGradient(
+                                  colors: [
+                                    Theme.of(
+                                      context,
+                                    ).primaryColor.withOpacity(0.2),
+                                    Theme.of(
+                                      context,
+                                    ).primaryColor.withOpacity(0.1),
+                                  ],
+                                )
+                              : null,
+                          border: isActive
+                              ? Border.all(
+                                  color: Theme.of(
+                                    context,
+                                  ).primaryColor.withOpacity(0.4),
+                                  width: 1,
+                                )
+                              : null,
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            // Holographic Icon
+                            if (column.icon != null) ...[
+                              Container(
+                                padding: const EdgeInsets.all(6),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(8),
+                                  gradient: LinearGradient(
+                                    colors: [
+                                      Theme.of(
+                                        context,
+                                      ).primaryColor.withOpacity(0.3),
+                                      Theme.of(
+                                        context,
+                                      ).primaryColor.withOpacity(0.1),
+                                    ],
+                                  ),
+                                ),
+                                child: Icon(
+                                  column.icon,
+                                  size: 16,
+                                  color: Theme.of(context).primaryColor,
+                                ),
+                              ),
+                              const SizedBox(width: 8),
                             ],
-                          ),
+
+                            // Header Text with Glow
+                            Flexible(
+                              child: FittedBox(
+                                fit: BoxFit.scaleDown,
+                                alignment: Alignment.center,
+                                child: ShaderMask(
+                                  shaderCallback: (bounds) => LinearGradient(
+                                    colors: isActive
+                                        ? [
+                                            Theme.of(context).primaryColor,
+                                            Theme.of(
+                                              context,
+                                            ).primaryColor.withOpacity(0.8),
+                                          ]
+                                        : [
+                                            Theme.of(context)
+                                                    .textTheme
+                                                    .titleMedium
+                                                    ?.color ??
+                                                Colors.black,
+                                            Theme.of(context)
+                                                    .textTheme
+                                                    .titleMedium
+                                                    ?.color
+                                                    ?.withOpacity(0.8) ??
+                                                Colors.black54,
+                                          ],
+                                  ).createShader(bounds),
+                                  child: Text(
+                                    column.title,
+                                    maxLines: 1,
+                                    textAlign: TextAlign.center,
+                                    overflow: TextOverflow.ellipsis,
+                                    softWrap: false,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleMedium
+                                        ?.copyWith(
+                                          fontWeight: isActive
+                                              ? FontWeight.w700
+                                              : FontWeight.w600,
+                                          color: Colors.white,
+                                        ),
+                                  ),
+                                ),
+                              ),
+                            ),
+
+                            // Sort Indicator - show for all sortable columns
+                            if (column.sortable) ...[
+                              const SizedBox(width: 4),
+                              AnimatedRotation(
+                                turns: isActive
+                                    ? (widget.sortAscending ? 0 : 0.5)
+                                    : 0,
+                                duration: const Duration(milliseconds: 300),
+                                child: AnimatedOpacity(
+                                  opacity: isActive ? 1.0 : 0.4,
+                                  duration: const Duration(milliseconds: 300),
+                                  child: Icon(
+                                    isActive
+                                        ? (widget.sortAscending
+                                              ? Icons.arrow_upward_rounded
+                                              : Icons.arrow_downward_rounded)
+                                        : Icons.unfold_more_rounded,
+                                    size: 16,
+                                    color: isActive
+                                        ? Theme.of(context).primaryColor
+                                        : Theme.of(context)
+                                              .textTheme
+                                              .bodyMedium
+                                              ?.color
+                                              ?.withOpacity(0.5),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ],
                         ),
-                        child: Icon(
-                          column.icon,
-                          size: 16,
-                          color: Theme.of(context).primaryColor,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                    ],
-                    
-                    // Header Text with Glow
-                    Flexible(
-                      child: ShaderMask(
-                        shaderCallback: (bounds) => LinearGradient(
-                          colors: isActive
-                              ? [
-                                  Theme.of(context).primaryColor,
-                                  Theme.of(context).primaryColor.withOpacity(0.8),
-                                ]
-                              : [
-                                  Theme.of(context).textTheme.titleMedium?.color ?? Colors.black,
-                                  Theme.of(context).textTheme.titleMedium?.color?.withOpacity(0.8) ?? Colors.black54,
-                                ],
-                        ).createShader(bounds),
-                        child: Text(
-                          column.title,
-                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: isActive ? FontWeight.w700 : FontWeight.w600,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ),
-                    
-                    // Sort Indicator - show for all sortable columns
-                    if (column.sortable) ...[
-                      const SizedBox(width: 4),
-                      AnimatedRotation(
-                        turns: isActive ? (widget.sortAscending ? 0 : 0.5) : 0,
-                        duration: const Duration(milliseconds: 300),
-                        child: AnimatedOpacity(
-                          opacity: isActive ? 1.0 : 0.4,
-                          duration: const Duration(milliseconds: 300),
-                          child: Icon(
-                            isActive 
-                              ? (widget.sortAscending ? Icons.arrow_upward_rounded : Icons.arrow_downward_rounded)
-                              : Icons.unfold_more_rounded,
-                            size: 16,
-                            color: isActive 
-                              ? Theme.of(context).primaryColor
-                              : Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.5),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
-              ).animate()
-                .fadeIn(delay: (index * 100).ms, duration: 600.ms)
-                .slideX(begin: -0.2, end: 0),
+                      )
+                      .animate()
+                      .fadeIn(delay: (index * 100).ms, duration: 600.ms)
+                      .slideX(begin: -0.2, end: 0),
             ),
           );
         }).toList(),
@@ -277,84 +322,111 @@ class _FuturisticTableState extends State<FuturisticTable>
             onEnter: (_) => setState(() => _hoveredRowIndex = index),
             onExit: (_) => setState(() => _hoveredRowIndex = null),
             child: GestureDetector(
-              onTap: widget.onRowTap != null ? () => widget.onRowTap!(index) : null,
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 300),
-                margin: const EdgeInsets.only(bottom: 12),
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
-                  gradient: isHovered
-                      ? LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                          colors: [
-                            Theme.of(context).primaryColor.withOpacity(0.12),
-                            Theme.of(context).primaryColor.withOpacity(0.06),
-                          ],
-                        )
-                      : LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                          colors: [
-                            Theme.of(context).cardColor.withOpacity(0.8),
-                            Theme.of(context).cardColor.withOpacity(0.4),
-                          ],
+              onTap: widget.onRowTap != null
+                  ? () => widget.onRowTap!(index)
+                  : null,
+              child:
+                  AnimatedContainer(
+                        duration: const Duration(milliseconds: 300),
+                        margin: const EdgeInsets.only(bottom: 12),
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(16),
+                          gradient: isHovered
+                              ? LinearGradient(
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                  colors: [
+                                    Theme.of(
+                                      context,
+                                    ).primaryColor.withOpacity(0.12),
+                                    Theme.of(
+                                      context,
+                                    ).primaryColor.withOpacity(0.06),
+                                  ],
+                                )
+                              : LinearGradient(
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                  colors: [
+                                    Theme.of(
+                                      context,
+                                    ).cardColor.withOpacity(0.8),
+                                    Theme.of(
+                                      context,
+                                    ).cardColor.withOpacity(0.4),
+                                  ],
+                                ),
+                          border: Border.all(
+                            color: isHovered
+                                ? Theme.of(
+                                    context,
+                                  ).primaryColor.withOpacity(0.4)
+                                : Theme.of(
+                                    context,
+                                  ).dividerColor.withOpacity(0.2),
+                            width: isHovered ? 1.5 : 1,
+                          ),
+                          boxShadow: isHovered
+                              ? [
+                                  BoxShadow(
+                                    color: Theme.of(
+                                      context,
+                                    ).primaryColor.withOpacity(0.2),
+                                    blurRadius: 20,
+                                    spreadRadius: 2,
+                                  ),
+                                ]
+                              : [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.05),
+                                    blurRadius: 10,
+                                    offset: const Offset(0, 4),
+                                  ),
+                                ],
                         ),
-                  border: Border.all(
-                    color: isHovered
-                        ? Theme.of(context).primaryColor.withOpacity(0.4)
-                        : Theme.of(context).dividerColor.withOpacity(0.2),
-                    width: isHovered ? 1.5 : 1,
-                  ),
-                  boxShadow: isHovered
-                      ? [
-                          BoxShadow(
-                            color: Theme.of(context).primaryColor.withOpacity(0.2),
-                            blurRadius: 20,
-                            spreadRadius: 2,
-                          ),
-                        ]
-                      : [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.05),
-                            blurRadius: 10,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
-                ),
-                child: Row(
-                  children: widget.columns.asMap().entries.map((entry) {
-                    final columnIndex = entry.key;
-                    final column = entry.value;
-                    final cellData = row.cells[columnIndex];
+                        child: Row(
+                          children: widget.columns.asMap().entries.map((entry) {
+                            final columnIndex = entry.key;
+                            final column = entry.value;
+                            final cellData = row.cells[columnIndex];
 
-                    return Expanded(
-                      flex: column.flex,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 12),
-                        child: cellData.widget ?? Text(
-                          cellData.text,
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            fontWeight: isHovered ? FontWeight.w600 : FontWeight.w500,
-                          ),
+                            return Expanded(
+                              flex: column.flex,
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                ),
+                                child:
+                                    cellData.widget ??
+                                    Text(
+                                      cellData.text,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium
+                                          ?.copyWith(
+                                            fontWeight: isHovered
+                                                ? FontWeight.w600
+                                                : FontWeight.w500,
+                                          ),
+                                    ),
+                              ),
+                            );
+                          }).toList(),
                         ),
+                      )
+                      .animate()
+                      .fadeIn(delay: (index * 50).ms, duration: 400.ms)
+                      .slideY(begin: 0.3, end: 0)
+                      .then(delay: (index * 100).ms)
+                      .shimmer(
+                        duration: 1500.ms,
+                        colors: [
+                          Colors.transparent,
+                          Theme.of(context).primaryColor.withOpacity(0.1),
+                          Colors.transparent,
+                        ],
                       ),
-                    );
-                  }).toList(),
-                ),
-              ).animate()
-                .fadeIn(delay: (index * 50).ms, duration: 400.ms)
-                .slideY(begin: 0.3, end: 0)
-                .then(delay: (index * 100).ms)
-                .shimmer(
-                  duration: 1500.ms,
-                  colors: [
-                    Colors.transparent,
-                    Theme.of(context).primaryColor.withOpacity(0.1),
-                    Colors.transparent,
-                  ],
-                ),
             ),
           );
         },
@@ -370,41 +442,41 @@ class _FuturisticTableState extends State<FuturisticTable>
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              width: 80,
-              height: 80,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(16),
-                gradient: LinearGradient(
+                  width: 80,
+                  height: 80,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(16),
+                    gradient: LinearGradient(
+                      colors: [
+                        Theme.of(context).primaryColor,
+                        Theme.of(context).primaryColor.withOpacity(0.6),
+                      ],
+                    ),
+                  ),
+                  child: const Icon(
+                    Icons.table_chart_rounded,
+                    color: Colors.white,
+                    size: 40,
+                  ),
+                )
+                .animate()
+                .scale(duration: 800.ms)
+                .then()
+                .shimmer(
+                  duration: 1500.ms,
                   colors: [
-                    Theme.of(context).primaryColor,
-                    Theme.of(context).primaryColor.withOpacity(0.6),
+                    Colors.white.withOpacity(0.3),
+                    Colors.white.withOpacity(0.8),
+                    Colors.white.withOpacity(0.3),
                   ],
                 ),
-              ),
-              child: const Icon(
-                Icons.table_chart_rounded,
-                color: Colors.white,
-                size: 40,
-              ),
-            ).animate()
-              .scale(duration: 800.ms)
-              .then()
-              .shimmer(
-                duration: 1500.ms,
-                colors: [
-                  Colors.white.withOpacity(0.3),
-                  Colors.white.withOpacity(0.8),
-                  Colors.white.withOpacity(0.3),
-                ],
-              ),
             const SizedBox(height: 24),
             Text(
               'Loading Data...',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
-            ).animate()
-              .fadeIn(delay: 300.ms, duration: 600.ms),
+              style: Theme.of(
+                context,
+              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w600),
+            ).animate().fadeIn(delay: 300.ms, duration: 600.ms),
           ],
         ),
       ),
@@ -444,13 +516,13 @@ class _FuturisticTableState extends State<FuturisticTable>
             Text(
               widget.emptyMessage!,
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.7),
+                color: Theme.of(
+                  context,
+                ).textTheme.bodyMedium?.color?.withOpacity(0.7),
               ),
             ),
           ],
-        ).animate()
-          .fadeIn(duration: 800.ms)
-          .slideY(begin: 0.3, end: 0),
+        ).animate().fadeIn(duration: 800.ms).slideY(begin: 0.3, end: 0),
       ),
     );
   }
@@ -492,9 +564,7 @@ class FuturisticTableColumn {
 class FuturisticTableRow {
   final List<FuturisticTableCell> cells;
 
-  const FuturisticTableRow({
-    required this.cells,
-  });
+  const FuturisticTableRow({required this.cells});
 }
 
 /// Table Cell Definition
@@ -502,10 +572,7 @@ class FuturisticTableCell {
   final String text;
   final Widget? widget;
 
-  const FuturisticTableCell({
-    required this.text,
-    this.widget,
-  });
+  const FuturisticTableCell({required this.text, this.widget});
 }
 
 /// Particle Background Painter
@@ -527,8 +594,9 @@ class TableParticlePainter extends CustomPainter {
     // Draw animated particles
     for (int i = 0; i < 20; i++) {
       final x = (size.width * (i / 20)) + (animationValue * 50);
-      final y = size.height * 0.5 + (animationValue * 30 * (i % 2 == 0 ? 1 : -1));
-      
+      final y =
+          size.height * 0.5 + (animationValue * 30 * (i % 2 == 0 ? 1 : -1));
+
       canvas.drawCircle(
         Offset(x % size.width, y % size.height),
         2 + (animationValue * 1),
@@ -546,10 +614,7 @@ class ScanlinePainter extends CustomPainter {
   final double animationValue;
   final Color primaryColor;
 
-  ScanlinePainter({
-    required this.animationValue,
-    required this.primaryColor,
-  });
+  ScanlinePainter({required this.animationValue, required this.primaryColor});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -564,10 +629,7 @@ class ScanlinePainter extends CustomPainter {
       ).createShader(Rect.fromLTWH(0, 0, size.width, 20));
 
     final y = size.height * animationValue;
-    canvas.drawRect(
-      Rect.fromLTWH(0, y - 10, size.width, 20),
-      paint,
-    );
+    canvas.drawRect(Rect.fromLTWH(0, y - 10, size.width, 20), paint);
   }
 
   @override

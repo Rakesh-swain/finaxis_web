@@ -72,13 +72,13 @@ class _FuturisticSidebarState extends State<FuturisticSidebar>
       child: Stack(
         children: [
           // 🌌 Particle Background
-          _buildParticleBackground(themeController),
+          // _buildParticleBackground(themeController),
           
           // 💎 Glassmorphic Container
           _buildGlassmorphicSidebar(themeController),
           
           // ✨ Glow Effects
-          _buildGlowEffects(themeController),
+          // _buildGlowEffects(themeController),
         ],
       ),
     );
@@ -270,14 +270,12 @@ class _FuturisticSidebarState extends State<FuturisticSidebar>
   /// Build navigation items
   Widget _buildNavigationItems(ThemeController themeController) {
     final items = _getNavigationItems();
-    
     return ListView.builder(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       itemCount: items.length,
       itemBuilder: (context, index) {
         final item = items[index];
         final isSelected = widget.selectedIndex == index;
-        
         return _buildNavigationItem(
           item,
           index,
@@ -302,7 +300,9 @@ class _FuturisticSidebarState extends State<FuturisticSidebar>
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          onTap: () => widget.onItemSelected(index),
+          onTap: () {
+            print("Navigation item tapped: $index");
+             widget.onItemSelected(index);},
           borderRadius: BorderRadius.circular(16),
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 300),
@@ -500,7 +500,7 @@ class _FuturisticSidebarState extends State<FuturisticSidebar>
         icon: Icons.people_alt_rounded,
         label: 'Applicants',
         route: '/applicants',
-        notificationCount: 3, // Example notification
+        notificationCount: 4, // Example notification
       ),
       NavigationItem(
         icon: Icons.verified_user_rounded,
@@ -508,30 +508,30 @@ class _FuturisticSidebarState extends State<FuturisticSidebar>
         route: '/consent',
         notificationCount: 0,
       ),
-      NavigationItem(
-        icon: Icons.analytics_rounded,
-        label: 'Analytics',
-        route: '/analytics',
-        notificationCount: 0,
-      ),
-      NavigationItem(
-        icon: Icons.assessment_rounded,
-        label: 'Reports',
-        route: '/reports',
-        notificationCount: 0,
-      ),
-      NavigationItem(
-        icon: Icons.history_rounded,
-        label: 'Audit Log',
-        route: '/audit-log',
-        notificationCount: 0,
-      ),
-      NavigationItem(
-        icon: Icons.settings_rounded,
-        label: 'Settings',
-        route: '/settings',
-        notificationCount: 0,
-      ),
+      // NavigationItem(
+      //   icon: Icons.analytics_rounded,
+      //   label: 'Analytics',
+      //   route: '/analytics',
+      //   notificationCount: 0,
+      // ),
+      // NavigationItem(
+      //   icon: Icons.assessment_rounded,
+      //   label: 'Reports',
+      //   route: '/reports',
+      //   notificationCount: 0,
+      // ),
+      // NavigationItem(
+      //   icon: Icons.history_rounded,
+      //   label: 'Audit Log',
+      //   route: '/audit-log',
+      //   notificationCount: 0,
+      // ),
+      // NavigationItem(
+      //   icon: Icons.settings_rounded,
+      //   label: 'Settings',
+      //   route: '/settings',
+      //   notificationCount: 0,
+      // ),
     ];
   }
 }

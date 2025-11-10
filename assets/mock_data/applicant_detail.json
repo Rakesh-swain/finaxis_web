@@ -1,14 +1,27 @@
 {
-  "applicant": {
-    "cif": "CIF001234",
-    "name": "Rajesh Kumar",
-    "creditScore": 785,
-    "riskScore": 0.35,
-    "ragStatus": "green",
-    "bankName": "HDFC Bank",
-    "email": "rajesh.kumar@example.com",
-    "mobile": "+91 98765 43210",
-    "lastUpdated": "2025-11-04T10:30:00Z"
+  "applicant":  {
+    "cif": "CIF001235",
+    "name": "Mohammed Al Mansoori",
+    "dateOfBirth": "1960-01-01",
+    "email": "mohammed.almansoori@gmail.com",
+    "pan": "KEKPS1943B",
+    "ckycCompliance": "Y",
+    "mobile": "+971 9482 4051",
+    "bankName": "Emirates NBD",
+    "branch": "Deira City Centre Branch",
+    "accountNumber": "*****122",
+    "accountType": "Current",
+    "accountOpeningDate": "2012-01-01",
+    "closingBalance": "212211.00",
+    "averageQuarterlyBalanceLatest": "382811.00",
+    "averageQuarterlyBalancePrevious": "182211.00",
+    "odCcLimit": "90000.00",
+    "loanType": "Personal Loan",
+    "employmentType": "Salaried",
+    "creditScore": 712,
+    "riskScore": 0.48,
+    "ragStatus": "amber",
+    "lastUpdated": "2025-11-10T10:30:00Z"
   },
   "affordability": {
     "affordabilityRatio": 0.68,
