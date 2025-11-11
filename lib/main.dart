@@ -1,3 +1,4 @@
+import 'package:finaxis_web/views/applicant/applicants_view.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -22,7 +23,7 @@ class FinaxisApp extends StatelessWidget {
   Widget build(BuildContext context) {
     // Initialize Theme Controller globally
     final themeController = Get.put(ThemeController(), permanent: true);
-
+    Get.put(ApplicantsController());
     return Obx(() => GetMaterialApp(
       title: 'Finaxis - Financial Analytics Platform',
       debugShowCheckedModeBanner: false,

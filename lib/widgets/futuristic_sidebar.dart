@@ -235,7 +235,7 @@ class _FuturisticSidebarState extends State<FuturisticSidebar>
                     .slideX(begin: -0.3, end: 0),
                   
                   Text(
-                    'AI Financial Platform',
+                    'Smart Lending Platform',
                     style: Theme.of(context).textTheme.labelSmall?.copyWith(
                       color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.7),
                       letterSpacing: 1.2,
@@ -447,7 +447,7 @@ class _FuturisticSidebarState extends State<FuturisticSidebar>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'RAKESH SWAIN',
+                      'AHMED FALASI',
                       style: Theme.of(context).textTheme.labelLarge?.copyWith(
                         fontWeight: FontWeight.w600,
                       ),

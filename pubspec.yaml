@@ -58,7 +58,7 @@ dependencies:
   intl: ^0.18.1
   
   # AI & Chat Integration
-  http: ^1.1.0
+  http: ^1.6.0
   
   # Advanced Animations & Effects
   lottie: ^2.7.0
@@ -99,6 +99,7 @@ dependencies:
   # Screen Size & Responsive Design
   responsive_framework: ^1.1.1
   webview_all: ^0.5.2
+  syncfusion_flutter_gauges: ^24.2.9
 
 dev_dependencies:
   flutter_test:
@@ -125,6 +126,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/mock_data/
+    - assets/analytics_report.pdf
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

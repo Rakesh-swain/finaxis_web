@@ -29,57 +29,42 @@ class DashboardModel {
 }
 
 class KpiData {
-  final int totalApplicants;
-  final double totalApplicantsMoM;
-  final int activeConsents;
-  final double activeConsentsMoM;
-  final int pendingConsents;
-  final double pendingConsentsMoM;
-  final double avgCreditScore;
-  final double avgCreditScoreMoM;
-  final double totalDisbursed;
-  final double totalDisbursedMoM;
+  final int activeCustomers;          // Active in last 30 days
+  final int activeConsents;           // Total active consents
+  final int expiringConsents;         // Expiring in next 30 days
+  final int totalTransactions;        // Current month transactions
+  final double failedTxnPercent;      // Failed transaction rate
+  final int openAlerts;               // Compliance / risk alerts
 
   KpiData({
-    required this.totalApplicants,
-    required this.totalApplicantsMoM,
+    required this.activeCustomers,
     required this.activeConsents,
-    required this.activeConsentsMoM,
-    required this.pendingConsents,
-    required this.pendingConsentsMoM,
-    required this.avgCreditScore,
-    required this.avgCreditScoreMoM,
-    required this.totalDisbursed,
-    required this.totalDisbursedMoM,
+    required this.expiringConsents,
+    required this.totalTransactions,
+    required this.failedTxnPercent,
+    required this.openAlerts,
   });
 
   factory KpiData.fromJson(Map<String, dynamic> json) {
     return KpiData(
-      totalApplicants: json['totalApplicants'],
-      totalApplicantsMoM: json['totalApplicantsMoM'].toDouble(),
-      activeConsents: json['activeConsents'],
-      activeConsentsMoM: json['activeConsentsMoM'].toDouble(),
-      pendingConsents: json['pendingConsents'],
-      pendingConsentsMoM: json['pendingConsentsMoM'].toDouble(),
-      avgCreditScore: json['avgCreditScore'].toDouble(),
-      avgCreditScoreMoM: json['avgCreditScoreMoM'].toDouble(),
-      totalDisbursed: json['totalDisbursed'].toDouble(),
-      totalDisbursedMoM: json['totalDisbursedMoM'].toDouble(),
+      activeCustomers: json['activeCustomers'] ?? 0,
+      activeConsents: json['activeConsents'] ?? 0,
+      expiringConsents: json['expiringConsents'] ?? 0,
+      totalTransactions: json['totalTransactions'] ?? 0,
+      failedTxnPercent:
+          (json['failedTxnPercent'] ?? 0).toDouble(),
+      openAlerts: json['openAlerts'] ?? 0,
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'totalApplicants': totalApplicants,
-      'totalApplicantsMoM': totalApplicantsMoM,
+      'activeCustomers': activeCustomers,
       'activeConsents': activeConsents,
-      'activeConsentsMoM': activeConsentsMoM,
-      'pendingConsents': pendingConsents,
-      'pendingConsentsMoM': pendingConsentsMoM,
-      'avgCreditScore': avgCreditScore,
-      'avgCreditScoreMoM': avgCreditScoreMoM,
-      'totalDisbursed': totalDisbursed,
-      'totalDisbursedMoM': totalDisbursedMoM,
+      'expiringConsents': expiringConsents,
+      'totalTransactions': totalTransactions,
+      'failedTxnPercent': failedTxnPercent,
+      'openAlerts': openAlerts,
     };
   }
 }

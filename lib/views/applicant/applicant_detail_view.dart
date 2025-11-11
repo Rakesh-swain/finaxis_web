@@ -1,9 +1,13 @@
 import 'dart:math' as Math;
+import 'dart:typed_data';
 import 'dart:ui';
-
+import 'dart:html' as html;
 import 'package:finaxis_web/a.dart';
+import 'package:finaxis_web/score_card.dart';
+import 'package:finaxis_web/views/applicant/customer_ai_chatview.dart';
 import 'package:finaxis_web/widgets/futuristic_layout.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../controllers/applicant_detail_controller.dart';
@@ -14,7 +18,37 @@ import '../../theme/app_theme.dart';
 /// Features floating tabs, glassmorphic design, and interactive animations
 class ApplicantDetailView extends GetView<ApplicantDetailController> {
   const ApplicantDetailView({super.key});
+Future<void> downloadAnalyticsPdf() async {
+  try {
+    // Load the PDF from assets
+    final ByteData data = await rootBundle.load('assets/analytics_report.pdf');
+    final Uint8List bytes = data.buffer.asUint8List();
 
+    // Create a Blob and URL
+    final blob = html.Blob([bytes], 'application/pdf');
+    final url = html.Url.createObjectUrlFromBlob(blob);
+
+    // Create a hidden anchor element
+    final anchor = html.AnchorElement(href: url)
+      ..setAttribute('download', 'Finaxis_Analytics_Report.pdf')
+      ..click();
+
+    // Revoke the temporary URL
+    html.Url.revokeObjectUrl(url);
+
+    Get.snackbar(
+      'Download Started',
+      'Your analytics report is being downloaded.',
+      snackPosition: SnackPosition.BOTTOM,
+    );
+  } catch (e) {
+    Get.snackbar(
+      'Download Failed',
+      'Could not download report: $e',
+      snackPosition: SnackPosition.BOTTOM,
+    );
+  }
+}
   @override
   Widget build(BuildContext context) {
     final themeController = Get.find<ThemeController>();
@@ -270,19 +304,20 @@ class ApplicantDetailView extends GetView<ApplicantDetailController> {
                   .toList(),
         ),
         const SizedBox(height: 25),
-        _buildQuickChatBar(context, themeController)
+        _buildQuickChatBar(context, themeController,detail)
       ],
     );
   }
  Widget _buildQuickChatBar(
     BuildContext context,
     ThemeController themeController,
+    dynamic detail
   ) {
     return FuturisticCard(
           width: 600,
           height: 64,
           padding: const EdgeInsets.all(8),
-          onTap: () => Get.toNamed('/ai-chat'),
+          onTap: () => Get.to(CustomerAiChatView(customerId: '', customerName: detail.applicant.name)),
           child: Row(
             children: [
               Container(
@@ -337,7 +372,7 @@ class ApplicantDetailView extends GetView<ApplicantDetailController> {
         const SizedBox(width: 16),
         _buildFloatingScoreCard(
           'Risk Score',
-          detail.applicant.riskScore.toStringAsFixed(1),
+          detail.applicant.riskScore.toStringAsFixed(0),
           Colors.amber,
           themeController,
         ),
@@ -568,41 +603,7 @@ class ApplicantDetailView extends GetView<ApplicantDetailController> {
   }
 
   /// 📑 Build tab content pages with book-open styling & smooth transitions
-  Widget _buildTabContentPages(
-    dynamic detail,
-    ThemeController themeController,
-  ) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 24),
-      padding: const EdgeInsets.all(32),
-      constraints: const BoxConstraints(minHeight: 400),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(32),
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Colors.white.withOpacity(0.95),
-            Colors.white.withOpacity(0.88),
-          ],
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 30,
-            spreadRadius: 2,
-            offset: const Offset(0, 15),
-          ),
-        ],
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(32),
-        child: Obx(() {
-          return _buildAnimatedPageTransition(detail, themeController);
-        }),
-      ),
-    );
-  }
+ 
 
   /// 📖 Build animated page transition with book-opening effects
   Widget _buildAnimatedPageTransition(
@@ -919,8 +920,8 @@ class ApplicantDetailView extends GetView<ApplicantDetailController> {
 
   Widget _infoCard(String title, String value, {bool emphasize = false}) {
     return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      // elevation: 2,
+      // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -938,7 +939,7 @@ class ApplicantDetailView extends GetView<ApplicantDetailController> {
               value,
               style: TextStyle(
                 fontWeight: FontWeight.w800,
-                fontSize: 18,
+                fontSize: 16,
                 letterSpacing: 0.4,
                 color: Colors.black87,
               ),
@@ -954,7 +955,7 @@ class ApplicantDetailView extends GetView<ApplicantDetailController> {
     final cif = (detail.applicant.cif ?? '').toString();
     final name = (detail.applicant.name ?? '').toString().toUpperCase();
     // Some models may not have customerType; derive or fallback to UNKNOWN
-    final custType = 'UNKNOWN';
+    final custType = 'SINGLE';
     final rag = (detail.applicant.ragStatus ?? 'LOW').toString();
     final risk = (detail.applicant.riskScore ?? 0).toDouble().clamp(0, 100);
     final credit = (detail.applicant.creditScore ?? 0).toDouble().clamp(
@@ -977,7 +978,7 @@ class ApplicantDetailView extends GetView<ApplicantDetailController> {
       padding: const EdgeInsets.all(24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+        children: [ 
           // Top info cards row
           Row(
             children: [
@@ -995,41 +996,11 @@ class ApplicantDetailView extends GetView<ApplicantDetailController> {
           Row(
             children: [
               Expanded(
-                child: _needleGaugeCard(
-                  title: 'Risk Score',
-                  value: risk,
-                  min: 0,
-                  max: 100,
-                  segments: const [
-                    Colors.green,
-                    Colors.green,
-                    Colors.green,
-                    Colors.amber,
-                    Colors.orange,
-                    Colors.red,
-                  ],
-                  valueColor: Colors.orange,
-                  footer: null,
-                ),
+                child:RiskScoreCard(score: 20)
               ),
               const SizedBox(width: 16),
               Expanded(
-                child: _needleGaugeCard(
-                  title: 'Credit Score',
-                  value: credit,
-                  min: 300,
-                  max: 900,
-                  segments: const [
-                    Colors.red,
-                    Colors.red,
-                    Colors.orange,
-                    Colors.amber,
-                    Colors.green,
-                    Colors.green,
-                  ],
-                  valueColor: Colors.orange,
-                  footer: 'Risk category : ${riskCategoryFromRag(rag)}',
-                ),
+                child: CreditScoreCard(score: 712),
               ),
             ],
           ),
@@ -1206,7 +1177,7 @@ class ApplicantDetailView extends GetView<ApplicantDetailController> {
             ),
           ),
           const SizedBox(height: 16),
-         PowerBIEmbedPage()
+         PowerBIEmbedPage(url: 'https://app.powerbi.com/reportEmbed?reportId=d6e2f3b8-ce85-4e18-9942-5a625589d1a3&autoAuth=true&ctid=ebc33efd-7258-4e11-8899-d85c565d0051')
         ],
       ),
     );
@@ -1518,18 +1489,16 @@ class ApplicantDetailView extends GetView<ApplicantDetailController> {
           Row(
             children: [
               // Export Action Button
-              _buildHeaderActionButton(
-                    icon: Icons.download_rounded,
-                    label: 'Export',
-                    onTap: () => Get.snackbar(
-                      'Export',
-                      'PDF export not yet implemented',
-                    ),
-                    color: Colors.green,
-                  )
-                  .animate()
-                  .scale(duration: 600.ms, delay: 400.ms)
-                  .fadeIn(duration: 400.ms, delay: 400.ms),
+             _buildHeaderActionButton(
+  icon: Icons.download_rounded,
+  label: 'Export',
+  onTap: downloadAnalyticsPdf,
+  color: Colors.green,
+)
+.animate()
+.scale(duration: 600.ms, delay: 400.ms)
+.fadeIn(duration: 400.ms, delay: 400.ms),
+
 
               const SizedBox(width: 12),
 
@@ -2261,6 +2230,7 @@ Widget _needleGaugeCard({
           const SizedBox(height: 8),
           SizedBox(
             height: 160,
+            width: 160,
             child: CustomPaint(
               painter: _NeedleGaugePainter(
                 value: value,
@@ -2615,7 +2585,7 @@ class _FeatureCardState extends State<_FeatureCard>
         builder: (context, _) {
           return Material(
             color: Theme.of(context).cardColor,
-            elevation: _elev.value,
+            elevation: 50,
             borderRadius: BorderRadius.circular(12),
             child: InkWell(
               borderRadius: BorderRadius.circular(12),
@@ -2625,68 +2595,68 @@ class _FeatureCardState extends State<_FeatureCard>
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 10,
-                            vertical: 6,
-                          ),
-                          decoration: BoxDecoration(
-                            color: widget.ragColor.withOpacity(0.12),
-                            border: Border.all(color: widget.ragColor),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Container(
-                                width: 8,
-                                height: 8,
-                                decoration: BoxDecoration(
-                                  color: widget.ragColor,
-                                  shape: BoxShape.circle,
-                                ),
-                              ),
-                              const SizedBox(width: 6),
-                              Text(
-                                widget.chipText,
-                                style: TextStyle(
-                                  color: widget.ragColor,
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 11,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const Spacer(),
-                        Icon(
-                          widget.trend == 'up'
-                              ? Icons.trending_up
-                              : widget.trend == 'down'
-                              ? Icons.trending_down
-                              : Icons.trending_flat,
-                          size: 18,
-                          color: widget.ragColor,
-                        ),
-                      ],
-                    ),
+                    // Row(
+                    //   children: [
+                    //     Container(
+                    //       padding: const EdgeInsets.symmetric(
+                    //         horizontal: 10,
+                    //         vertical: 6,
+                    //       ),
+                    //       decoration: BoxDecoration(
+                    //         color: widget.ragColor.withOpacity(0.12),
+                    //         border: Border.all(color: widget.ragColor),
+                    //         borderRadius: BorderRadius.circular(20),
+                    //       ),
+                    //       child: Row(
+                    //         mainAxisSize: MainAxisSize.min,
+                    //         children: [
+                    //           Container(
+                    //             width: 8,
+                    //             height: 8,
+                    //             decoration: BoxDecoration(
+                    //               color: widget.ragColor,
+                    //               shape: BoxShape.circle,
+                    //             ),
+                    //           ),
+                    //           const SizedBox(width: 6),
+                    //           Text(
+                    //             widget.chipText,
+                    //             style: TextStyle(
+                    //               color: widget.ragColor,
+                    //               fontWeight: FontWeight.w700,
+                    //               fontSize: 11,
+                    //             ),
+                    //           ),
+                    //         ],
+                    //       ),
+                    //     ),
+                    //     const Spacer(),
+                    //     Icon(
+                    //       widget.trend == 'up'
+                    //           ? Icons.trending_up
+                    //           : widget.trend == 'down'
+                    //           ? Icons.trending_down
+                    //           : Icons.trending_flat,
+                    //       size: 18,
+                    //       color: widget.ragColor,
+                    //     ),
+                    //   ],
+                    // ),
                     const SizedBox(height: 10),
                     Text(
                       widget.title,
                       style: const TextStyle(
-                        fontSize: 12,
-                        color: Colors.black54,
+                        fontSize: 18,
+                        color: Colors.black,
                       ),
                     ),
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         Text(
-                          _valAnim.value.toStringAsFixed(1),
+                          widget.title == 'Avg Balance Repayment Week' || widget.title == 'Credit Utilization' || widget.title == 'Monthly Savings'?'AED ${_valAnim.value.toStringAsFixed(1)}':_valAnim.value.toStringAsFixed(1),
                           style: TextStyle(
-                            fontSize: 24,
+                            fontSize: 22,
                             fontWeight: FontWeight.bold,
                             color: widget.ragColor,
                           ),
@@ -2698,13 +2668,12 @@ class _FeatureCardState extends State<_FeatureCard>
                         ),
                       ],
                     ),
-                    const SizedBox(height: 10),
-                    SizedBox(
-                      height: 40,
-                      child: CustomPaint(
-                        painter: _MiniSparklinePainter(widget.ragColor),
-                      ),
-                    ),
+                    // SizedBox(
+                    //   height: 40,
+                    //   child: CustomPaint(
+                    //     painter: _MiniSparklinePainter(widget.ragColor),
+                    //   ),
+                    // ),
                   ],
                 ),
               ),

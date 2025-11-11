@@ -193,93 +193,117 @@ class DashboardView extends GetView<DashboardController> {
   }
 
   /// Build executive metrics with floating cards
-  Widget _buildExecutiveMetrics(
-    BuildContext context,
-    ThemeController themeController,
-  ) {
-    return Obx(() {
-      final dashboardData = controller.dashboardData.value;
+ Widget _buildExecutiveMetrics(
+  BuildContext context,
+  ThemeController themeController,
+) {
+  return Obx(() {
+    final dashboardData = controller.dashboardData.value;
 
-      return LayoutBuilder(
-        builder: (context, constraints) {
-          final isLargeScreen = constraints.maxWidth > 1200;
-          final crossAxisCount = isLargeScreen ? 5 : 2;
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isLargeScreen = constraints.maxWidth > 1200;
+        // final crossAxisCount = isLargeScreen ? 3 : 2;
 
-          return GridView.count(
-            crossAxisCount: 3,
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            childAspectRatio: 2,
-            crossAxisSpacing: 24,
-            mainAxisSpacing: 24,
-            children: [
-              _buildFloatingMetricCard(
-                'Total Portfolio',
-                NumberFormat.currency(
-                  symbol: '₹',
-                  decimalDigits: 0,
-                ).format(dashboardData?.kpis.totalDisbursed ?? 0),
-                Icons.account_balance_wallet_rounded,
-                themeController.getPrimaryGradient(),
-                '+12.5%',
-                context,
-                themeController,
-                index: 0,
+        return GridView.count(
+          crossAxisCount: 3,
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          childAspectRatio: 2,
+          crossAxisSpacing: 24,
+          mainAxisSpacing: 24,
+          children: [
+            // 1️⃣ Active Customers (30 Days)
+            _buildFloatingMetricCard(
+              'Active Customers (30 Days)',
+              '${dashboardData?.kpis.activeCustomers ?? 0}',
+              Icons.people_alt_rounded,
+              LinearGradient(
+                colors: [Colors.blue.shade400, Colors.blue.shade700],
               ),
-              _buildFloatingMetricCard(
-                'Active Consents',
-                '${dashboardData?.kpis.activeConsents ?? 0}',
-                Icons.verified_user_rounded,
-                LinearGradient(
-                  colors: [Colors.green.shade400, Colors.green.shade600],
-                ),
-                '+8.3%',
-                context,
-                themeController,
-                index: 1,
+              '+5.2%',
+              context,
+              themeController,
+              index: 0,
+            ),
+
+            // 2️⃣ Consents Granted (Total Active)
+            _buildFloatingMetricCard(
+              'Consents Granted (Active)',
+              '${dashboardData?.kpis.activeConsents ?? 0}',
+              Icons.verified_user_rounded,
+              LinearGradient(
+                colors: [Colors.green.shade400, Colors.green.shade600],
               ),
-              // _buildFloatingMetricCard(
-              //   'Risk Score',
-              //   '${dashboardData?.kpis.avgCreditScore.toStringAsFixed(1) ?? '0.0'}',
-              //   Icons.shield_rounded,
-              //   LinearGradient(
-              //     colors: [Colors.amber.shade400, Colors.orange.shade500],
-              //   ),
-              //   'Low Risk',
-              //   context,
-              //   themeController,
-              //   index: 2,
-              // ),
-              _buildFloatingMetricCard(
-                'Pending Consents',
-                '${dashboardData?.kpis.pendingConsents ?? 0}',
-                Icons.pending_actions_rounded,
-                LinearGradient(
-                  colors: [Colors.orange.shade400, Colors.orange.shade600],
-                ),
-                '-5.2%',
-                context,
-                themeController,
-                index: 3,
+              '+8.3%',
+              context,
+              themeController,
+              index: 1,
+            ),
+
+            // 3️⃣ Consents Expiring (Next 30 Days)
+            _buildFloatingMetricCard(
+              'Consents Expiring (Next 30 Days)',
+              '${dashboardData?.kpis.expiringConsents ?? 0}',
+              Icons.timer_rounded,
+              LinearGradient(
+                colors: [Colors.orange.shade400, Colors.deepOrange.shade600],
               ),
-              _buildFloatingMetricCard(
-                'Total Applicants',
-                '${dashboardData?.kpis.totalApplicants ?? 0}',
-                Icons.people_rounded,
-                LinearGradient(
-                  colors: [Colors.purple.shade400, Colors.purple.shade600],
-                ),
-                '+15 Today',
-                context,
-                themeController,
-                index: 4,
+              'Upcoming',
+              context,
+              themeController,
+              index: 2,
+            ),
+
+            // 4️⃣ Total Transactions (Current Month)
+            _buildFloatingMetricCard(
+              'Total Transactions (Month)',
+              NumberFormat.compact().format(
+                dashboardData?.kpis.totalTransactions ?? 0,
               ),
-            ],
-          );
-        },
-      );
-    });
-  }
+              Icons.swap_horiz_rounded,
+              LinearGradient(
+                colors: [Colors.purple.shade400, Colors.deepPurple.shade600],
+              ),
+              '+12.1%',
+              context,
+              themeController,
+              index: 3,
+            ),
+
+            // 5️⃣ Failed Transactions (%) (Last 7 Days)
+            _buildFloatingMetricCard(
+              'Failed Transactions (7 Days)',
+              '${(dashboardData?.kpis.failedTxnPercent ?? 0).toStringAsFixed(1)}%',
+              Icons.error_outline_rounded,
+              LinearGradient(
+                colors: [Colors.redAccent.shade400, Colors.red.shade700],
+              ),
+              '-1.4%',
+              context,
+              themeController,
+              index: 4,
+            ),
+
+            // 6️⃣ Compliance / Risk Alerts (Open)
+            _buildFloatingMetricCard(
+              'Compliance / Risk Alerts (Open)',
+              '${dashboardData?.kpis.openAlerts ?? 0}',
+              Icons.warning_amber_rounded,
+              LinearGradient(
+                colors: [Colors.teal.shade400, Colors.teal.shade700],
+              ),
+              'Monitor',
+              context,
+              themeController,
+              index: 5,
+            ),
+          ],
+        );
+      },
+    );
+  });
+}
 
   /// Build floating metric card with animations
   Widget _buildFloatingMetricCard(
@@ -1183,583 +1207,7 @@ class DashboardView extends GetView<DashboardController> {
   //   );
   // }
 
-  Widget _buildTopNavbar(
-    BuildContext context,
-    ThemeController themeController,
-  ) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-      decoration: BoxDecoration(
-        color: Theme.of(context).cardColor.withOpacity(0.95),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.08),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          // Title
-          Text(
-            'Finaxis',
-            style: Theme.of(
-              context,
-            ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700),
-          ),
-          const SizedBox(width: 24),
-          // Search Bar
-          Expanded(
-            child: Container(
-              height: 44,
-              decoration: BoxDecoration(
-                color: Theme.of(context).scaffoldBackgroundColor,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: Theme.of(context).dividerColor.withOpacity(0.1),
-                ),
-              ),
-              child: TextField(
-                decoration: InputDecoration(
-                  prefixIcon: Icon(
-                    Icons.search,
-                    color: Theme.of(context).textTheme.bodyMedium?.color,
-                  ),
-                  hintText: 'Search applicants, consents or reports',
-                  border: InputBorder.none,
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 12,
-                  ),
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(width: 16),
-          // Notifications with badge
-          Stack(
-            clipBehavior: Clip.none,
-            children: [
-              IconButton(
-                tooltip: 'Notifications',
-                icon: const Icon(Icons.notifications_outlined),
-                onPressed: () {},
-              ),
-              Positioned(
-                right: 8,
-                top: 8,
-                child: Container(
-                  width: 10,
-                  height: 10,
-                  decoration: BoxDecoration(
-                    color: Colors.redAccent,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(width: 8),
-          // Theme Selector Dropdown
-          Obx(() => _buildThemeDropdown(context, themeController)),
-          const SizedBox(width: 16),
-          // Profile
-          CircleAvatar(
-            radius: 18,
-            backgroundColor: Theme.of(context).primaryColor.withOpacity(0.1),
-            child: Icon(
-              Icons.person,
-              color: Theme.of(context).primaryColor,
-              size: 20,
-            ),
-          ),
-        ],
-      ),
-    );
+
   }
 
-  Widget _buildThemeDropdown(BuildContext context, ThemeController themeCtrl) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      decoration: BoxDecoration(
-        color: Theme.of(context).primaryColor.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(
-          color: Theme.of(context).primaryColor.withOpacity(0.2),
-        ),
-      ),
-      child: DropdownButtonHideUnderline(
-        child: DropdownButton<String>(
-          value: themeCtrl.currentThemeName,
-          isDense: true,
-          icon: Icon(
-            Icons.palette_outlined,
-            size: 16,
-            color: Theme.of(context).primaryColor,
-          ),
-          style: Theme.of(
-            context,
-          ).textTheme.labelMedium?.copyWith(fontWeight: FontWeight.w600),
-          items: ThemeController.availableThemes.map((theme) {
-            return DropdownMenuItem(
-              value: theme,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  _getThemeIcon(theme),
-                  const SizedBox(width: 6),
-                  Text(theme),
-                ],
-              ),
-            );
-          }).toList(),
-          onChanged: (value) {
-            if (value != null) themeCtrl.switchTheme(value);
-          },
-        ),
-      ),
-    );
-  }
 
-  Icon _getThemeIcon(String theme) {
-    switch (theme) {
-      case 'Light':
-        return const Icon(Icons.wb_sunny, size: 14, color: Colors.orange);
-      case 'Dark':
-        return const Icon(
-          Icons.nightlight_round,
-          size: 14,
-          color: Colors.indigo,
-        );
-      case 'Gold':
-        return const Icon(Icons.star, size: 14, color: Colors.amber);
-      case 'Emerald':
-        return const Icon(Icons.eco, size: 14, color: Colors.green);
-      case 'Royal':
-        return const Icon(Icons.shield, size: 14, color: Colors.deepPurple);
-      default:
-        return const Icon(Icons.palette, size: 14);
-    }
-  }
-
-  Widget _buildKpiCards(BuildContext context, ThemeController themeCtrl) {
-    final data = controller.dashboardData.value;
-    if (data == null) return const SizedBox();
-
-    final crossAxisCount = Responsive.getColumns(context, max: 4);
-    final chartColors = themeCtrl.getChartColors();
-
-    return GridView.count(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      crossAxisCount: crossAxisCount,
-      mainAxisSpacing: Responsive.getSpacing(context),
-      crossAxisSpacing: Responsive.getSpacing(context),
-      childAspectRatio: 1.6,
-      children: [
-        AnimatedKpiCard(
-          title: 'Total Applicants',
-          value: data.kpis.totalApplicants.toString(),
-          percentage: data.kpis.totalApplicantsMoM,
-          icon: Icons.people_alt_rounded,
-          gradient: LinearGradient(
-            colors: [chartColors[0], chartColors[1]],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-        ),
-        AnimatedKpiCard(
-          title: 'Active Consents',
-          value: data.kpis.activeConsents.toString(),
-          percentage: data.kpis.activeConsentsMoM,
-          icon: Icons.verified_user_rounded,
-          gradient: LinearGradient(
-            colors: [chartColors[1], chartColors[2]],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-        ),
-        AnimatedKpiCard(
-          title: 'Avg Credit Score',
-          value: data.kpis.avgCreditScore.toStringAsFixed(0),
-          percentage: data.kpis.avgCreditScoreMoM,
-          icon: Icons.star_rate_rounded,
-          gradient: LinearGradient(
-            colors: [chartColors[2], chartColors[3]],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-        ),
-        AnimatedKpiCard(
-          title: 'Total Disbursed (YTD)',
-          value: NumberFormat.compactCurrency(
-            symbol: '₹',
-            decimalDigits: 1,
-          ).format(data.kpis.totalDisbursed),
-          percentage: data.kpis.totalDisbursedMoM,
-          icon: Icons.attach_money_rounded,
-          gradient: AppTheme.copperGradient,
-        ),
-      ],
-    );
-  }
-
-  Widget _buildChartsRow(BuildContext context, ThemeController themeCtrl) {
-    final dashboard = controller.dashboardData.value;
-    if (dashboard == null) return const SizedBox();
-
-    final rag = dashboard.ragSummary;
-    final funnel = dashboard.funnelStages;
-    final chartColors = themeCtrl.getChartColors();
-
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Donut Chart: RAG Distribution
-        Expanded(
-          child: Card(
-            elevation: 0,
-            child: Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Risk Portfolio Distribution',
-                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  Center(
-                    child: AspectRatio(
-                      aspectRatio:
-                          1, // ✅ ensures equal height and width (perfect circle)
-                      child: PieChart(
-                        PieChartData(
-                          sectionsSpace: 2,
-                          centerSpaceRadius: 60,
-                          sections: [
-                            PieChartSectionData(
-                              color: AppTheme.ragGreen,
-                              value: rag.green.toDouble(),
-                              title:
-                                  '${((rag.green / rag.total) * 100).toStringAsFixed(0)}%',
-                              radius: 80,
-                              titleStyle: const TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 14,
-                              ),
-                            ),
-                            PieChartSectionData(
-                              color: AppTheme.ragAmber,
-                              value: rag.amber.toDouble(),
-                              title:
-                                  '${((rag.amber / rag.total) * 100).toStringAsFixed(0)}%',
-                              radius: 80, // ✅ keep consistent radius
-                              titleStyle: const TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 14,
-                              ),
-                            ),
-                            PieChartSectionData(
-                              color: AppTheme.ragRed,
-                              value: rag.red.toDouble(),
-                              title:
-                                  '${((rag.red / rag.total) * 100).toStringAsFixed(0)}%',
-                              radius: 80,
-                              titleStyle: const TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 14,
-                              ),
-                            ),
-                          ],
-                        ),
-                        swapAnimationDuration: AppTheme.normalAnimation,
-                        swapAnimationCurve: Curves.easeOutCubic,
-                      ),
-                    ),
-                  ),
-
-                  const SizedBox(height: 8),
-                  Wrap(
-                    spacing: 12,
-                    runSpacing: 8,
-                    children: [
-                      _legendDot(AppTheme.ragGreen, 'Low Risk (${rag.green})'),
-                      _legendDot(
-                        AppTheme.ragAmber,
-                        'Medium Risk (${rag.amber})',
-                      ),
-                      _legendDot(AppTheme.ragRed, 'High Risk (${rag.red})'),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-        const SizedBox(width: 16),
-        // Bar Chart: Applicant Funnel
-        Expanded(
-          child: Card(
-            elevation: 0,
-            child: Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Application Funnel',
-                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  SizedBox(
-                    height: 260,
-                    child: BarChart(
-                      BarChartData(
-                        barTouchData: BarTouchData(
-                          enabled: true,
-                          touchTooltipData: BarTouchTooltipData(
-                            getTooltipItem: (group, groupIndex, rod, rodIndex) {
-                              final label = funnel[group.x.toInt()].stage;
-                              return BarTooltipItem(
-                                '$label\n',
-                                Theme.of(context).textTheme.labelLarge!
-                                    .copyWith(fontWeight: FontWeight.bold),
-                                children: [
-                                  TextSpan(
-                                    text: NumberFormat.compact().format(
-                                      rod.toY,
-                                    ),
-                                    style: Theme.of(
-                                      context,
-                                    ).textTheme.labelMedium,
-                                  ),
-                                ],
-                              );
-                            },
-                          ),
-                        ),
-                        titlesData: FlTitlesData(
-                          leftTitles: const AxisTitles(
-                            sideTitles: SideTitles(showTitles: false),
-                          ),
-                          topTitles: const AxisTitles(
-                            sideTitles: SideTitles(showTitles: false),
-                          ),
-                          rightTitles: const AxisTitles(
-                            sideTitles: SideTitles(showTitles: false),
-                          ),
-                          bottomTitles: AxisTitles(
-                            sideTitles: SideTitles(
-                              showTitles: true,
-                              getTitlesWidget: (value, meta) {
-                                final idx = value.toInt();
-                                if (idx >= 0 && idx < funnel.length) {
-                                  final label = funnel[idx].stage
-                                      .split(' ')
-                                      .first;
-                                  return Padding(
-                                    padding: const EdgeInsets.only(top: 8.0),
-                                    child: Text(
-                                      label,
-                                      style: Theme.of(
-                                        context,
-                                      ).textTheme.labelSmall,
-                                    ),
-                                  );
-                                }
-                                return const SizedBox();
-                              },
-                              reservedSize: 32,
-                            ),
-                          ),
-                        ),
-                        gridData: const FlGridData(show: false),
-                        borderData: FlBorderData(show: false),
-                        barGroups: List.generate(funnel.length, (i) {
-                          final count = funnel[i].count.toDouble();
-                          return BarChartGroupData(
-                            x: i,
-                            barRods: [
-                              BarChartRodData(
-                                toY: count,
-                                width: 18,
-                                gradient: LinearGradient(
-                                  colors: [chartColors[0], chartColors[1]],
-                                  begin: Alignment.bottomCenter,
-                                  end: Alignment.topCenter,
-                                ),
-                                borderRadius: BorderRadius.circular(6),
-                              ),
-                            ],
-                          );
-                        }),
-                      ),
-                      swapAnimationDuration: AppTheme.normalAnimation,
-                      swapAnimationCurve: Curves.easeOutCubic,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _legendDot(Color color, String label) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(
-          width: 10,
-          height: 10,
-          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
-        ),
-        const SizedBox(width: 6),
-        Text(label, style: const TextStyle(fontSize: 12)),
-      ],
-    );
-  }
-
-  Widget _buildApplicantsTable(BuildContext context) {
-    return Card(
-      elevation: 0,
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Recent Applicants',
-                  style: Theme.of(
-                    context,
-                  ).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold),
-                ),
-                Obx(
-                  () => Wrap(
-                    spacing: 8,
-                    children: [
-                      FilterChip(
-                        label: const Text('All'),
-                        selected: controller.selectedRagFilter.value == 'all',
-                        onSelected: (_) => controller.filterByRag('all'),
-                      ),
-                      FilterChip(
-                        label: const Text('Green'),
-                        selected: controller.selectedRagFilter.value == 'green',
-                        onSelected: (_) => controller.filterByRag('green'),
-                      ),
-                      FilterChip(
-                        label: const Text('Amber'),
-                        selected: controller.selectedRagFilter.value == 'amber',
-                        onSelected: (_) => controller.filterByRag('amber'),
-                      ),
-                      FilterChip(
-                        label: const Text('Red'),
-                        selected: controller.selectedRagFilter.value == 'red',
-                        onSelected: (_) => controller.filterByRag('red'),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            Obx(
-              () => SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: DataTable(
-                  columns: const [
-                    DataColumn(label: Text('CIF')),
-                    DataColumn(label: Text('Name')),
-                    DataColumn(label: Text('Credit Score')),
-                    DataColumn(label: Text('Risk Score')),
-                    DataColumn(label: Text('RAG Status')),
-                    DataColumn(label: Text('Bank')),
-                    DataColumn(label: Text('Action')),
-                  ],
-                  rows: controller.filteredApplicants.map((applicant) {
-                    return DataRow(
-                      cells: [
-                        DataCell(Text(applicant.cif)),
-                        DataCell(Text(applicant.name)),
-                        DataCell(Text(applicant.creditScore.toString())),
-                        DataCell(Text(applicant.riskScore.toStringAsFixed(2))),
-                        DataCell(
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 6,
-                            ),
-                            decoration: BoxDecoration(
-                              color: AppTheme.getRagColor(
-                                applicant.ragStatus,
-                              ).withOpacity(0.15),
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(
-                                color: AppTheme.getRagColor(
-                                  applicant.ragStatus,
-                                ).withOpacity(0.4),
-                              ),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Container(
-                                  width: 8,
-                                  height: 8,
-                                  decoration: BoxDecoration(
-                                    color: AppTheme.getRagColor(
-                                      applicant.ragStatus,
-                                    ),
-                                    shape: BoxShape.circle,
-                                  ),
-                                ),
-                                const SizedBox(width: 6),
-                                Text(
-                                  applicant.ragStatus.toUpperCase(),
-                                  style: TextStyle(
-                                    color: AppTheme.getRagColor(
-                                      applicant.ragStatus,
-                                    ),
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: 11,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        DataCell(Text(applicant.bankName)),
-                        DataCell(
-                          ElevatedButton(
-                            onPressed: () => controller
-                                .navigateToApplicantDetail(applicant.cif),
-                            child: const Text('View'),
-                          ),
-                        ),
-                      ],
-                    );
-                  }).toList(),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}

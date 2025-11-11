@@ -30,7 +30,6 @@ class DashboardController extends GetxController {
       
       // Load dashboard data
       final dashboard = await _dashboardService.fetchDashboardData();
-      print('Dashboard loaded: ${dashboard.kpis.totalApplicants} applicants');
       dashboardData.value = dashboard;
       
       // Load applicants data

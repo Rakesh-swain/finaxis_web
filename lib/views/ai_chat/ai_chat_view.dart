@@ -712,7 +712,7 @@ Widget _buildChatInterface(BuildContext context, ThemeController themeController
         maxLines: null,
         textInputAction: TextInputAction.newline,
         decoration: InputDecoration(
-          hintText: 'Ask Finaxis AI about your your customer...',
+          hintText: 'Ask Finaxis AI about your customer...',
           hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
             color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.5),
           ),

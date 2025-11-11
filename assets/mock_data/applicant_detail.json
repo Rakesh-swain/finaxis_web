@@ -19,7 +19,7 @@
     "loanType": "Personal Loan",
     "employmentType": "Salaried",
     "creditScore": 712,
-    "riskScore": 0.48,
+    "riskScore": 20,
     "ragStatus": "amber",
     "lastUpdated": "2025-11-10T10:30:00Z"
   },
@@ -52,16 +52,16 @@
     {"category": "Investment", "amount": 20000.0, "channel": "Cheque"}
   ],
   "keyFeatures": [
-    {"name": "Alarming Transactions", "value": 2.0, "trend": "down", "ragStatus": "green"},
-    {"name": "Payment Revoke", "value": 0.0, "trend": "stable", "ragStatus": "green"},
-    {"name": "Avg Balance Repayment Week", "value": 45000.0, "trend": "up", "ragStatus": "green"},
+    {"name": "Alarming Transactions", "value": 2, "trend": "down", "ragStatus": "green"},
+    {"name": "Payment Revoke", "value": 0, "trend": "stable", "ragStatus": "green"},
+    {"name": "Avg Balance Repayment Week", "value": 45000, "trend": "up", "ragStatus": "green"},
     {"name": "Earning to Spend Ratio", "value": 1.8, "trend": "up", "ragStatus": "green"},
     {"name": "Investment Analysis", "value": 0.25, "trend": "up", "ragStatus": "green"},
-    {"name": "Loan Enquiry Count", "value": 3.0, "trend": "stable", "ragStatus": "amber"},
-    {"name": "Credit Utilization", "value": 42.0, "trend": "down", "ragStatus": "green"},
+    {"name": "Loan Enquiry Count", "value": 3, "trend": "stable", "ragStatus": "amber"},
+    {"name": "Credit Utilization", "value": 1500, "trend": "down", "ragStatus": "green"},
     {"name": "Debt to Income", "value": 0.35, "trend": "down", "ragStatus": "green"},
-    {"name": "Monthly Savings", "value": 15000.0, "trend": "up", "ragStatus": "green"},
-    {"name": "EMI Bounce Rate", "value": 0.0, "trend": "stable", "ragStatus": "green"},
+    {"name": "Monthly Savings", "value": 15000, "trend": "up", "ragStatus": "green"},
+    {"name": "EMI Bounce Rate", "value": 0, "trend": "stable", "ragStatus": "green"},
     {"name": "Cash Dependency", "value": 0.12, "trend": "down", "ragStatus": "green"},
     {"name": "Financial Discipline Score", "value": 8.5, "trend": "up", "ragStatus": "green"}
   ],

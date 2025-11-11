@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class LoginController extends GetxController {
-  final emailController = TextEditingController(text: 'demo@finaxis.com');
-  final passwordController = TextEditingController(text: 'demo123');
+  final emailController = TextEditingController(text: 'admin@finaxis.com');
+  final passwordController = TextEditingController(text: 'admin123');
   final formKey = GlobalKey<FormState>();
   
   final RxBool isLoading = false.obs;
