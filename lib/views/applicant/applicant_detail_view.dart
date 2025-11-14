@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'dart:ui';
 import 'dart:html' as html;
 import 'package:finaxis_web/score_card.dart';
+import 'package:finaxis_web/views/applicant/chart_screen.dart';
 import 'package:finaxis_web/views/applicant/customer_ai_chatview.dart';
 import 'package:finaxis_web/views/applicant/spend_pattern_chart.dart';
 import 'package:finaxis_web/views/powerbi/powerbi_page.dart';
@@ -480,6 +481,11 @@ class ApplicantDetailView extends GetView<ApplicantDetailController> {
         'label': 'Balance Enquiry',
         'color': Colors.pink,
       },
+       {
+        'icon': Icons.bar_chart_outlined,
+        'label': 'FinAxis Chart Analytics',
+        'color': Colors.indigo,
+      },
     ];
 
     return Container(
@@ -676,6 +682,8 @@ class ApplicantDetailView extends GetView<ApplicantDetailController> {
         return _buildInquiryHistoryTab(detail);
       case 7:
         return _buildBalanceEnquiryTab(detail);
+      case 8:
+        return DashboardScreen();
       default:
         return _buildGeneralTab(detail);
     }

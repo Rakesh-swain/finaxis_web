@@ -1,3 +1,4 @@
+import 'package:finaxis_web/views/consent/add_consent_page.dart';
 import 'package:get/get.dart';
 import '../bindings/login_binding.dart';
 import '../bindings/dashboard_binding.dart';
@@ -63,6 +64,10 @@ class AppPages {
     GetPage(
       name: '/settings',
       page: () => const SettingsView(),
+    ),
+    GetPage(
+      name: '/add-consent',
+      page: () => const AddConsentPage(),
     ),
   ];
 }

@@ -1,30 +1,30 @@
-/// models/local_chat_models.dart
-/// Shared models for local chat functionality
+import 'package:flutter/material.dart';
 
-/// Local Chat Message Model
 class LocalChatMessage {
   final String content;
   final bool isUser;
   final DateTime timestamp;
+  final bool isPdfUpload;
+  final List<ChatOption>? options; // Add clickable options
 
   LocalChatMessage({
     required this.content,
     required this.isUser,
     required this.timestamp,
+    this.isPdfUpload = false,
+    this.options,
   });
 }
 
-/// Quick Action Item Model
-class QuickActionItem {
-  final String icon;
-  final String category;
-  final String title;
+/// Model for clickable chat options
+class ChatOption {
+  final String label;
   final String message;
+  final IconData? icon;
 
-  QuickActionItem({
-    required this.icon,
-    required this.category,
-    required this.title,
+  ChatOption({
+    required this.label,
     required this.message,
+    this.icon,
   });
 }

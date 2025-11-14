@@ -8,51 +8,21 @@ import 'package:glassmorphism/glassmorphism.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
 import '../../controllers/theme_controller.dart';
 
-/// 🤖 AI Chat Hub - Enhanced with Hardcoded Responses
+/// 🤖 AI Chat Hub - Enhanced with PDF Support
 class AiChatView extends StatelessWidget {
   const AiChatView({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    // Initialize controller
     final controller = Get.put(AiController(), permanent: false);
     final themeController = Get.find<ThemeController>();
 
     return FuturisticLayout(
       selectedIndex: 0,
       pageTitle: 'AI Chat Hub',
-      // headerActions: [
-      //   _buildHeaderAction(
-      //     icon: Icons.settings,
-      //     label: 'Settings',
-      //     onTap: () => Get.snackbar('AI Chat Settings', 'Coming soon'),
-      //     color: Colors.blue,
-      //   ),
-      // ],
       child: GetBuilder<AiController>(
         init: controller,
         builder: (ctrl) => _buildChatInterface(context, themeController, ctrl),
-      ),
-    );
-  }
-
-  Widget _buildHeaderAction({
-    required IconData icon,
-    required String label,
-    required VoidCallback onTap,
-    required Color color,
-  }) {
-    return InkWell(
-      onTap: onTap,
-      child: Row(
-        children: [
-          Icon(icon, color: color),
-          const SizedBox(width: 6),
-          Text(
-            label,
-            style: TextStyle(fontWeight: FontWeight.bold, color: color),
-          ),
-        ],
       ),
     );
   }
@@ -69,6 +39,11 @@ class AiChatView extends StatelessWidget {
       return Column(
         children: [
           if (!hasMessages) _buildGlowingHeader(context, themeController),
+          
+          // PDF Mode Indicator
+          if (controller.isPdfChatMode.value)
+            _buildPdfModeIndicator(context, themeController, controller),
+          
           Expanded(
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -77,8 +52,8 @@ class AiChatView extends StatelessWidget {
                   flex: 3,
                   child: _buildMessagesArea(context, themeController, controller),
                 ),
-                if (!hasMessages)
-                  _buildQuickActions(context, themeController, controller),
+                // if (!hasMessages)
+                //   _buildQuickActions(context, themeController, controller),
               ],
             ),
           ),
@@ -86,6 +61,67 @@ class AiChatView extends StatelessWidget {
         ],
       );
     });
+  }
+
+  /// Build PDF Mode Indicator
+  Widget _buildPdfModeIndicator(
+    BuildContext context,
+    ThemeController themeController,
+    AiController controller,
+  ) {
+    return Container(
+      margin: const EdgeInsets.fromLTRB(24, 16, 24, 8),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+      decoration: BoxDecoration(
+        color: themeController.getThemeData().primaryColor.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: themeController.getThemeData().primaryColor.withOpacity(0.3),
+        ),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            Icons.picture_as_pdf_rounded,
+            color: themeController.getThemeData().primaryColor,
+            size: 20,
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'PDF Chat Mode Active',
+                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: themeController.getThemeData().primaryColor,
+                  ),
+                ),
+                Text(
+                  'Chatting with: ${controller.uploadedFileName.value}',
+                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                    color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.7),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 12),
+          TextButton.icon(
+            onPressed: controller.endPdfChat,
+            icon: const Icon(Icons.close, size: 16),
+            label: const Text('End Chat'),
+            style: TextButton.styleFrom(
+              foregroundColor: Colors.red,
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            ),
+          ),
+        ],
+      ),
+    ).animate()
+      .fadeIn(duration: 400.ms)
+      .slideY(begin: -0.2, end: 0);
   }
 
   /// Build glowing header
@@ -145,41 +181,41 @@ class AiChatView extends StatelessWidget {
   }
 
   /// Build messages area
-  Widget _buildMessagesArea(
-    BuildContext context, 
-    ThemeController themeController,
-    AiController controller,
-  ) {
-    return Obx(() {
-      final messages = controller.localMessages;
-      final isTyping = controller.isTyping.value;
-      
-      if (messages.isEmpty && !isTyping) {
-        return _buildEmptyState(context, themeController);
-      }
-      
-      return ListView.builder(
-        controller: controller.scrollController,
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-        itemCount: messages.length + (isTyping ? 1 : 0),
-        itemBuilder: (context, index) {
-          if (index == messages.length && isTyping) {
-            return _buildTypingIndicator(context, themeController);
-          }
-          
-          final message = messages[index];
-          return _buildMessageBubble(
-            message,
-            context,
-            themeController,
-          ).animate(delay: (index * 100).ms)
-            .fadeIn(duration: 600.ms)
-            .slideY(begin: 0.5, end: 0, curve: Curves.easeOutCubic);
-        },
-      );
-    });
-  }
-
+Widget _buildMessagesArea(
+  BuildContext context, 
+  ThemeController themeController,
+  AiController controller,
+) {
+  return Obx(() {
+    final messages = controller.localMessages;
+    final isTyping = controller.isTyping.value;
+    
+    if (messages.isEmpty && !isTyping) {
+      return _buildEmptyState(context, themeController);
+    }
+    
+    return ListView.builder(
+      controller: controller.scrollController,
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+      itemCount: messages.length + (isTyping ? 1 : 0),
+      itemBuilder: (context, index) {
+        if (index == messages.length && isTyping) {
+          return _buildTypingIndicator(context, themeController);
+        }
+        
+        final message = messages[index];
+        return _buildMessageBubble(
+          message,
+          context,
+          themeController,
+          controller, // Pass controller here
+        ).animate(delay: (index * 100).ms)
+          .fadeIn(duration: 600.ms)
+          .slideY(begin: 0.5, end: 0, curve: Curves.easeOutCubic);
+      },
+    );
+  });
+}
   /// Build typing indicator
   Widget _buildTypingIndicator(BuildContext context, ThemeController themeController) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -245,7 +281,7 @@ class AiChatView extends StatelessWidget {
   Widget _buildEmptyState(BuildContext context, ThemeController themeController) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.only(left: 100.0),
+        padding: const EdgeInsets.only(left: 0.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -318,36 +354,37 @@ class AiChatView extends StatelessWidget {
   }
 
   /// Build message bubble
-  Widget _buildMessageBubble(
-    LocalChatMessage message,
-    BuildContext context,
-    ThemeController themeController,
-  ) {
-    final isUser = message.isUser;
-    
-    return Container(
-      margin: EdgeInsets.only(
-        bottom: 16,
-        left: isUser ? 60 : 0,
-        right: isUser ? 0 : 60,
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
-        children: [
-          if (!isUser) _buildAvatarIcon(false, themeController),
-          if (!isUser) const SizedBox(width: 12),
-          
-          Flexible(
-            child: _buildMessageContent(message, context, themeController),
-          ),
-          
-          if (isUser) const SizedBox(width: 12),
-          if (isUser) _buildAvatarIcon(true, themeController),
-        ],
-      ),
-    );
-  }
+Widget _buildMessageBubble(
+  LocalChatMessage message,
+  BuildContext context,
+  ThemeController themeController,
+  AiController controller, // Add controller parameter
+) {
+  final isUser = message.isUser;
+  
+  return Container(
+    margin: EdgeInsets.only(
+      bottom: 16,
+      left: isUser ? 60 : 0,
+      right: isUser ? 0 : 60,
+    ),
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
+      children: [
+        if (!isUser) _buildAvatarIcon(false, themeController),
+        if (!isUser) const SizedBox(width: 12),
+        
+        Flexible(
+          child: _buildMessageContent(message, context, themeController, controller),
+        ),
+        
+        if (isUser) const SizedBox(width: 12),
+        if (isUser) _buildAvatarIcon(true, themeController),
+      ],
+    ),
+  );
+}
 
   /// Build avatar icon
   Widget _buildAvatarIcon(bool isUser, ThemeController themeController) {
@@ -383,6 +420,7 @@ Widget _buildMessageContent(
   LocalChatMessage message,
   BuildContext context,
   ThemeController themeController,
+  AiController controller, // Add controller parameter
 ) {
   final isUser = message.isUser;
   final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -434,18 +472,35 @@ Widget _buildMessageContent(
             ),
           ],
         ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-          child: SelectableText(
-            message.content,
-            style: TextStyle(
-              height: 1.5,
-              color: isDark ? Colors.white : Colors.black87,
-              fontWeight: FontWeight.w400,
-              fontSize: 15,
-              letterSpacing: 0.2,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              child: SelectableText(
+                message.content,
+                style: TextStyle(
+                  height: 1.5,
+                  color: isDark ? Colors.white : Colors.black87,
+                  fontWeight: FontWeight.w400,
+                  fontSize: 15,
+                  letterSpacing: 0.2,
+                ),
+              ),
             ),
-          ),
+            
+            // Add clickable options if available
+            if (message.options != null && message.options!.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 14),
+                child: _buildChatOptions(
+                  message.options!,
+                  context,
+                  themeController,
+                  controller,
+                ),
+              ),
+          ],
         ),
       ),
       
@@ -463,146 +518,256 @@ Widget _buildMessageContent(
     ],
   );
 }
+Widget _buildChatOptions(
+  List<ChatOption> options,
+  BuildContext context,
+  ThemeController themeController,
+  AiController controller,
+) {
+  return Padding(
+    padding: const EdgeInsets.only(top: 12),
+    child: Wrap(
+      spacing: 12,
+      runSpacing: 12,
+      children: options.map((option) {
+        return _buildOptionChip(
+          option,
+          context,
+          themeController,
+          controller,
+        );
+      }).toList(),
+    ),
+  );
+}
 
-  /// Build quick actions panel
-  Widget _buildQuickActions(
-    BuildContext context, 
-    ThemeController themeController,
-    AiController controller,
-  ) {
-    final quickActions = [
-      QuickActionItem(
-        icon: '🔴',
-        category: 'Risk Analysis',
-        title: 'Give me the risk distribution of my applicants',
-        message: 'Provide a detailed risk distribution of all applicants, including segments such as low, medium, and high risk, along with key risk indicators.',
-      ),
-      QuickActionItem(
-        icon: '📊',
-        category: 'Portfolio',
-        title: 'What all kind of business, customer segment approach for loan',
-        message: 'Explain the different business types and customer segments eligible for loans, along with their typical loan approaches, risk profiles, and evaluation criteria.',
-      ),
-      QuickActionItem(
-        icon: '✅',
-        category: 'Performance',
-        title: 'Analyze loan approval rates',
-        message: 'Analyze our loan approval rates by category, risk level, and time period. Identify patterns and improvement opportunities.',
-      ),
-    ];
-
-    return Container(
-      width: 200,
-      margin: const EdgeInsets.only(right: 16, top: 8, bottom: 8),
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          final availableHeight = constraints.maxHeight;
-          final itemCount = quickActions.length;
-          final itemHeight = availableHeight / itemCount;
-
-          return SingleChildScrollView(
-            child: Column(
-              children: [
-                for (int index = 0; index < itemCount; index++)
-                  SizedBox(
-                    height: itemHeight,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 6),
-                      child: _buildQuickActionCard(
-                              quickActions[index], themeController, context, controller)
-                          .animate(delay: (index * 100).ms)
-                          .fadeIn(duration: 500.ms)
-                          .slideY(begin: 0.2, end: 0),
-                    ),
-                  ),
-              ],
-            ),
-          );
-        },
-      ),
-    );
-  }
-
-  /// Build quick action card
-  Widget _buildQuickActionCard(
-    QuickActionItem action,
-    ThemeController themeController,
-    BuildContext context,
-    AiController controller,
-  ) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: () => controller.sendQuickActionMessage(action.message),
-        borderRadius: BorderRadius.circular(16),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                themeController.getThemeData().primaryColor.withOpacity(0.1),
-                themeController.getThemeData().primaryColor.withOpacity(0.05),
-              ],
-            ),
-            border: Border.all(
-              color: themeController.getThemeData().primaryColor.withOpacity(0.3),
-              width: 1.5,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: themeController.getThemeData().primaryColor.withOpacity(0.1),
-                blurRadius: 8,
-                spreadRadius: 1,
-              ),
+/// Build individual option chip with shader effect
+Widget _buildOptionChip(
+  ChatOption option,
+  BuildContext context,
+  ThemeController themeController,
+  AiController controller,
+) {
+  final isDark = Theme.of(context).brightness == Brightness.dark;
+  
+  return Material(
+    color: Colors.transparent,
+    child: InkWell(
+      onTap: () => controller.sendHardcodedMessage(option.message),
+      borderRadius: BorderRadius.circular(16),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              themeController.getThemeData().primaryColor.withOpacity(0.15),
+              themeController.getThemeData().primaryColor.withOpacity(0.08),
             ],
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Row(
-                children: [
-                  Text(
-                    action.icon,
-                    style: const TextStyle(fontSize: 15),
-                  ),
-                  const SizedBox(width: 6),
-                  Expanded(
-                    child: Text(
-                      action.category,
-                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                        color: themeController.getThemeData().primaryColor,
-                        fontWeight: FontWeight.w700,
-                        fontSize: 14,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              Text(
-                action.title,
-                style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                  fontWeight: FontWeight.w900,
-                  fontSize: 13,
-                  height: 1.3,
-                  color: isDark ? Colors.white : Colors.black87,
+          border: Border.all(
+            color: themeController.getThemeData().primaryColor.withOpacity(0.4),
+            width: 1.5,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: themeController.getThemeData().primaryColor.withOpacity(0.2),
+              blurRadius: 8,
+              spreadRadius: 0,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (option.icon != null) ...[
+              ShaderMask(
+                shaderCallback: (bounds) => themeController.getPrimaryGradient()
+                    .createShader(bounds),
+                child: Icon(
+                  option.icon,
+                  size: 20,
+                  color: Colors.white,
                 ),
-                maxLines: 4,
-                overflow: TextOverflow.ellipsis,
               ),
+              const SizedBox(width: 8),
             ],
-          ),
+            ShaderMask(
+              shaderCallback: (bounds) => themeController.getPrimaryGradient()
+                  .createShader(bounds),
+              child: Text(
+                option.label,
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 14,
+                  color: Colors.white,
+                  letterSpacing: 0.3,
+                ),
+              ),
+            ),
+            const SizedBox(width: 4),
+            ShaderMask(
+              shaderCallback: (bounds) => themeController.getPrimaryGradient()
+                  .createShader(bounds),
+              child: Icon(
+                Icons.arrow_forward_rounded,
+                size: 16,
+                color: Colors.white,
+              ),
+            ),
+          ],
         ),
       ),
+    ),
+  ).animate(onPlay: (controller) => controller.repeat(reverse: true))
+    .shimmer(
+      duration: 2000.ms,
+      color: themeController.getThemeData().primaryColor.withOpacity(0.3),
     );
-  }
+}
+
+  /// Build quick actions panel
+  // Widget _buildQuickActions(
+  //   BuildContext context, 
+  //   ThemeController themeController,
+  //   AiController controller,
+  // ) {
+  //   final quickActions = [
+  //     QuickActionItem(
+  //       icon: '🔴',
+  //       category: 'Risk Analysis',
+  //       title: 'Give me the risk distribution of my applicants',
+  //       message: 'Provide a detailed risk distribution of all applicants, including segments such as low, medium, and high risk, along with key risk indicators.',
+  //     ),
+  //     QuickActionItem(
+  //       icon: '📊',
+  //       category: 'Portfolio',
+  //       title: 'What all kind of business, customer segment approach for loan',
+  //       message: 'Explain the different business types and customer segments eligible for loans, along with their typical loan approaches, risk profiles, and evaluation criteria.',
+  //     ),
+  //     QuickActionItem(
+  //       icon: '✅',
+  //       category: 'Performance',
+  //       title: 'Analyze loan approval rates',
+  //       message: 'Analyze our loan approval rates by category, risk level, and time period. Identify patterns and improvement opportunities.',
+  //     ),
+  //   ];
+
+  //   return Container(
+  //     width: 200,
+  //     margin: const EdgeInsets.only(right: 16, top: 8, bottom: 8),
+  //     child: LayoutBuilder(
+  //       builder: (context, constraints) {
+  //         final availableHeight = constraints.maxHeight;
+  //         final itemCount = quickActions.length;
+  //         final itemHeight = availableHeight / itemCount;
+
+  //         return SingleChildScrollView(
+  //           child: Column(
+  //             children: [
+  //               for (int index = 0; index < itemCount; index++)
+  //                 SizedBox(
+  //                   height: itemHeight,
+  //                   child: Padding(
+  //                     padding: const EdgeInsets.symmetric(
+  //                         horizontal: 8, vertical: 6),
+  //                     child: _buildQuickActionCard(
+  //                             quickActions[index], themeController, context, controller)
+  //                         .animate(delay: (index * 100).ms)
+  //                         .fadeIn(duration: 500.ms)
+  //                         .slideY(begin: 0.2, end: 0),
+  //                   ),
+  //                 ),
+  //             ],
+  //           ),
+  //         );
+  //       },
+  //     ),
+  //   );
+  // }
+
+  // /// Build quick action card
+  // Widget _buildQuickActionCard(
+  //   QuickActionItem action,
+  //   ThemeController themeController,
+  //   BuildContext context,
+  //   AiController controller,
+  // ) {
+  //   final isDark = Theme.of(context).brightness == Brightness.dark;
+    
+  //   return Material(
+  //     color: Colors.transparent,
+  //     child: InkWell(
+  //       onTap: () => controller.sendQuickActionMessage(action.message),
+  //       borderRadius: BorderRadius.circular(16),
+  //       child: Container(
+  //         padding: const EdgeInsets.symmetric(horizontal: 10),
+  //         decoration: BoxDecoration(
+  //           borderRadius: BorderRadius.circular(16),
+  //           gradient: LinearGradient(
+  //             begin: Alignment.topLeft,
+  //             end: Alignment.bottomRight,
+  //             colors: [
+  //               themeController.getThemeData().primaryColor.withOpacity(0.1),
+  //               themeController.getThemeData().primaryColor.withOpacity(0.05),
+  //             ],
+  //           ),
+  //           border: Border.all(
+  //             color: themeController.getThemeData().primaryColor.withOpacity(0.3),
+  //             width: 1.5,
+  //           ),
+  //           boxShadow: [
+  //             BoxShadow(
+  //               color: themeController.getThemeData().primaryColor.withOpacity(0.1),
+  //               blurRadius: 8,
+  //               spreadRadius: 1,
+  //             ),
+  //           ],
+  //         ),
+  //         child: Column(
+  //           crossAxisAlignment: CrossAxisAlignment.start,
+  //           mainAxisAlignment: MainAxisAlignment.center,
+  //           children: [
+  //             Row(
+  //               children: [
+  //                 Text(
+  //                   action.icon,
+  //                   style: const TextStyle(fontSize: 15),
+  //                 ),
+  //                 const SizedBox(width: 6),
+  //                 Expanded(
+  //                   child: Text(
+  //                     action.category,
+  //                     style: Theme.of(context).textTheme.labelSmall?.copyWith(
+  //                       color: themeController.getThemeData().primaryColor,
+  //                       fontWeight: FontWeight.w700,
+  //                       fontSize: 14,
+  //                     ),
+  //                   ),
+  //                 ),
+  //               ],
+  //             ),
+  //             const SizedBox(height: 8),
+  //             Text(
+  //               action.title,
+  //               style: Theme.of(context).textTheme.labelMedium?.copyWith(
+  //                 fontWeight: FontWeight.w900,
+  //                 fontSize: 13,
+  //                 height: 1.3,
+  //                 color: isDark ? Colors.white : Colors.black87,
+  //               ),
+  //               maxLines: 4,
+  //               overflow: TextOverflow.ellipsis,
+  //             ),
+  //           ],
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
 
   /// Build chat input
   Widget _buildChatInput(
@@ -616,6 +781,8 @@ Widget _buildMessageContent(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           _buildVoiceButton(themeController),
+          const SizedBox(width: 12),
+          _buildPdfUploadButton(themeController, controller),
           const SizedBox(width: 12),
           Expanded(
             child: _buildTextInput(context, themeController, controller),
@@ -664,6 +831,43 @@ Widget _buildMessageContent(
     );
   }
 
+  /// Build PDF Upload Button
+  Widget _buildPdfUploadButton(ThemeController themeController, AiController controller) {
+    return Obx(() => Container(
+      width: 48,
+      height: 48,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        gradient: controller.isUploadingPdf.value
+            ? LinearGradient(
+                colors: [Colors.grey.shade400, Colors.grey.shade600],
+              )
+            : themeController.getPrimaryGradient(),
+        boxShadow: [
+          BoxShadow(
+            color: themeController.getThemeData().primaryColor.withOpacity(0.3),
+            blurRadius: 12,
+            spreadRadius: 2,
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: controller.isUploadingPdf.value ? null : controller.handlePdfUpload,
+          borderRadius: BorderRadius.circular(12),
+          child: Icon(
+            controller.isUploadingPdf.value
+                ? Icons.hourglass_empty_rounded
+                : Icons.add_circle_outline_rounded,
+            color: Colors.white,
+            size: 20,
+          ),
+        ),
+      ),
+    ));
+  }
+
   /// Build text input
   Widget _buildTextInput(
     BuildContext context, 
@@ -688,7 +892,7 @@ Widget _buildMessageContent(
         maxLines: null,
         textInputAction: TextInputAction.newline,
         decoration: InputDecoration(
-          hintText: 'Ask Finaxis AI about your customers...',
+          hintText: 'Ask Finaxis AI about your customers or documents...',
           hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
             color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.5),
           ),

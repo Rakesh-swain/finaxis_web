@@ -35,7 +35,7 @@ class ConsentView extends GetView<ApplicantsController> {
         Tooltip(
           message: 'Add Consent',
           child: InkWell(
-            onTap: () => Get.to(() => const AddConsentPage()),
+            onTap: () => Get.toNamed('/add-consent'),
             borderRadius: BorderRadius.circular(12),
             child: Container(
               margin: const EdgeInsets.only(left: 8),
