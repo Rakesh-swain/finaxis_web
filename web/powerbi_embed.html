@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Power BI Embed (Dynamic Reports)</title>
+
+  <!-- Load MSAL and Power BI SDK -->
+  <script src="https://alcdn.msauth.net/browser/2.37.0/js/msal-browser.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/powerbi-client@2.23.1/dist/powerbi.min.js"></script>
+</head>
+<body>
+  <h3>Power BI Report Embed</h3>
+
+  <!-- Buttons for different reports -->
+  <button onclick="embedReport('46c6e5b0-e695-45ed-a5fa-c10701849cab')">Balance Analysis</button>
+  <button onclick="embedReport('743c5c51-16eb-4904-ac28-e64b396ccbca')">Transaction Analysis</button>
+  <button onclick="embedReport('d8bd547b-5e24-435f-bd37-62d0c4223133')">Expense</button>
+  <button onclick="embedReport('079cb597-4452-403c-b26b-124da4a8c25f')">Alarming Transactions</button>
+  <button onclick="embedReport('19acc25b-3cee-48f9-af8c-6f55dfc3ccda')">FOIR Distribution</button>
+  <button onclick="embedReport('01a4e87d-aafe-427e-9d71-965e20036e35')">Cashflow</button>
+
+  <div id="reportContainer" style="height:90vh;width:100%;border:1px solid #ccc;margin-top:1rem;"></div>
+
+<script>
+/** 🔹 Replace with your details **/
+const TENANT_ID = "ebc33efd-7258-4e11-8899-d85c565d0051";
+const CLIENT_ID = "783763bd-c12a-4cda-b9eb-b7f962806474";
+const WORKSPACE_ID = "e03bca69-7e6a-4b1c-91ee-9429f902e690";
+
+/** 🔹 MSAL Configuration **/
+const msalConfig = {
+  auth: {
+    clientId: CLIENT_ID,
+    authority: `https://login.microsoftonline.com/${TENANT_ID}`,
+    redirectUri: "http://localhost:5500/",
+  },
+  cache: {
+    cacheLocation: "localStorage",
+    storeAuthStateInCookie: false,
+  }
+};
+
+const msalInstance = new msal.PublicClientApplication(msalConfig);
+
+/** 🔹 Get Access Token **/
+async function getAccessToken() {
+  const tokenRequest = {
+    scopes: ["https://analysis.windows.net/powerbi/api/.default"],
+  };
+  let account = msalInstance.getAllAccounts()[0];
+
+  try {
+    if (account) {
+      const response = await msalInstance.acquireTokenSilent({ ...tokenRequest, account });
+      return response.accessToken;
+    }
+
+    const loginResponse = await msalInstance.loginPopup({ scopes: ["User.Read"] });
+    account = loginResponse.account;
+    const tokenResponse = await msalInstance.acquireTokenSilent({ ...tokenRequest, account });
+    return tokenResponse.accessToken;
+  } catch (error) {
+    console.warn("Token fetch failed, retrying login:", error);
+    const loginResponse = await msalInstance.loginPopup(tokenRequest);
+    const tokenResponse = await msalInstance.acquireTokenSilent({
+      ...tokenRequest,
+      account: loginResponse.account,
+    });
+    return tokenResponse.accessToken;
+  }
+}
+
+/** 🔹 Embed any report dynamically **/
+async function embedReport(reportId) {
+  try {
+    const accessToken = await getAccessToken();
+    console.log("✅ Access Token acquired");
+
+    const embedUrl = `https://app.powerbi.com/reportEmbed?reportId=${reportId}&groupId=${WORKSPACE_ID}`;
+    const models = window['powerbi-client'].models;
+
+    const embedConfig = {
+      type: 'report',
+      tokenType: models.TokenType.Aad,
+      accessToken: accessToken,
+      embedUrl: embedUrl,
+      settings: {
+        panes: {
+          filters: { visible: false },
+          pageNavigation: { visible: true }
+        }
+      }
+    };
+
+    const container = document.getElementById('reportContainer');
+    powerbi.reset(container); // Clear any previous report
+    powerbi.embed(container, embedConfig);
+
+  } catch (err) {
+    console.error("❌ Embed failed:", err);
+  }
+}
+</script>
+</body>
+</html>

@@ -99,7 +99,7 @@ class ConsentView extends GetView<ApplicantsController> {
                     child: DataTable(
                       columns: const [
                         DataColumn(label: Text('Applicant Name')),
-                         DataColumn(label: Text('CIF')),
+                         DataColumn(label: Text('Application No.')),
                         DataColumn(label: Text('Mobile Number')),
                         DataColumn(label: Text('Status')),
                         DataColumn(label: Text('Bank Name')),

@@ -1,3 +1,4 @@
+import 'package:finaxis_web/views/dashboard/date_picker.dart';
 import 'package:finaxis_web/widgets/animated_kpi_card.dart';
 import 'package:finaxis_web/widgets/responsive_layout.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +15,8 @@ import '../../widgets/futuristic_layout.dart';
 import '../../widgets/futuristic_sidebar.dart';
 import '../../widgets/futuristic_table.dart';
 
+enum DateFilterType { today, week, month, calendar }
+
 /// 🚀 Executive Dashboard - 2050 Style Premium Console
 class DashboardView extends GetView<DashboardController> {
   const DashboardView({super.key});
@@ -24,10 +27,9 @@ class DashboardView extends GetView<DashboardController> {
 
     return FuturisticLayout(
       selectedIndex: 1, // Dashboard index (AI Chat Hub=0, Dashboard=1)
-      pageTitle: 'Executive Console',
+      pageTitle: 'Good morning AHMED FALASI',
       headerActions: [
-        _buildQuickAIButton(context, themeController),
-        _buildThemeSelector(context, themeController),
+        _buildDateFilterSection(context, themeController),
       ],
       child: Obx(() {
         if (controller.isLoading.value) {
@@ -38,8 +40,10 @@ class DashboardView extends GetView<DashboardController> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // 🎯 Hero Section with Finaxis Branding
-              _buildHeroSection(context, themeController),
+              const SizedBox(height: 16),
+
+              // 📅 Date Filter Section
+              // _buildDateFilterSection(context, themeController),
 
               const SizedBox(height: 32),
 
@@ -53,11 +57,6 @@ class DashboardView extends GetView<DashboardController> {
 
               const SizedBox(height: 32),
 
-              // 🔍 AI Insights Carousel
-              // _buildAIInsightsCarousel(context, themeController),
-
-              // const SizedBox(height: 32),
-
               // 👥 Recent Applicants Grid (Futuristic)
               _buildRecentApplicants(context, themeController),
             ],
@@ -67,243 +66,510 @@ class DashboardView extends GetView<DashboardController> {
     );
   }
 
-  /// Build hero section with Finaxis branding
-  Widget _buildHeroSection(
-    BuildContext context,
-    ThemeController themeController,
-  ) {
-    return Container(
-      padding: const EdgeInsets.all(32),
-      child: Column(
-        children: [
-          // 🌟 Dynamic Finaxis Logo with Gradient
-          ShaderMask(
-                shaderCallback: (bounds) =>
-                    themeController.getPrimaryGradient().createShader(bounds),
-                child: Text(
-                  'FINAXIS',
-                  style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                    fontWeight: FontWeight.w900,
-                    color: Colors.white,
-                    letterSpacing: 4.0,
-                    fontSize: 35,
-                  ),
-                ),
-              )
-              .animate()
-              .fadeIn(duration: 800.ms, delay: 200.ms)
-              .slideY(begin: -0.3, end: 0)
-              .then()
-              .shimmer(duration: 2000.ms, delay: 1000.ms),
-
-          const SizedBox(height: 16),
-
-          // ✨ Animated Subtitle
-          SizedBox(
-            height: 40,
-            child: AnimatedTextKit(
-              animatedTexts: [
-                TypewriterAnimatedText(
-                  'Executive Financial Intelligence Platform',
-                  textStyle: Theme.of(context).textTheme.headlineSmall
-                      ?.copyWith(
-                        color: Theme.of(
-                          context,
-                        ).textTheme.bodyMedium?.color?.withOpacity(0.7),
-                        fontWeight: FontWeight.w500,
-                        letterSpacing: 1.2,
-                      ),
-                  speed: const Duration(milliseconds: 80),
-                ),
-                TypewriterAnimatedText(
-                  'AI-Powered Risk Analysis & Portfolio Management',
-                  textStyle: Theme.of(context).textTheme.headlineSmall
-                      ?.copyWith(
-                        color: Theme.of(
-                          context,
-                        ).textTheme.bodyMedium?.color?.withOpacity(0.7),
-                        fontWeight: FontWeight.w500,
-                        letterSpacing: 1.2,
-                      ),
-                  speed: const Duration(milliseconds: 80),
-                ),
-              ],
-              totalRepeatCount: 1,
-              pause: const Duration(seconds: 3),
-              displayFullTextOnTap: true,
-            ),
-          ).animate().fadeIn(duration: 1000.ms, delay: 1200.ms),
-
-          const SizedBox(height: 24),
-
-          // 🔍 Quick AI Chat Bar
-          _buildQuickChatBar(context, themeController),
-        ],
-      ),
-    );
-  }
-
-  /// Build quick AI chat integration
-  Widget _buildQuickChatBar(
-    BuildContext context,
-    ThemeController themeController,
-  ) {
-    return FuturisticCard(
-          width: 600,
-          height: 64,
-          padding: const EdgeInsets.all(8),
-          onTap: () => Get.toNamed('/ai-chat'),
-          child: Row(
-            children: [
-              Container(
-                width: 48,
-                height: 48,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  gradient: themeController.getPrimaryGradient(),
-                ),
-                child: const Icon(
-                  Icons.smart_toy_rounded,
-                  color: Colors.white,
-                  size: 24,
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Text(
-                  'Ask AI about your customer...',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: Theme.of(
-                      context,
-                    ).textTheme.bodyMedium?.color?.withOpacity(0.7),
-                  ),
-                ),
-              ),
-              Icon(
-                Icons.arrow_forward_rounded,
-                color: themeController.getThemeData().primaryColor,
-                size: 20,
-              ),
-            ],
-          ),
-        )
-        .animate()
-        .fadeIn(duration: 600.ms, delay: 1800.ms)
-        .slideY(begin: 0.3, end: 0);
-  }
-
-  /// Build executive metrics with floating cards
- Widget _buildExecutiveMetrics(
+  /// Build Date Filter Section
+Widget _buildDateFilterSection(
   BuildContext context,
   ThemeController themeController,
 ) {
   return Obx(() {
-    final dashboardData = controller.dashboardData.value;
+    final selectedFilter = controller.selectedDateFilter.value;
+    final fromDate = controller.fromDate.value;
+    final toDate = controller.toDate.value;
 
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final isLargeScreen = constraints.maxWidth > 1200;
-        // final crossAxisCount = isLargeScreen ? 3 : 2;
+    return Container(
+      // padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        // color: Theme.of(context).cardColor,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 🔹 Filter buttons row
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              ToggleButtons(
+                isSelected: [
+                  selectedFilter == DateFilterType.today,
+                  selectedFilter == DateFilterType.week,
+                  selectedFilter == DateFilterType.month,
+                  selectedFilter == DateFilterType.calendar,
+                ],
+                onPressed: (index) {
+                  final filterType = DateFilterType.values[index];
+                  controller.setDateFilter(filterType);
 
-        return GridView.count(
-          crossAxisCount: 3,
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          childAspectRatio: 2,
-          crossAxisSpacing: 24,
-          mainAxisSpacing: 24,
-          children: [
-            // 1️⃣ Active Customers (30 Days)
-            _buildFloatingMetricCard(
-              'Active Customers (30 Days)',
-              '${dashboardData?.kpis.activeCustomers ?? 0}',
-              Icons.people_alt_rounded,
-              LinearGradient(
-                colors: [Colors.blue.shade400, Colors.blue.shade700],
+                  if (filterType == DateFilterType.calendar) {
+                    _showCalendarPicker(context);
+                  }
+                },
+                borderRadius: BorderRadius.circular(12),
+                selectedColor: Colors.white,
+                fillColor: themeController.getThemeData().primaryColor,
+                color: themeController.getThemeData().primaryColor,
+                constraints: const BoxConstraints(
+                  minHeight: 36.0,
+                  minWidth: 70.0,
+                ),
+                children: const [
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 12),
+                    child: Text('Today'),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 12),
+                    child: Text('Week'),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 12),
+                    child: Text('Month'),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 12),
+                    child: Text('Calendar'),
+                  ),
+                ],
               ),
-              '+5.2%',
-              context,
-              themeController,
-              index: 0,
-            ),
+            ],
+          ),
 
-            // 2️⃣ Consents Granted (Total Active)
-            _buildFloatingMetricCard(
-              'Consents Granted (Active)',
-              '${dashboardData?.kpis.activeConsents ?? 0}',
-              Icons.verified_user_rounded,
-              LinearGradient(
-                colors: [Colors.green.shade400, Colors.green.shade600],
-              ),
-              '+8.3%',
-              context,
-              themeController,
-              index: 1,
-            ),
+          const SizedBox(height: 12),
 
-            // 3️⃣ Consents Expiring (Next 30 Days)
-            _buildFloatingMetricCard(
-              'Consents Expiring (Next 30 Days)',
-              '${dashboardData?.kpis.expiringConsents ?? 0}',
-              Icons.timer_rounded,
-              LinearGradient(
-                colors: [Colors.orange.shade400, Colors.deepOrange.shade600],
+          // 🔹 Compact From-To Row (aligned to right)
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              _buildDatePickerCard(
+                context,
+                themeController,
+                'From',
+                fromDate,
+                isEnabled: selectedFilter != DateFilterType.today,
+                onTap: selectedFilter != DateFilterType.today
+                    ? () => _showDatePicker(context, true)
+                    : null,
+                small: true, // custom flag for smaller size
               ),
-              'Upcoming',
-              context,
-              themeController,
-              index: 2,
-            ),
-
-            // 4️⃣ Total Transactions (Current Month)
-            _buildFloatingMetricCard(
-              'Total Transactions (Month)',
-              NumberFormat.compact().format(
-                dashboardData?.kpis.totalTransactions ?? 0,
+              const SizedBox(width: 10),
+              Icon(
+                Icons.arrow_forward,
+                color: themeController.getThemeData().primaryColor,
+                size: 20,
               ),
-              Icons.swap_horiz_rounded,
-              LinearGradient(
-                colors: [Colors.purple.shade400, Colors.deepPurple.shade600],
+              const SizedBox(width: 10),
+              _buildDatePickerCard(
+                context,
+                themeController,
+                'To',
+                toDate,
+                isEnabled: selectedFilter != DateFilterType.today,
+                onTap: selectedFilter != DateFilterType.today
+                    ? () => _showDatePicker(context, false)
+                    : null,
+                small: true,
               ),
-              '+12.1%',
-              context,
-              themeController,
-              index: 3,
-            ),
-
-            // 5️⃣ Failed Transactions (%) (Last 7 Days)
-            _buildFloatingMetricCard(
-              'Failed Transactions (7 Days)',
-              '${(dashboardData?.kpis.failedTxnPercent ?? 0).toStringAsFixed(1)}%',
-              Icons.error_outline_rounded,
-              LinearGradient(
-                colors: [Colors.redAccent.shade400, Colors.red.shade700],
-              ),
-              '-1.4%',
-              context,
-              themeController,
-              index: 4,
-            ),
-
-            // 6️⃣ Compliance / Risk Alerts (Open)
-            _buildFloatingMetricCard(
-              'Compliance / Risk Alerts (Open)',
-              '${dashboardData?.kpis.openAlerts ?? 0}',
-              Icons.warning_amber_rounded,
-              LinearGradient(
-                colors: [Colors.teal.shade400, Colors.teal.shade700],
-              ),
-              'Monitor',
-              context,
-              themeController,
-              index: 5,
-            ),
-          ],
-        );
-      },
+            ],
+          ),
+        ],
+      ),
     );
   });
 }
+
+
+  /// Build Date Picker Card
+  Widget _buildDatePickerCard(
+  BuildContext context,
+  ThemeController themeController,
+  String label,
+  DateTime date, {
+  bool isEnabled = true,
+  VoidCallback? onTap,
+  bool small = false, // new flag
+}) {
+  final textTheme = Theme.of(context).textTheme;
+
+  return GestureDetector(
+    onTap: isEnabled ? onTap : null,
+    child: Container(
+      padding: EdgeInsets.symmetric(
+        vertical: small ? 6 : 12,
+        horizontal: small ? 10 : 16,
+      ),
+      decoration: BoxDecoration(
+        color: isEnabled
+            ? Theme.of(context).cardColor
+            : Colors.grey.shade200,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(
+          color: themeController.getThemeData().primaryColor.withOpacity(0.3),
+        ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            Icons.calendar_today,
+            size: small ? 14 : 18,
+            color: themeController.getThemeData().primaryColor,
+          ),
+          const SizedBox(width: 6),
+          Text(
+            '${label}: ${DateFormat('dd MMM').format(date)}',
+            style: textTheme.bodyMedium?.copyWith(
+              fontSize: small ? 13 : 15,
+              color: isEnabled
+                  ? themeController.getThemeData().primaryColor
+                  : Colors.grey,
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
+
+  /// Show Date Picker
+  Future<void> _showDatePicker(BuildContext context, bool isFromDate) async {
+    final selectedFilter = controller.selectedDateFilter.value;
+    final currentDate = isFromDate ? controller.fromDate.value : controller.toDate.value;
+    
+    DateTime? firstDate;
+    DateTime? lastDate;
+    
+    // Set constraints based on filter type
+    if (selectedFilter == DateFilterType.week) {
+      // For week, limit to 7 days range
+      if (isFromDate) {
+        firstDate = DateTime(2020);
+        lastDate = controller.toDate.value.subtract(const Duration(days: 1));
+      } else {
+        firstDate = controller.fromDate.value.add(const Duration(days: 1));
+        lastDate = controller.fromDate.value.add(const Duration(days: 7));
+      }
+    } else {
+      firstDate = DateTime(2020);
+      lastDate = DateTime.now().add(const Duration(days: 365));
+    }
+    
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: currentDate,
+      firstDate: firstDate,
+      lastDate: lastDate,
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: ColorScheme.light(
+              primary: Get.find<ThemeController>().getThemeData().primaryColor,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+    
+    if (picked != null) {
+      if (isFromDate) {
+        controller.setFromDate(picked);
+        
+        // Auto-adjust toDate for week filter
+        if (selectedFilter == DateFilterType.week) {
+          final newToDate = picked.add(const Duration(days: 6));
+          if (newToDate.isAfter(DateTime.now())) {
+            controller.setToDate(DateTime.now());
+          } else {
+            controller.setToDate(newToDate);
+          }
+        }
+      } else {
+        controller.setToDate(picked);
+      }
+      
+      controller.fetchDashboardData();
+    }
+  }
+
+  /// Show Calendar Range Picker
+ Future<void> _showCalendarPicker(BuildContext context) async {
+  final theme = Get.find<ThemeController>().getThemeData();
+
+  // Use Flutter's built-in date range picker wrapped in a Dialog
+  final DateTimeRange? picked = await showDateRangePicker(
+    context: context,
+    firstDate: DateTime(2020),
+    lastDate: DateTime.now().add(const Duration(days: 365)),
+    initialDateRange: DateTimeRange(
+      start: controller.fromDate.value,
+      end: controller.toDate.value,
+    ),
+    builder: (context, child) {
+      return Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        insetPadding: const EdgeInsets.all(20),
+        child: Container(
+          constraints: const BoxConstraints(
+            maxWidth: 450,
+            maxHeight: 600,
+          ),
+          child: Theme(
+            data: Theme.of(context).copyWith(
+              colorScheme: ColorScheme.light(
+                primary: theme.primaryColor,
+                onPrimary: Colors.white,
+                onSurface: theme.textTheme.bodyLarge?.color ?? Colors.black,
+              ),
+              dialogTheme: DialogThemeData(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+              ),
+            ),
+            child: child!,
+          ),
+        ),
+      );
+    },
+  );
+
+  // Update dates if user selected a range
+  if (picked != null) {
+    controller.setFromDate(picked.start);
+    controller.setToDate(picked.end);
+    controller.fetchDashboardData();
+  }
+}
+
+
+
+
+
+  /// Build executive metrics with floating cards
+  Widget _buildExecutiveMetrics(
+    BuildContext context,
+    ThemeController themeController,
+  ) {
+    return Obx(() {
+      final dashboardData = controller.dashboardData.value;
+      final selectedFilter = controller.selectedDateFilter.value;
+      
+      // Define cards based on filter type
+      List<Widget> cards = [];
+      
+      if (selectedFilter == DateFilterType.today) {
+        // Show only 3 cards for Today
+        cards = [
+          _buildFloatingMetricCard(
+            'Total Consent Requests (Today)',
+            '${dashboardData?.kpis.activeCustomers ?? 0}',
+            Icons.people_alt_rounded,
+            LinearGradient(
+              colors: [Colors.blue.shade400, Colors.blue.shade700],
+            ),
+            '+5.2%',
+            context,
+            themeController,
+            index: 0,
+          ),
+          _buildFloatingMetricCard(
+            'Consents Granted (Today)',
+            '${dashboardData?.kpis.activeConsents ?? 0}',
+            Icons.verified_user_rounded,
+            LinearGradient(
+              colors: [Colors.green.shade400, Colors.green.shade600],
+            ),
+            '+8.3%',
+            context,
+            themeController,
+            index: 1,
+          ),
+          _buildFloatingMetricCard(
+            'Consents Pending (Today)',
+            '${dashboardData?.kpis.expiringConsents ?? 0}',
+            Icons.timer_rounded,
+            LinearGradient(
+              colors: [Colors.orange.shade400, Colors.deepOrange.shade600],
+            ),
+            '0%',
+            context,
+            themeController,
+            index: 2,
+          ),
+        ];
+      } else if (selectedFilter == DateFilterType.week) {
+        // Show all 6 cards for Week
+        cards = [
+          _buildFloatingMetricCard(
+            'Total Consent Requests (Week)',
+            '${dashboardData?.kpis.activeCustomers ?? 0}',
+            Icons.people_alt_rounded,
+            LinearGradient(
+              colors: [Colors.blue.shade400, Colors.blue.shade700],
+            ),
+            '+5.2%',
+            context,
+            themeController,
+            index: 0,
+          ),
+          _buildFloatingMetricCard(
+            'Consents Granted (Week)',
+            '${dashboardData?.kpis.activeConsents ?? 0}',
+            Icons.verified_user_rounded,
+            LinearGradient(
+              colors: [Colors.green.shade400, Colors.green.shade600],
+            ),
+            '+8.3%',
+            context,
+            themeController,
+            index: 1,
+          ),
+          _buildFloatingMetricCard(
+            'Consents Pending (Week)',
+            '${dashboardData?.kpis.expiringConsents ?? 0}',
+            Icons.timer_rounded,
+            LinearGradient(
+              colors: [Colors.orange.shade400, Colors.deepOrange.shade600],
+            ),
+            '0%',
+            context,
+            themeController,
+            index: 2,
+          ),
+          _buildFloatingMetricCard(
+            'Total Loans Approved (Week)',
+            'AED ${dashboardData?.kpis.totalTransactions.toString()}' ?? 'AED 0',
+            Icons.swap_horiz_rounded,
+            LinearGradient(
+              colors: [Colors.purple.shade400, Colors.deepPurple.shade600],
+            ),
+            '+12.1%',
+            context,
+            themeController,
+            index: 3,
+          ),
+          _buildFloatingMetricCard(
+            'Total Amount Sanctioned (Week)',
+              'AED ${dashboardData?.kpis.totalTransactions.toString()}' ?? 'AED 0',
+            Icons.error_outline_rounded,
+            LinearGradient(
+              colors: [Colors.teal.shade400, Colors.teal.shade700],
+            ),
+            '-1.4%',
+            context,
+            themeController,
+            index: 4,
+          ),
+          _buildFloatingMetricCard(
+            'Risk Alerts (Week)',
+            '${dashboardData?.kpis.openAlerts ?? 0}',
+            Icons.warning_amber_rounded,
+            LinearGradient(
+              colors: [Colors.redAccent.shade400, Colors.red.shade700],
+            ),
+            'Monitor',
+            context,
+            themeController,
+            index: 5,
+          ),
+        ];
+      } else {
+        // Show all 6 cards for Month and Calendar
+        cards = [
+          _buildFloatingMetricCard(
+            'Total Consent Requests (30 Days)',
+            '${dashboardData?.kpis.activeCustomers ?? 0}',
+            Icons.people_alt_rounded,
+            LinearGradient(
+              colors: [Colors.blue.shade400, Colors.blue.shade700],
+            ),
+            '+5.2%',
+            context,
+            themeController,
+            index: 0,
+          ),
+          _buildFloatingMetricCard(
+            'Consents Granted (Total Active)',
+            '${dashboardData?.kpis.activeConsents ?? 0}',
+            Icons.verified_user_rounded,
+            LinearGradient(
+              colors: [Colors.green.shade400, Colors.green.shade600],
+            ),
+            '+8.3%',
+            context,
+            themeController,
+            index: 1,
+          ),
+          _buildFloatingMetricCard(
+            'Consents Pending Action',
+            '${dashboardData?.kpis.expiringConsents ?? 0}',
+            Icons.timer_rounded,
+            LinearGradient(
+              colors: [Colors.orange.shade400, Colors.deepOrange.shade600],
+            ),
+            '0%',
+            context,
+            themeController,
+            index: 2,
+          ),
+          _buildFloatingMetricCard(
+            'Total Loans Approved (Current Month)',
+             'AED ${dashboardData?.kpis.totalTransactions.toString()}' ?? 'AED 0',
+            Icons.swap_horiz_rounded,
+            LinearGradient(
+              colors: [Colors.purple.shade400, Colors.deepPurple.shade600],
+            ),
+            '+12.1%',
+            context,
+            themeController,
+            index: 3,
+          ),
+          _buildFloatingMetricCard(
+            'Total Amount Sanctioned',
+           'AED ${dashboardData?.kpis.totalTransactions.toString()}' ?? 'AED 0',
+            Icons.error_outline_rounded,
+            LinearGradient(
+              colors: [Colors.teal.shade400, Colors.teal.shade700],
+            ),
+            '-1.4%',
+            context,
+            themeController,
+            index: 4,
+          ),
+          _buildFloatingMetricCard(
+            'Risk Alerts',
+            '${dashboardData?.kpis.openAlerts ?? 0}',
+            Icons.warning_amber_rounded,
+            LinearGradient(
+              colors: [Colors.redAccent.shade400, Colors.red.shade700],
+            ),
+            'Monitor',
+            context,
+            themeController,
+            index: 5,
+          ),
+        ];
+      }
+
+      return GridView.count(
+        crossAxisCount: 3,
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        childAspectRatio: 1.9,
+        crossAxisSpacing: 24,
+        mainAxisSpacing: 24,
+        children: cards,
+      );
+    });
+  }
 
   /// Build floating metric card with animations
   Widget _buildFloatingMetricCard(
@@ -317,7 +583,7 @@ class DashboardView extends GetView<DashboardController> {
     required int index,
   }) {
     return FuturisticCard(
-          height: 100,
+          height: 120,
           isElevated: true,
           gradient: gradient,
           child: Column(
@@ -332,7 +598,7 @@ class DashboardView extends GetView<DashboardController> {
                       borderRadius: BorderRadius.circular(12),
                       color: Colors.white.withOpacity(0.2),
                     ),
-                    child: Icon(icon, color: Colors.white, size: 24),
+                    child: Icon(icon, color: Colors.white, size: 20),
                   ),
                   Container(
                     padding: const EdgeInsets.symmetric(
@@ -368,8 +634,8 @@ class DashboardView extends GetView<DashboardController> {
                 value,
                 style: const TextStyle(
                   color: Colors.white,
-                  fontSize: 25,
-                  fontWeight: FontWeight.w700,
+                  fontSize: 23,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
             ],
@@ -390,11 +656,10 @@ class DashboardView extends GetView<DashboardController> {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Portfolio Donut Chart
         Expanded(child: _buildPortfolioChart(context, themeController)),
         const SizedBox(width: 24),
-        // Pipeline Funnel
-        Expanded(child: _buildPipelineFunnel(context, themeController)),
+        Expanded(child: Container())
+        // Expanded(child: _buildPipelineFunnel(context, themeController)),
       ],
     );
   }
@@ -429,7 +694,7 @@ class DashboardView extends GetView<DashboardController> {
                   child: PieChart(
                     PieChartData(
                       sectionsSpace: 4,
-                      centerSpaceRadius: 70,
+                      centerSpaceRadius: 60,
                       sections: [
                         PieChartSectionData(
                           color: AppTheme.ragGreen,
@@ -535,7 +800,6 @@ class DashboardView extends GetView<DashboardController> {
                         showTitles: true,
                         reservedSize: 40,
                         getTitlesWidget: (value, meta) {
-                          // Show only integer labels on Y-axis
                           if (value % 1 == 0) {
                             return Text(
                               value.toInt().toString(),
@@ -573,9 +837,9 @@ class DashboardView extends GetView<DashboardController> {
                     ),
                   ),
                   gridData: FlGridData(
-                    show: false, // ✅ enable grid lines
-                    drawVerticalLine: false, // only horizontal grid lines
-                    horizontalInterval: 5, // adjust based on your data scale
+                    show: false,
+                    drawVerticalLine: false,
+                    horizontalInterval: 5,
                   ),
                   borderData: FlBorderData(
                     show: true,
@@ -607,114 +871,6 @@ class DashboardView extends GetView<DashboardController> {
         Text(
           '$label ($value)',
           style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
-        ),
-      ],
-    );
-  }
-
-  /// Build AI insights carousel
-  Widget _buildAIInsightsCarousel(
-    BuildContext context,
-    ThemeController themeController,
-  ) {
-    final insights = [
-      {
-        'title': '🎯 Portfolio Optimization',
-        'description':
-            'Consider diversifying high-risk assets by 15% to improve overall portfolio stability',
-        'action': 'View Recommendations',
-      },
-      {
-        'title': '📈 Growth Opportunity',
-        'description':
-            'Emerging market trends suggest potential 8.5% growth in renewable energy loans',
-        'action': 'Explore Trends',
-      },
-      {
-        'title': '⚠️ Risk Alert',
-        'description':
-            '3 applicants require immediate attention due to credit score fluctuations',
-        'action': 'Review Alerts',
-      },
-    ];
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          '🔮 AI-Powered Insights',
-          style: Theme.of(
-            context,
-          ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w700),
-        ),
-        const SizedBox(height: 16),
-        SizedBox(
-          height: 180,
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemCount: insights.length,
-            itemBuilder: (context, index) {
-              final insight = insights[index];
-              return Container(
-                    width: 320,
-                    margin: const EdgeInsets.only(right: 16),
-                    child: FuturisticCard(
-                      gradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: [
-                          themeController
-                              .getThemeData()
-                              .primaryColor
-                              .withOpacity(0.1),
-                          themeController
-                              .getThemeData()
-                              .primaryColor
-                              .withOpacity(0.05),
-                        ],
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            insight['title']!,
-                            style: Theme.of(context).textTheme.titleMedium
-                                ?.copyWith(fontWeight: FontWeight.w600),
-                          ),
-                          const SizedBox(height: 12),
-                          Expanded(
-                            child: Text(
-                              insight['description']!,
-                              style: Theme.of(
-                                context,
-                              ).textTheme.bodyMedium?.copyWith(height: 1.4),
-                            ),
-                          ),
-                          const SizedBox(height: 16),
-                          SizedBox(
-                            width: double.infinity,
-                            child: ElevatedButton(
-                              onPressed: () {},
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: themeController
-                                    .getThemeData()
-                                    .primaryColor,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                              ),
-                              child: Text(insight['action']!),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  )
-                  .animate(delay: (index * 300).ms)
-                  .fadeIn(duration: 600.ms)
-                  .slideX(begin: 0.3, end: 0);
-            },
-          ),
         ),
       ],
     );
@@ -760,39 +916,26 @@ class DashboardView extends GetView<DashboardController> {
               () => FuturisticTable(
                 columns: [
                   const FuturisticTableColumn(
-                    title: 'CIF',
-                    // icon: Icons.fingerprint_rounded,
-                    flex: 1,
+                    title: 'Application No.',
                   ),
                   const FuturisticTableColumn(
                     title: 'Name',
-                    // icon: Icons.person_rounded,
-                    flex: 2,
                   ),
                   const FuturisticTableColumn(
-                    title: 'Credit Score',
-                    // icon: Icons.star_rounded,
-                    flex: 1,
+                    title: 'AECB Score',
                   ),
                   const FuturisticTableColumn(
-                    title: 'Risk Score',
-                    // icon: Icons.star_rounded,
-                    flex: 1,
+                    title: 'Finaxis Credit Score',
                   ),
                   const FuturisticTableColumn(
                     title: 'Risk Status',
-                    // icon: Icons.security_rounded,
-                    flex: 1,
                   ),
                   const FuturisticTableColumn(
                     title: 'Bank',
-                    // icon: Icons.account_balance_rounded,
-                    flex: 2,
                   ),
                   const FuturisticTableColumn(
-                    title: 'Action',
+                    title: '',
                     sortable: false,
-                    flex: 1,
                   ),
                 ],
                 rows: applicants
@@ -811,7 +954,6 @@ class DashboardView extends GetView<DashboardController> {
                                       horizontal: 8,
                                       vertical: 4,
                                     ),
-
                                     child: Text(
                                       applicant.creditScore.toString() == '0'
                                           ? '_'
@@ -853,7 +995,6 @@ class DashboardView extends GetView<DashboardController> {
                                       horizontal: 8,
                                       vertical: 4,
                                     ),
-
                                     child: Text(
                                       applicant.riskScore.toString() == '0'
                                           ? '_'
@@ -962,7 +1103,6 @@ class DashboardView extends GetView<DashboardController> {
                                       horizontal: 8,
                                       vertical: 4,
                                     ),
-
                                     child: Text(
                                       applicant.bankName.toString() == ''
                                           ? '_'
@@ -1000,7 +1140,7 @@ class DashboardView extends GetView<DashboardController> {
                                 : 'Open',
                             widget: ElevatedButton.icon(
                               onPressed: (applicant.mobile?.isEmpty ?? true)
-                                  ? null // disable button if mobile is empty
+                                  ? null
                                   : () => controller.navigateToApplicantDetail(
                                       applicant.cif,
                                     ),
@@ -1097,117 +1237,54 @@ class DashboardView extends GetView<DashboardController> {
       ],
     );
   }
+}
 
-  /// Build quick AI button
-  Widget _buildQuickAIButton(
-    BuildContext context,
-    ThemeController themeController,
-  ) {
-    return Container(
-      decoration: BoxDecoration(
-        gradient: themeController.getPrimaryGradient(),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: IconButton(
-        onPressed: () => Get.toNamed('/ai-chat'),
-        icon: const Icon(Icons.smart_toy_rounded, color: Colors.white),
-        tooltip: 'Ask AI',
-      ),
-    );
-  }
+// Custom FuturisticCard Widget (if not already defined in your project)
+class FuturisticCard extends StatelessWidget {
+  final Widget child;
+  final double? width;
+  final double? height;
+  final EdgeInsetsGeometry? padding;
+  final bool isElevated;
+  final LinearGradient? gradient;
+  final VoidCallback? onTap;
 
-  /// Build theme selector
-  Widget _buildThemeSelector(
-    BuildContext context,
-    ThemeController themeController,
-  ) {
-    return Obx(
-      () => PopupMenuButton<String>(
-        icon: Icon(
-          Icons.palette_rounded,
-          color: themeController.getThemeData().primaryColor,
-        ),
-        onSelected: (themeName) => themeController.switchTheme(themeName),
-        itemBuilder: (context) =>
-            [
-                  'Classic Light',
-                  'Emerald Luxe',
-                  'Royal Gold',
-                  'Aurora Green',
-                  'Cyber Violet',
-                ]
-                .map(
-                  (theme) => PopupMenuItem(
-                    value: theme,
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 16,
-                          height: 16,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(4),
-                            gradient: _getThemeGradient(theme),
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Text(theme),
-                      ],
-                    ),
+  const FuturisticCard({
+    Key? key,
+    required this.child,
+    this.width,
+    this.height,
+    this.padding,
+    this.isElevated = false,
+    this.gradient,
+    this.onTap,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(16),
+      child: Container(
+        width: width,
+        height: height,
+        padding: padding ?? const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          gradient: gradient,
+          color: gradient == null ? Theme.of(context).cardColor : null,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: isElevated
+              ? [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 20,
+                    offset: const Offset(0, 10),
                   ),
-                )
-                .toList(),
+                ]
+              : null,
+        ),
+        child: child,
       ),
     );
   }
-
-  /// Get theme gradient preview
-  LinearGradient _getThemeGradient(String theme) {
-    switch (theme) {
-      case 'Classic Light':
-        return const LinearGradient(
-          colors: [Color(0xFF1E3A8A), Color(0xFF3B82F6)],
-        );
-      case 'Emerald Luxe':
-        return const LinearGradient(
-          colors: [Color(0xFF0F766E), Color(0xFF10B981)],
-        );
-      case 'Royal Gold':
-        return const LinearGradient(
-          colors: [Color(0xFFD97706), Color(0xFFFBBF24)],
-        );
-      case 'Aurora Green':
-        return const LinearGradient(
-          colors: [Color(0xFF059669), Color(0xFF06B6D4)],
-        );
-      case 'Cyber Violet':
-        return const LinearGradient(
-          colors: [Color(0xFF7C3AED), Color(0xFF8B5CF6)],
-        );
-      default:
-        return const LinearGradient(colors: [Colors.blue, Colors.blueAccent]);
-    }
-  }
-
-  // Widget _buildSidebar(BuildContext context) {
-  //   return FuturisticSidebar(
-  //     selectedIndex: 0,
-  //     onItemSelected: (index) {
-  //       switch (index) {
-  //         case 0:
-  //           if (Get.currentRoute != '/dashboard') Get.offNamed('/dashboard');
-  //           break;
-  //         case 1:
-  //           Get.offNamed('/consent');
-  //           break;
-  //         case 2:
-  //           Get.offNamed('/applicants');
-  //           break;
-  //       }
-  //     },
-  //   );
-  // }
-
-
-  }
-
-
+}

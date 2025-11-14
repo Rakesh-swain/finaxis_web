@@ -1,37 +1,91 @@
 class ApplicantModel {
   final String cif;
   final String name;
+  final String dateOfBirth;
+  final String email;
+  final String pan;
+  final String ckycCompliance;
+  final String mobile;
+  final String bankName;
+  final String branch;
+  final String accountNumber;
+  final String accountType;
+  final String accountOpeningDate;
+  final double closingBalance;
+  final double averageQuarterlyBalanceLatest;
+  final double averageQuarterlyBalancePrevious;
+  final double odCcLimit;
+  final String loanType;
+  final String employmentType;
   final int creditScore;
   final double riskScore;
   final String ragStatus;
-  final String bankName;
-  final String email;
-  final String mobile;
   final DateTime lastUpdated;
 
   ApplicantModel({
     required this.cif,
     required this.name,
+    required this.dateOfBirth,
+    required this.email,
+    required this.pan,
+    required this.ckycCompliance,
+    required this.mobile,
+    required this.bankName,
+    required this.branch,
+    required this.accountNumber,
+    required this.accountType,
+    required this.accountOpeningDate,
+    required this.closingBalance,
+    required this.averageQuarterlyBalanceLatest,
+    required this.averageQuarterlyBalancePrevious,
+    required this.odCcLimit,
+    required this.loanType,
+    required this.employmentType,
     required this.creditScore,
     required this.riskScore,
     required this.ragStatus,
-    required this.bankName,
-    required this.email,
-    required this.mobile,
     required this.lastUpdated,
   });
 
   factory ApplicantModel.fromJson(Map<String, dynamic> json) {
     return ApplicantModel(
-      cif: json['cif'],
-      name: json['name'],
-      creditScore: json['creditScore'],
-      riskScore: json['riskScore'].toDouble(),
-      ragStatus: json['ragStatus'],
-      bankName: json['bankName'],
-      email: json['email'],
-      mobile: json['mobile'],
-      lastUpdated: DateTime.parse(json['lastUpdated']),
+      cif: json['cif'] ?? '',
+      name: json['name'] ?? '',
+      dateOfBirth: json['dateOfBirth'] ?? '',
+      email: json['email'] ?? '',
+      pan: json['pan'] ?? '',
+      ckycCompliance: json['ckycCompliance'] ?? '',
+      mobile: json['mobile'] ?? '',
+      bankName: json['bankName'] ?? '',
+      branch: json['branch'] ?? '',
+      accountNumber: json['accountNumber'] ?? '',
+      accountType: json['accountType'] ?? '',
+      accountOpeningDate: json['accountOpeningDate'] ?? '',
+      closingBalance: (json['closingBalance'] is num)
+          ? json['closingBalance'].toDouble()
+          : double.tryParse(json['closingBalance'] ?? '0') ?? 0,
+      averageQuarterlyBalanceLatest:
+          (json['averageQuarterlyBalanceLatest'] is num)
+              ? json['averageQuarterlyBalanceLatest'].toDouble()
+              : double.tryParse(json['averageQuarterlyBalanceLatest'] ?? '0') ??
+                  0,
+      averageQuarterlyBalancePrevious:
+          (json['averageQuarterlyBalancePrevious'] is num)
+              ? json['averageQuarterlyBalancePrevious'].toDouble()
+              : double.tryParse(json['averageQuarterlyBalancePrevious'] ?? '0') ??
+                  0,
+      odCcLimit: (json['odCcLimit'] is num)
+          ? json['odCcLimit'].toDouble()
+          : double.tryParse(json['odCcLimit'] ?? '0') ?? 0,
+      loanType: json['loanType'] ?? '',
+      employmentType: json['employmentType'] ?? '',
+      creditScore: json['creditScore'] ?? 0,
+      riskScore: (json['riskScore'] is num)
+          ? json['riskScore'].toDouble()
+          : double.tryParse(json['riskScore'] ?? '0') ?? 0,
+      ragStatus: json['ragStatus'] ?? '',
+      lastUpdated: DateTime.tryParse(json['lastUpdated'] ?? '') ??
+          DateTime.now(),
     );
   }
 
@@ -39,16 +93,30 @@ class ApplicantModel {
     return {
       'cif': cif,
       'name': name,
+      'dateOfBirth': dateOfBirth,
+      'email': email,
+      'pan': pan,
+      'ckycCompliance': ckycCompliance,
+      'mobile': mobile,
+      'bankName': bankName,
+      'branch': branch,
+      'accountNumber': accountNumber,
+      'accountType': accountType,
+      'accountOpeningDate': accountOpeningDate,
+      'closingBalance': closingBalance,
+      'averageQuarterlyBalanceLatest': averageQuarterlyBalanceLatest,
+      'averageQuarterlyBalancePrevious': averageQuarterlyBalancePrevious,
+      'odCcLimit': odCcLimit,
+      'loanType': loanType,
+      'employmentType': employmentType,
       'creditScore': creditScore,
       'riskScore': riskScore,
       'ragStatus': ragStatus,
-      'bankName': bankName,
-      'email': email,
-      'mobile': mobile,
       'lastUpdated': lastUpdated.toIso8601String(),
     };
   }
 }
+
 
 class ApplicantDetailModel {
   final ApplicantModel applicant;

@@ -2,9 +2,10 @@ import 'dart:math' as Math;
 import 'dart:typed_data';
 import 'dart:ui';
 import 'dart:html' as html;
-import 'package:finaxis_web/a.dart';
 import 'package:finaxis_web/score_card.dart';
 import 'package:finaxis_web/views/applicant/customer_ai_chatview.dart';
+import 'package:finaxis_web/views/applicant/spend_pattern_chart.dart';
+import 'package:finaxis_web/views/powerbi/powerbi_page.dart';
 import 'package:finaxis_web/widgets/futuristic_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -18,37 +19,40 @@ import '../../theme/app_theme.dart';
 /// Features floating tabs, glassmorphic design, and interactive animations
 class ApplicantDetailView extends GetView<ApplicantDetailController> {
   const ApplicantDetailView({super.key});
-Future<void> downloadAnalyticsPdf() async {
-  try {
-    // Load the PDF from assets
-    final ByteData data = await rootBundle.load('assets/analytics_report.pdf');
-    final Uint8List bytes = data.buffer.asUint8List();
+  Future<void> downloadAnalyticsPdf() async {
+    try {
+      // Load the PDF from assets
+      final ByteData data = await rootBundle.load(
+        'assets/analytics_report.pdf',
+      );
+      final Uint8List bytes = data.buffer.asUint8List();
 
-    // Create a Blob and URL
-    final blob = html.Blob([bytes], 'application/pdf');
-    final url = html.Url.createObjectUrlFromBlob(blob);
+      // Create a Blob and URL
+      final blob = html.Blob([bytes], 'application/pdf');
+      final url = html.Url.createObjectUrlFromBlob(blob);
 
-    // Create a hidden anchor element
-    final anchor = html.AnchorElement(href: url)
-      ..setAttribute('download', 'Finaxis_Analytics_Report.pdf')
-      ..click();
+      // Create a hidden anchor element
+      final anchor = html.AnchorElement(href: url)
+        ..setAttribute('download', 'Finaxis_Analytics_Report.pdf')
+        ..click();
 
-    // Revoke the temporary URL
-    html.Url.revokeObjectUrl(url);
+      // Revoke the temporary URL
+      html.Url.revokeObjectUrl(url);
 
-    Get.snackbar(
-      'Download Started',
-      'Your analytics report is being downloaded.',
-      snackPosition: SnackPosition.BOTTOM,
-    );
-  } catch (e) {
-    Get.snackbar(
-      'Download Failed',
-      'Could not download report: $e',
-      snackPosition: SnackPosition.BOTTOM,
-    );
+      Get.snackbar(
+        'Download Started',
+        'Your analytics report is being downloaded.',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    } catch (e) {
+      Get.snackbar(
+        'Download Failed',
+        'Could not download report: $e',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    }
   }
-}
+
   @override
   Widget build(BuildContext context) {
     final themeController = Get.find<ThemeController>();
@@ -154,43 +158,37 @@ Future<void> downloadAnalyticsPdf() async {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(32),
         gradient: _buildProfileGradient(themeController),
-        boxShadow: [
-          BoxShadow(
-            color: themeController.getThemeData().primaryColor.withOpacity(0.2),
-            blurRadius: 40,
-            spreadRadius: 4,
-            offset: const Offset(0, 20),
-          ),
-        ],
+        // boxShadow: [
+        //   BoxShadow(
+        //     color: themeController.getThemeData().primaryColor.withOpacity(0.2),
+        //     blurRadius: 40,
+        //     spreadRadius: 4,
+        //     offset: const Offset(0, 20),
+        //   ),
+        // ],
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(32),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-          child: Container(
-            decoration: BoxDecoration(
-              border: Border.all(
-                color: Colors.white.withOpacity(0.2),
-                width: 1,
+        child: Container(
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.white.withOpacity(0.2), width: 1),
+          ),
+          padding: const EdgeInsets.all(32),
+          child: Row(
+            children: [
+              // 🎭 Animated Avatar Section
+              _buildAnimatedAvatar(detail, themeController),
+
+              const SizedBox(width: 32),
+
+              // 📄 Profile Information
+              Expanded(
+                child: _buildProfileInfo(context, detail, themeController),
               ),
-            ),
-            padding: const EdgeInsets.all(32),
-            child: Row(
-              children: [
-                // 🎭 Animated Avatar Section
-                _buildAnimatedAvatar(detail, themeController),
 
-                const SizedBox(width: 32),
-
-                // 📄 Profile Information
-                Expanded(
-                  child: _buildProfileInfo(context, detail, themeController),
-                ),
-
-                // 📊 Floating Score Cards
-                _buildFloatingScoreCards(detail, themeController),
-              ],
-            ),
+              // 📊 Floating Score Cards
+              _buildFloatingScoreCards(detail, themeController),
+            ],
           ),
         ),
       ),
@@ -304,20 +302,26 @@ Future<void> downloadAnalyticsPdf() async {
                   .toList(),
         ),
         const SizedBox(height: 25),
-        _buildQuickChatBar(context, themeController,detail)
+        _buildQuickChatBar(context, themeController, detail),
       ],
     );
   }
- Widget _buildQuickChatBar(
+
+  Widget _buildQuickChatBar(
     BuildContext context,
     ThemeController themeController,
-    dynamic detail
+    dynamic detail,
   ) {
     return FuturisticCard(
           width: 600,
           height: 64,
           padding: const EdgeInsets.all(8),
-          onTap: () => Get.to(CustomerAiChatView(customerId: '', customerName: detail.applicant.name)),
+          onTap: () => Get.to(
+            CustomerAiChatView(
+              customerId: '',
+              customerName: detail.applicant.name,
+            ),
+          ),
           child: Row(
             children: [
               Container(
@@ -356,6 +360,7 @@ Future<void> downloadAnalyticsPdf() async {
         .fadeIn(duration: 600.ms, delay: 1800.ms)
         .slideY(begin: 0.3, end: 0);
   }
+
   /// 📊 Build floating score cards
   Widget _buildFloatingScoreCards(
     dynamic detail,
@@ -364,14 +369,14 @@ Future<void> downloadAnalyticsPdf() async {
     return Row(
       children: [
         _buildFloatingScoreCard(
-          'Credit Score',
+          'AECB Score',
           detail.applicant.creditScore.toString(),
-          Colors.green,
+          const Color.fromARGB(255, 161, 252, 202),
           themeController,
         ),
         const SizedBox(width: 16),
         _buildFloatingScoreCard(
-          'Risk Score',
+          'Finaxis Credit Score',
           detail.applicant.riskScore.toStringAsFixed(0),
           Colors.amber,
           themeController,
@@ -384,11 +389,11 @@ Future<void> downloadAnalyticsPdf() async {
   Widget _buildFloatingScoreCard(
     String title,
     String value,
-    MaterialColor color,
+    Color color,
     ThemeController themeController,
   ) {
     return Container(
-          width: 120,
+          // width: 120,
           height: 100,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20),
@@ -396,8 +401,8 @@ Future<void> downloadAnalyticsPdf() async {
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                const Color.fromARGB(255, 3, 3, 3).withOpacity(0.15),
-                const Color.fromARGB(255, 20, 20, 20).withOpacity(0.05),
+                const Color.fromARGB(255, 247, 246, 246).withOpacity(0.15),
+                const Color.fromARGB(255, 253, 253, 253).withOpacity(0.05),
               ],
             ),
             border: Border.all(color: Colors.white.withOpacity(0.2), width: 1),
@@ -429,8 +434,8 @@ Future<void> downloadAnalyticsPdf() async {
                   Text(
                     title,
                     style: const TextStyle(
-                      fontSize: 12,
-                      color: Colors.white70,
+                      fontSize: 14,
+                      color: Colors.white,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -603,7 +608,6 @@ Future<void> downloadAnalyticsPdf() async {
   }
 
   /// 📑 Build tab content pages with book-open styling & smooth transitions
- 
 
   /// 📖 Build animated page transition with book-opening effects
   Widget _buildAnimatedPageTransition(
@@ -729,9 +733,9 @@ Future<void> downloadAnalyticsPdf() async {
       colors: [
         themeController.getThemeData().primaryColor,
         themeController.getThemeData().primaryColor.withOpacity(0.8),
-        themeController.getThemeData().colorScheme.secondary.withOpacity(0.6),
+        // themeController.getThemeData().colorScheme.secondary.withOpacity(0.6),
       ],
-      stops: const [0.0, 0.7, 1.0],
+      stops: const [0.0, 1.0],
     );
   }
 
@@ -952,16 +956,31 @@ Future<void> downloadAnalyticsPdf() async {
 
   // Tab: General
   Widget _buildGeneralTab(detail) {
-    final cif = (detail.applicant.cif ?? '').toString();
-    final name = (detail.applicant.name ?? '').toString().toUpperCase();
-    // Some models may not have customerType; derive or fallback to UNKNOWN
+    final applicant = detail.applicant;
+
+    final cif = (applicant.cif ?? '').toString();
+    final name = (applicant.name ?? '').toString().toUpperCase();
     final custType = 'SINGLE';
-    final rag = (detail.applicant.ragStatus ?? 'LOW').toString();
-    final risk = (detail.applicant.riskScore ?? 0).toDouble().clamp(0, 100);
-    final credit = (detail.applicant.creditScore ?? 0).toDouble().clamp(
-      300,
-      900,
-    );
+    final rag = (applicant.ragStatus ?? 'LOW').toString();
+    final risk = (applicant.riskScore ?? 0).toDouble().clamp(0, 100);
+    final credit = (applicant.creditScore ?? 0).toDouble().clamp(300, 900);
+    final dob = (applicant.dateOfBirth ?? '').toString();
+    final email = (applicant.email ?? '').toString();
+    final mobile = (applicant.mobile ?? '').toString();
+    final bank = (applicant.bankName ?? '').toString();
+    final branch = (applicant.branch ?? '').toString();
+    final accountNo = (applicant.accountNumber ?? '').toString();
+    final accountType = (applicant.accountType ?? '').toString();
+    final accountOpenDate = (applicant.accountOpeningDate ?? '').toString();
+    final closingBal = (applicant.closingBalance ?? '').toString();
+    final avgBalLatest = (applicant.averageQuarterlyBalanceLatest ?? '')
+        .toString();
+    final avgBalPrev = (applicant.averageQuarterlyBalancePrevious ?? '')
+        .toString();
+    final odCcLimit = (applicant.odCcLimit ?? '').toString();
+    final loanType = (applicant.loanType ?? '').toString();
+    final employmentType = (applicant.employmentType ?? '').toString();
+    final ckyc = (applicant.ckycCompliance ?? '').toString();
 
     String riskCategoryFromRag(String r) {
       switch (r.toUpperCase()) {
@@ -974,15 +993,17 @@ Future<void> downloadAnalyticsPdf() async {
       }
     }
 
+    final riskCategory = riskCategoryFromRag(rag);
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [ 
-          // Top info cards row
+        children: [
+          // 🔹 Top row: Basic Info
           Row(
             children: [
-              Expanded(child: _infoCard('CIF Number', cif)),
+              Expanded(child: _infoCard('Application No.', cif)),
               const SizedBox(width: 16),
               Expanded(
                 child: _infoCard('Customer Name', name, emphasize: true),
@@ -991,19 +1012,107 @@ Future<void> downloadAnalyticsPdf() async {
               Expanded(child: _infoCard('Customer Type', custType)),
             ],
           ),
+
           const SizedBox(height: 16),
-          // Gauges row
+
+          // 🔹 Second row: Personal Details
           Row(
             children: [
-              Expanded(
-                child:RiskScoreCard(score: 20)
-              ),
+              Expanded(child: _infoCard('Date of Birth', dob)),
+              const SizedBox(width: 16),
+              Expanded(child: _infoCard('Email', email)),
+              const SizedBox(width: 16),
+              Expanded(child: _infoCard('Mobile', mobile)),
+            ],
+          ),
+
+          const SizedBox(height: 16),
+
+          // 🔹 Third row: Bank Information
+          Row(
+            children: [
+              Expanded(child: _infoCard('Bank Name', bank)),
+              const SizedBox(width: 16),
+              Expanded(child: _infoCard('Branch', branch)),
+              const SizedBox(width: 16),
+              Expanded(child: _infoCard('Account Number', accountNo)),
+            ],
+          ),
+
+          const SizedBox(height: 16),
+
+          // 🔹 Fourth row: Account Details
+          Row(
+            children: [
+              Expanded(child: _infoCard('Account Type', accountType)),
+              const SizedBox(width: 16),
+              Expanded(child: _infoCard('Opening Date', accountOpenDate)),
               const SizedBox(width: 16),
               Expanded(
-                child: CreditScoreCard(score: 712),
+                child: _infoCard('CKYC Compliance', ckyc == 'Y' ? 'Yes' : 'No'),
               ),
             ],
           ),
+
+          const SizedBox(height: 16),
+
+          // 🔹 Fifth row: Balances
+          Row(
+            children: [
+              Expanded(child: _infoCard('Closing Balance', 'AED $closingBal')),
+              const SizedBox(width: 16),
+              Expanded(
+                child: _infoCard(
+                  'Avg Quarterly Bal (Latest)',
+                  'AED $avgBalLatest',
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: _infoCard('Avg Quarterly Bal (Prev)', 'AED $avgBalPrev'),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 16),
+
+          // 🔹 Sixth row: Financial Products
+          Row(
+            children: [
+              Expanded(child: _infoCard('OD/CC Limit', 'AED $odCcLimit')),
+              const SizedBox(width: 16),
+              Expanded(child: _infoCard('Loan Type', loanType)),
+              const SizedBox(width: 16),
+              Expanded(child: _infoCard('Employment Type', employmentType)),
+            ],
+          ),
+
+          const SizedBox(height: 24),
+
+          // 🔹 Gauges row: Risk + Credit Scores
+          Row(
+            children: [
+              Expanded(child: RiskScoreCard(score: risk)),
+              const SizedBox(width: 16),
+              Expanded(child: CreditScoreCard(score: credit)),
+            ],
+          ),
+
+          const SizedBox(height: 16),
+
+          // 🔹 RAG / Risk Category
+          // Row(
+          //   children: [
+          //     Expanded(
+          //       child: _infoCard('RAG Status', riskCategory,
+          //           emphasize: true),
+          //     ),
+          //     const SizedBox(width: 16),
+          //     Expanded(child: Container()),
+          //     const SizedBox(width: 16),
+          //     Expanded(child: Container()),
+          //   ],
+          // ),
         ],
       ),
     );
@@ -1117,6 +1226,9 @@ Future<void> downloadAnalyticsPdf() async {
                   ),
                   const SizedBox(height: 12),
                   SizedBox(height: 320, child: _RunningAreaChart(data: series)),
+                  SizedBox(
+                    height: 400,
+                    child: PowerBIEmbedView())
                 ],
               ),
             ),
@@ -1130,57 +1242,7 @@ Future<void> downloadAnalyticsPdf() async {
   Widget _buildSpendTrendTab(detail) {
     final channelTotals = _aggregateChannels(detail); // label->value
     final sicTotals = _aggregateSic(detail); // label->value
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(24),
-      child: Column(
-        children: [
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Spend Pattern - Channel',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 12),
-                  SizedBox(
-                    height: 280,
-                    child: _SingleSeriesBarChartWithLabels(
-                      data: channelTotals,
-                      highlightLabel: 'CASH',
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(height: 16),
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Spend Pattern - SIC',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 12),
-                  SizedBox(
-                    height: 280,
-                    child: _SingleSeriesBarChartWithLabels(data: sicTotals),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(height: 16),
-         PowerBIEmbedPage(url: 'https://app.powerbi.com/reportEmbed?reportId=d6e2f3b8-ce85-4e18-9942-5a625589d1a3&autoAuth=true&ctid=ebc33efd-7258-4e11-8899-d85c565d0051')
-        ],
-      ),
-    );
+    return spendPatternCharts();
   }
 
   // Tab: Key Features
@@ -1489,32 +1551,31 @@ Future<void> downloadAnalyticsPdf() async {
           Row(
             children: [
               // Export Action Button
-             _buildHeaderActionButton(
-  icon: Icons.download_rounded,
-  label: 'Export',
-  onTap: downloadAnalyticsPdf,
-  color: Colors.green,
-)
-.animate()
-.scale(duration: 600.ms, delay: 400.ms)
-.fadeIn(duration: 400.ms, delay: 400.ms),
-
+              _buildHeaderActionButton(
+                    icon: Icons.download_rounded,
+                    label: 'Export',
+                    onTap: downloadAnalyticsPdf,
+                    color: Colors.green,
+                  )
+                  .animate()
+                  .scale(duration: 600.ms, delay: 400.ms)
+                  .fadeIn(duration: 400.ms, delay: 400.ms),
 
               const SizedBox(width: 12),
 
               // Share Action Button
-              _buildHeaderActionButton(
-                    icon: Icons.share_rounded,
-                    label: 'Share',
-                    onTap: () => Get.snackbar(
-                      'Share',
-                      'Share functionality coming soon',
-                    ),
-                    color: Colors.blue,
-                  )
-                  .animate()
-                  .scale(duration: 600.ms, delay: 500.ms)
-                  .fadeIn(duration: 400.ms, delay: 500.ms),
+              // _buildHeaderActionButton(
+              //       icon: Icons.share_rounded,
+              //       label: 'Share',
+              //       onTap: () => Get.snackbar(
+              //         'Share',
+              //         'Share functionality coming soon',
+              //       ),
+              //       color: Colors.blue,
+              //     )
+              //     .animate()
+              //     .scale(duration: 600.ms, delay: 500.ms)
+              //     .fadeIn(duration: 400.ms, delay: 500.ms),
             ],
           ),
         ],
@@ -1912,57 +1973,77 @@ class _BarWithLabelsPainter extends CustomPainter {
 class _SingleSeriesBarPainter extends CustomPainter {
   final Map<String, double> data;
   final String? highlightLabel;
+
   _SingleSeriesBarPainter(this.data, {this.highlightLabel});
+
   @override
   void paint(Canvas canvas, Size size) {
     if (data.isEmpty) return;
+
     final entries = data.entries.toList();
-    final double maxV = entries
-        .map((e) => e.value)
-        .reduce((a, b) => a > b ? a : b);
+
+    final double maxV = entries.map((e) => e.value).reduce((a, b) => a > b ? a : b);
+
     final double barW = size.width / (entries.length * 1.8);
     final double gap = barW * 0.8;
     double x = gap / 2;
-    final labelStyle = const TextStyle(fontSize: 10, color: Colors.black87);
+
+    // 🔥 Bigger fonts
+    final labelStyle = const TextStyle(fontSize: 14, color: Colors.black87);
     final valStyle = const TextStyle(
-      fontSize: 11,
+      fontSize: 16,
       color: Colors.black87,
       fontWeight: FontWeight.bold,
     );
+
     for (final e in entries) {
-      final bool isHighlight =
-          highlightLabel != null &&
+      final bool isHighlight = highlightLabel != null &&
           e.key.toUpperCase() == highlightLabel!.toUpperCase();
-      final paint = Paint()..color = isHighlight ? Colors.red : Colors.indigo;
-      final double h = maxV == 0
-          ? 0.0
-          : (e.value / maxV) * (size.height * 0.75);
-      final rect = Rect.fromLTWH(x, size.height - h, barW, h);
+
+      final paint = Paint()
+        ..color = isHighlight ? Colors.indigo : Colors.indigo;
+
+      final double h = maxV == 0 ? 0 : (e.value / maxV) * (size.height * 0.65);
+
+      // Bar rectangle
+      final rect = Rect.fromLTWH(x, size.height - h - 30, barW, h);
       canvas.drawRRect(
-        RRect.fromRectAndRadius(rect, const Radius.circular(4)),
+        RRect.fromRectAndRadius(rect, const Radius.circular(6)),
         paint,
       );
+
+      // 🔥 Value BELOW the bar
       final vt = TextPainter(
         text: TextSpan(text: e.value.toStringAsFixed(0), style: valStyle),
         textDirection: TextDirection.ltr,
       )..layout();
+
       vt.paint(
         canvas,
-        Offset(x + barW / 2 - vt.width / 2, size.height - h - vt.height - 2),
+        Offset(x + barW / 2 - vt.width / 2, size.height - 28),
       );
+
+      // 🔥 Label BELOW value
       final tp = TextPainter(
         text: TextSpan(text: e.key, style: labelStyle),
         textDirection: TextDirection.ltr,
       )..layout(maxWidth: barW + gap);
-      tp.paint(canvas, Offset(x - 4, size.height - tp.height));
+
+      tp.paint(
+        canvas,
+        Offset(x + barW / 2 - tp.width / 2, size.height - tp.height),
+      );
+
       x += barW + gap;
     }
   }
 
   @override
-  bool shouldRepaint(covariant _SingleSeriesBarPainter old) =>
-      old.data != data || old.highlightLabel != highlightLabel;
+  bool shouldRepaint(covariant _SingleSeriesBarPainter old) {
+    return old.data != data || old.highlightLabel != highlightLabel;
+  }
 }
+
 
 class _SmallLineChart extends StatelessWidget {
   final List<_Point> data;
@@ -2427,25 +2508,25 @@ Map<String, double> _aggregateChannels(detail) {
     if (acc.isEmpty) {
       // Demo fallback matching your screenshot style
       return {
-        'CHEQUE': 0,
-        'EFT': 3259,
-        'RTGS': 4500,
-        'IMPS': 0,
-        'UPI': 1018,
-        'CASH': 0,
-        'OTHERS': 21194,
+        'CHEQUE': 10000,
+        'EFT': 5259,
+        'FTS': 14500,
+        'WAPI': 12300,
+        'ITR': 10180,
+        'CASH': 4390,
+        'OTHERS': 11194,
       }.map((k, v) => MapEntry(k, v.toDouble()));
     }
     return acc;
   } catch (_) {
     return {
-      'CHEQUE': 0,
-      'EFT': 3200,
-      'RTGS': 4400,
-      'IMPS': 0,
-      'UPI': 900,
-      'CASH': 0,
-      'OTHERS': 20000,
+        'CHEQUE': 10000,
+        'EFT': 5259,
+        'FTS': 14500,
+        'WAPI': 12300,
+        'ITR': 10180,
+        'CASH': 4390,
+        'OTHERS': 11194,
     }.map((k, v) => MapEntry(k, v.toDouble()));
   }
 }
@@ -2645,16 +2726,17 @@ class _FeatureCardState extends State<_FeatureCard>
                     const SizedBox(height: 10),
                     Text(
                       widget.title,
-                      style: const TextStyle(
-                        fontSize: 18,
-                        color: Colors.black,
-                      ),
+                      style: const TextStyle(fontSize: 18, color: Colors.black),
                     ),
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         Text(
-                          widget.title == 'Avg Balance Repayment Week' || widget.title == 'Credit Utilization' || widget.title == 'Monthly Savings'?'AED ${_valAnim.value.toStringAsFixed(1)}':_valAnim.value.toStringAsFixed(1),
+                          widget.title == 'Avg Balance Repayment Week' ||
+                                  widget.title == 'Credit Utilization' ||
+                                  widget.title == 'Monthly Savings'
+                              ? 'AED ${_valAnim.value.toStringAsFixed(1)}'
+                              : _valAnim.value.toStringAsFixed(1),
                           style: TextStyle(
                             fontSize: 22,
                             fontWeight: FontWeight.bold,

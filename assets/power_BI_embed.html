@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Power BI Embed (Local Test)</title>
+
+  <!-- Load MSAL and Power BI SDK -->
+  <script src="https://alcdn.msauth.net/browser/2.37.0/js/msal-browser.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/powerbi-client@2.23.1/dist/powerbi.min.js"></script>
+</head>
+<body>
+  <h3>Power BI Report Embed</h3>
+  <button id="loginBtn">Sign in & Embed Report</button>
+  <div id="reportContainer" style="height:90vh;width:100%;border:1px solid #ccc;margin-top:1rem;"></div>
+
+<script>
+/** 🔹 Replace with your details **/
+const TENANT_ID = "ebc33efd-7258-4e11-8899-d85c565d0051";
+const CLIENT_ID = "783763bd-c12a-4cda-b9eb-b7f962806474"; // Pro user's App ID
+const WORKSPACE_ID = "e03bca69-7e6a-4b1c-91ee-9429f902e690";
+const REPORT_ID = "d6e2f3b8-ce85-4e18-9942-5a625589d1a3";
+
+/** 🔹 MSAL Configuration **/
+const msalConfig = {
+  auth: {
+    clientId: CLIENT_ID,
+    authority: `https://login.microsoftonline.com/${TENANT_ID}`,
+    // ✅ Use the exact Live Server URL (must be added in Azure App → Redirect URIs)
+    redirectUri: "http://localhost:5500/",
+  },
+  cache: {
+    cacheLocation: "localStorage", // Keep login session
+    storeAuthStateInCookie: false,
+  }
+};
+
+const msalInstance = new msal.PublicClientApplication(msalConfig);
+
+/** 🔹 Login + Token Acquisition **/
+async function getAccessToken() {
+  const tokenRequest = {
+    scopes: ["https://analysis.windows.net/powerbi/api/.default"],
+  };
+
+  let account = msalInstance.getAllAccounts()[0];
+
+  try {
+    // 1️⃣ Try silent token
+    if (account) {
+      const response = await msalInstance.acquireTokenSilent({ ...tokenRequest, account });
+      return response.accessToken;
+    }
+
+    // 2️⃣ Otherwise login popup
+    const loginResponse = await msalInstance.loginPopup({
+      scopes: ["User.Read"], // minimal scope just to log in
+    });
+
+    account = loginResponse.account;
+
+    const tokenResponse = await msalInstance.acquireTokenSilent({ ...tokenRequest, account });
+    return tokenResponse.accessToken;
+  } catch (error) {
+    console.warn("Silent token failed, retrying login:", error);
+    const loginResponse = await msalInstance.loginPopup(tokenRequest);
+    const tokenResponse = await msalInstance.acquireTokenSilent({
+      ...tokenRequest,
+      account: loginResponse.account,
+    });
+    return tokenResponse.accessToken;
+  }
+}
+
+/** 🔹 Embed Report **/
+async function embedReport() {
+  try {
+    const accessToken = await getAccessToken();
+    console.log("✅ Got Access Token:", accessToken);
+
+    const embedUrl = `https://app.powerbi.com/reportEmbed?reportId=${REPORT_ID}&groupId=${WORKSPACE_ID}`;
+    const models = window['powerbi-client'].models;
+
+    const embedConfig = {
+      type: 'report',
+      tokenType: models.TokenType.Aad,
+      accessToken: accessToken,
+      embedUrl: embedUrl,
+      settings: {
+        panes: {
+          filters: { visible: false },
+          pageNavigation: { visible: true }
+        }
+      }
+    };
+
+    const reportContainer = document.getElementById('reportContainer');
+    powerbi.reset(reportContainer); // clear old embeds
+    powerbi.embed(reportContainer, embedConfig);
+
+  } catch (err) {
+    console.error("❌ Embed failed:", err);
+  }
+}
+
+document.getElementById("loginBtn").addEventListener("click", embedReport);
+</script>
+</body>
+</html>

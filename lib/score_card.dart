@@ -55,7 +55,7 @@ class _RiskScoreCardState extends State<RiskScoreCard>
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              'Risk Score',
+              'FinAxis Credit Score',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
@@ -153,15 +153,6 @@ class _RiskScoreCardState extends State<RiskScoreCard>
                 },
               ),
             ),
-            const SizedBox(height: 8),
-            const Text(
-              '',
-              style: TextStyle(
-                fontSize: 14,
-                color: Color(0xFF666666),
-                fontWeight: FontWeight.w500,
-              ),
-            ),
           ],
         ),
       ),
@@ -235,7 +226,7 @@ class _CreditScoreCardState extends State<CreditScoreCard>
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              'Credit Score',
+              'AECB Score',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
@@ -243,6 +234,8 @@ class _CreditScoreCardState extends State<CreditScoreCard>
               ),
             ),
             const SizedBox(height: 10),
+
+            /// ✅ Keep same layout style as RiskScoreCard
             SizedBox(
               height: 200,
               child: AnimatedBuilder(
@@ -252,99 +245,102 @@ class _CreditScoreCardState extends State<CreditScoreCard>
                   final riskCategory = getRiskCategory(currentScore);
                   final scoreColor = getScoreColor(currentScore);
 
-                  return Column(
+                  return Stack(
+                    alignment: Alignment.bottomCenter,
                     children: [
-                      Expanded(
-                        child: SfRadialGauge(
-                          axes: <RadialAxis>[
-                            RadialAxis(
-                              minimum: 300,
-                              maximum: 900,
-                              startAngle: 180,
-                              endAngle: 0,
-                              showLabels: false,
-                              showTicks: false,
-                              axisLineStyle: const AxisLineStyle(
-                                thickness: 20,
-                                color: Color(0xFFE8E8E8),
-                                cornerStyle: CornerStyle.bothCurve,
-                              ),
-                              ranges: <GaugeRange>[
-                                GaugeRange(
-                                  startValue: 300,
-                                  endValue: 420,
-                                  color: const Color(0xFFE53935),
-                                  startWidth: 20,
-                                  endWidth: 20,
-                                ),
-                                GaugeRange(
-                                  startValue: 420,
-                                  endValue: 540,
-                                  color: const Color(0xFFFF5722),
-                                  startWidth: 20,
-                                  endWidth: 20,
-                                ),
-                                GaugeRange(
-                                  startValue: 540,
-                                  endValue: 660,
-                                  color: const Color(0xFFFF9800),
-                                  startWidth: 20,
-                                  endWidth: 20,
-                                ),
-                                GaugeRange(
-                                  startValue: 660,
-                                  endValue: 780,
-                                  color: const Color(0xFFFDD835),
-                                  startWidth: 20,
-                                  endWidth: 20,
-                                ),
-                                GaugeRange(
-                                  startValue: 780,
-                                  endValue: 900,
-                                  color: const Color(0xFF66BB6A),
-                                  startWidth: 20,
-                                  endWidth: 20,
-                                ),
-                              ],
-                              pointers: <GaugePointer>[
-                                NeedlePointer(
-                                  value: currentScore,
-                                  needleLength: 0.7,
-                                  needleStartWidth: 1.5,
-                                  needleEndWidth: 4,
-                                  needleColor: const Color(0xFF424242),
-                                  knobStyle: const KnobStyle(
-                                    knobRadius: 0.07,
-                                    color: Color(0xFF424242),
-                                  ),
-                                  enableAnimation: false,
-                                ),
-                              ],
-                              annotations: <GaugeAnnotation>[
-                                GaugeAnnotation(
-                                  widget: Text(
-                                    currentScore.toInt().toString(),
-                                    style: TextStyle(
-                                      fontSize: 48,
-                                      fontWeight: FontWeight.bold,
-                                      color: scoreColor,
-                                    ),
-                                  ),
-                                  angle: 90,
-                                  positionFactor: 0.7,
-                                ),
-                              ],
+                      SfRadialGauge(
+                        axes: <RadialAxis>[
+                          RadialAxis(
+                            minimum: 300,
+                            maximum: 900,
+                            startAngle: 180,
+                            endAngle: 0,
+                            showLabels: false,
+                            showTicks: false,
+                            axisLineStyle: const AxisLineStyle(
+                              thickness: 20,
+                              color: Color(0xFFE8E8E8),
+                              cornerStyle: CornerStyle.bothCurve,
                             ),
-                          ],
-                        ),
+                            ranges: <GaugeRange>[
+                              GaugeRange(
+                                startValue: 300,
+                                endValue: 420,
+                                color: const Color(0xFFE53935),
+                                startWidth: 20,
+                                endWidth: 20,
+                              ),
+                              GaugeRange(
+                                startValue: 420,
+                                endValue: 540,
+                                color: const Color(0xFFFF5722),
+                                startWidth: 20,
+                                endWidth: 20,
+                              ),
+                              GaugeRange(
+                                startValue: 540,
+                                endValue: 660,
+                                color: const Color(0xFFFF9800),
+                                startWidth: 20,
+                                endWidth: 20,
+                              ),
+                              GaugeRange(
+                                startValue: 660,
+                                endValue: 780,
+                                color: const Color(0xFFFDD835),
+                                startWidth: 20,
+                                endWidth: 20,
+                              ),
+                              GaugeRange(
+                                startValue: 780,
+                                endValue: 900,
+                                color: const Color(0xFF66BB6A),
+                                startWidth: 20,
+                                endWidth: 20,
+                              ),
+                            ],
+                            pointers: <GaugePointer>[
+                              NeedlePointer(
+                                value: currentScore,
+                                needleLength: 0.7,
+                                needleStartWidth: 1.5,
+                                needleEndWidth: 4,
+                                needleColor: const Color(0xFF424242),
+                                knobStyle: const KnobStyle(
+                                  knobRadius: 0.07,
+                                  color: Color(0xFF424242),
+                                ),
+                                enableAnimation: false,
+                              ),
+                            ],
+                            annotations: <GaugeAnnotation>[
+                              GaugeAnnotation(
+                                widget: Text(
+                                  currentScore.toInt().toString(),
+                                  style: TextStyle(
+                                    fontSize: 48,
+                                    fontWeight: FontWeight.bold,
+                                    color: scoreColor,
+                                  ),
+                                ),
+                                angle: 90,
+                                positionFactor: 0.7,
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: 8),
-                      Text(
-                        'Risk category : $riskCategory',
-                        style: const TextStyle(
-                          fontSize: 14,
-                          color: Color(0xFF666666),
-                          fontWeight: FontWeight.w500,
+
+                      // ✅ Moved below the gauge for better spacing
+                      Positioned(
+                        bottom: 0,
+                        child: Text(
+                          'Risk category : $riskCategory',
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: Color(0xFF666666),
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
                       ),
                     ],

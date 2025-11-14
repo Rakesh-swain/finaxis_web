@@ -1,3 +1,4 @@
+import 'package:finaxis_web/controllers/ai_controller.dart';
 import 'package:get/get.dart';
 import '../controllers/ai_chat_controller.dart';
 import '../controllers/theme_controller.dart';
@@ -13,5 +14,6 @@ class AiChatBinding extends Bindings {
     
     // Initialize AI Chat Controller
     Get.lazyPut<AiChatController>(() => AiChatController());
+    Get.lazyPut<AiController>(() => AiController());
   }
 }

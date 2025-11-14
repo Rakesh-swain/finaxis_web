@@ -1,3 +1,4 @@
+import 'package:finaxis_web/views/dashboard/dashboard_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -6,7 +7,7 @@ import '../../controllers/theme_controller.dart';
 import '../../models/applicant_model.dart';
 import '../../services/applicant_service.dart';
 import '../../theme/app_theme.dart';
-import '../../widgets/futuristic_layout.dart';
+import '../../widgets/futuristic_layout.dart' hide FuturisticCard;
 import '../../widgets/futuristic_table.dart';
 
 class ApplicantsBinding extends Bindings {
@@ -44,12 +45,100 @@ class ApplicantsController extends GetxController {
     'Credit Card',
     'Business Loan',
   ];
-
+ final selectedDateFilter = DateFilterType.month.obs;
+  final fromDate = Rx<DateTime>(DateTime.now().subtract(const Duration(days: 30)));
+  final toDate = Rx<DateTime>(DateTime.now());
   @override
   void onInit() {
     super.onInit();
+     setDateFilter(DateFilterType.month);
     fetchApplicants();
   }
+void setDateFilter(DateFilterType filterType) {
+  selectedDateFilter.value = filterType;
+
+  final now = DateTime.now();
+
+  switch (filterType) {
+    case DateFilterType.today:
+      final today = DateTime(now.year, now.month, now.day);
+      fromDate.value = today;
+      toDate.value = today;
+      break;
+
+    case DateFilterType.week:
+      final endDate = DateTime(now.year, now.month, now.day);
+      final startDate = endDate.subtract(const Duration(days: 6));
+      fromDate.value = startDate;
+      toDate.value = endDate;
+      break;
+
+    case DateFilterType.month:
+      final endDate = DateTime(now.year, now.month, now.day);
+      final startDate = endDate.subtract(const Duration(days: 30));
+      fromDate.value = startDate;
+      toDate.value = endDate;
+      break;
+
+    case DateFilterType.calendar:
+      if (fromDate.value.isAfter(toDate.value)) {
+        final endDate = DateTime(now.year, now.month, now.day);
+        final startDate = endDate.subtract(const Duration(days: 30));
+        fromDate.value = startDate;
+        toDate.value = endDate;
+      }
+      break;
+  }
+
+  fetchApplicants();
+}
+
+/// Set From Date
+void setFromDate(DateTime date) {
+  fromDate.value = date;
+
+  // Validation: Ensure from date is not after to date
+  if (date.isAfter(toDate.value)) {
+    toDate.value = date;
+  }
+
+  // Only apply restrictions for non-calendar filters
+  if (selectedDateFilter.value == DateFilterType.week) {
+    // Limit to 7 days
+    if (toDate.value.difference(date).inDays > 7) {
+      toDate.value = date.add(const Duration(days: 7));
+    }
+  } else if (selectedDateFilter.value == DateFilterType.month) {
+    // Limit to 30 days
+    if (toDate.value.difference(date).inDays > 30) {
+      toDate.value = date.add(const Duration(days: 30));
+    }
+  }
+  // For calendar mode, allow any range without restrictions
+}
+
+/// Set To Date - UPDATED
+void setToDate(DateTime date) {
+  toDate.value = date;
+
+  // Validation: Ensure to date is not before from date
+  if (date.isBefore(fromDate.value)) {
+    fromDate.value = date;
+  }
+
+  // Only apply restrictions for non-calendar filters
+  if (selectedDateFilter.value == DateFilterType.week) {
+    // Limit to 7 days
+    if (date.difference(fromDate.value).inDays > 7) {
+      fromDate.value = date.subtract(const Duration(days: 7));
+    }
+  } else if (selectedDateFilter.value == DateFilterType.month) {
+    // Limit to 30 days
+    if (date.difference(fromDate.value).inDays > 30) {
+      fromDate.value = date.subtract(const Duration(days: 30));
+    }
+  }}
+ 
 
   Future<void> fetchApplicants() async {
     try {
@@ -192,6 +281,9 @@ class ApplicantsView extends GetView<ApplicantsController> {
     return FuturisticLayout(
       selectedIndex: 2,
       pageTitle: 'Applicant Portfolio',
+      headerActions: [
+         _buildDateFilterSection(context, themeController),
+      ],
       child: Obx(() {
         if (controller.isLoading.value) {
           return Center(child: _buildLoadingState(context, themeController));
@@ -200,7 +292,287 @@ class ApplicantsView extends GetView<ApplicantsController> {
       }),
     );
   }
+Widget _buildDateFilterSection(
+  BuildContext context,
+  ThemeController themeController,
+) {
+  return Obx(() {
+    final selectedFilter = controller.selectedDateFilter.value;
+    final fromDate = controller.fromDate.value;
+    final toDate = controller.toDate.value;
 
+    return Container(
+      // padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        // color: Theme.of(context).cardColor,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 🔹 Filter buttons row
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              ToggleButtons(
+                isSelected: [
+                  selectedFilter == DateFilterType.today,
+                  selectedFilter == DateFilterType.week,
+                  selectedFilter == DateFilterType.month,
+                  selectedFilter == DateFilterType.calendar,
+                ],
+                onPressed: (index) {
+                  final filterType = DateFilterType.values[index];
+                  controller.setDateFilter(filterType);
+
+                  if (filterType == DateFilterType.calendar) {
+                    _showCalendarPicker(context);
+                  }
+                },
+                borderRadius: BorderRadius.circular(12),
+                selectedColor: Colors.white,
+                fillColor: themeController.getThemeData().primaryColor,
+                color: themeController.getThemeData().primaryColor,
+                constraints: const BoxConstraints(
+                  minHeight: 36.0,
+                  minWidth: 70.0,
+                ),
+                children: const [
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 12),
+                    child: Text('Today'),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 12),
+                    child: Text('Week'),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 12),
+                    child: Text('Month'),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 12),
+                    child: Text('Calendar'),
+                  ),
+                ],
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 12),
+
+          // 🔹 Compact From-To Row (aligned to right)
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              _buildDatePickerCard(
+                context,
+                themeController,
+                'From',
+                fromDate,
+                isEnabled: selectedFilter != DateFilterType.today,
+                onTap: selectedFilter != DateFilterType.today
+                    ? () => _showDatePicker(context, true)
+                    : null,
+                small: true, // custom flag for smaller size
+              ),
+              const SizedBox(width: 10),
+              Icon(
+                Icons.arrow_forward,
+                color: themeController.getThemeData().primaryColor,
+                size: 20,
+              ),
+              const SizedBox(width: 10),
+              _buildDatePickerCard(
+                context,
+                themeController,
+                'To',
+                toDate,
+                isEnabled: selectedFilter != DateFilterType.today,
+                onTap: selectedFilter != DateFilterType.today
+                    ? () => _showDatePicker(context, false)
+                    : null,
+                small: true,
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  });
+}
+
+
+  /// Build Date Picker Card
+  Widget _buildDatePickerCard(
+  BuildContext context,
+  ThemeController themeController,
+  String label,
+  DateTime date, {
+  bool isEnabled = true,
+  VoidCallback? onTap,
+  bool small = false, // new flag
+}) {
+  final textTheme = Theme.of(context).textTheme;
+
+  return GestureDetector(
+    onTap: isEnabled ? onTap : null,
+    child: Container(
+      padding: EdgeInsets.symmetric(
+        vertical: small ? 6 : 12,
+        horizontal: small ? 10 : 16,
+      ),
+      decoration: BoxDecoration(
+        color: isEnabled
+            ? Theme.of(context).cardColor
+            : Colors.grey.shade200,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(
+          color: themeController.getThemeData().primaryColor.withOpacity(0.3),
+        ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            Icons.calendar_today,
+            size: small ? 14 : 18,
+            color: themeController.getThemeData().primaryColor,
+          ),
+          const SizedBox(width: 6),
+          Text(
+            '${label}: ${DateFormat('dd MMM').format(date)}',
+            style: textTheme.bodyMedium?.copyWith(
+              fontSize: small ? 13 : 15,
+              color: isEnabled
+                  ? themeController.getThemeData().primaryColor
+                  : Colors.grey,
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
+
+  /// Show Date Picker
+  Future<void> _showDatePicker(BuildContext context, bool isFromDate) async {
+    final selectedFilter = controller.selectedDateFilter.value;
+    final currentDate = isFromDate ? controller.fromDate.value : controller.toDate.value;
+    
+    DateTime? firstDate;
+    DateTime? lastDate;
+    
+    // Set constraints based on filter type
+    if (selectedFilter == DateFilterType.week) {
+      // For week, limit to 7 days range
+      if (isFromDate) {
+        firstDate = DateTime(2020);
+        lastDate = controller.toDate.value.subtract(const Duration(days: 1));
+      } else {
+        firstDate = controller.fromDate.value.add(const Duration(days: 1));
+        lastDate = controller.fromDate.value.add(const Duration(days: 7));
+      }
+    } else {
+      firstDate = DateTime(2020);
+      lastDate = DateTime.now().add(const Duration(days: 365));
+    }
+    
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: currentDate,
+      firstDate: firstDate,
+      lastDate: lastDate,
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: ColorScheme.light(
+              primary: Get.find<ThemeController>().getThemeData().primaryColor,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+    
+    if (picked != null) {
+      if (isFromDate) {
+        controller.setFromDate(picked);
+        
+        // Auto-adjust toDate for week filter
+        if (selectedFilter == DateFilterType.week) {
+          final newToDate = picked.add(const Duration(days: 6));
+          if (newToDate.isAfter(DateTime.now())) {
+            controller.setToDate(DateTime.now());
+          } else {
+            controller.setToDate(newToDate);
+          }
+        }
+      } else {
+        controller.setToDate(picked);
+      }
+      
+      controller.fetchApplicants();
+    }
+  }
+
+  /// Show Calendar Range Picker
+ Future<void> _showCalendarPicker(BuildContext context) async {
+  final theme = Get.find<ThemeController>().getThemeData();
+
+  // Use Flutter's built-in date range picker wrapped in a Dialog
+  final DateTimeRange? picked = await showDateRangePicker(
+    context: context,
+    firstDate: DateTime(2020),
+    lastDate: DateTime.now().add(const Duration(days: 365)),
+    initialDateRange: DateTimeRange(
+      start: controller.fromDate.value,
+      end: controller.toDate.value,
+    ),
+    builder: (context, child) {
+      return Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        insetPadding: const EdgeInsets.all(20),
+        child: Container(
+          constraints: const BoxConstraints(
+            maxWidth: 450,
+            maxHeight: 600,
+          ),
+          child: Theme(
+            data: Theme.of(context).copyWith(
+              colorScheme: ColorScheme.light(
+                primary: theme.primaryColor,
+                onPrimary: Colors.white,
+                onSurface: theme.textTheme.bodyLarge?.color ?? Colors.black,
+              ),
+              dialogTheme: DialogThemeData(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+              ),
+            ),
+            child: child!,
+          ),
+        ),
+      );
+    },
+  );
+
+  // Update dates if user selected a range
+  if (picked != null) {
+    controller.setFromDate(picked.start);
+    controller.setToDate(picked.end);
+    controller.fetchApplicants();
+  }
+}
   Widget _buildFloatingCardShelf(
     BuildContext context,
     ThemeController themeController,
@@ -219,7 +591,7 @@ class ApplicantsView extends GetView<ApplicantsController> {
                 child: FuturisticTable(
                   columns: [
                     const FuturisticTableColumn(
-                      title: 'CIF',
+                      title: 'Application No.',
                       // icon: Icons.fingerprint_rounded,
                     ),
                     const FuturisticTableColumn(
@@ -227,11 +599,11 @@ class ApplicantsView extends GetView<ApplicantsController> {
                       // icon: Icons.person_rounded,
                     ),
                     const FuturisticTableColumn(
-                      title: 'Credit Score',
+                      title: 'AECB Score',
                       // icon: Icons.star_rounded,
                     ),
                     const FuturisticTableColumn(
-                      title: 'Risk Score',
+                      title: 'Finaxis Credit Score',
                       // icon: Icons.analytics_rounded,
                     ),
                     const FuturisticTableColumn(
@@ -251,7 +623,7 @@ class ApplicantsView extends GetView<ApplicantsController> {
                       // icon: Icons.schedule_rounded,
                     ),
                     const FuturisticTableColumn(
-                      title: 'Action',
+                      title: '',
                       sortable: false,
                     ),
                   ],
@@ -698,83 +1070,86 @@ class ApplicantsView extends GetView<ApplicantsController> {
         ),
         const SizedBox(width: 16),
         Expanded(
-          flex: 3,
-          child: Obx(() {
-            return Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Wrap(
-                  spacing: 12,
-                  children: [
-                    _buildFilterChip('All', 'all'),
-                    _buildFilterChip('Low', 'green', Colors.green),
-                    _buildFilterChip('Medium', 'amber', Colors.amber),
-                    _buildFilterChip('High', 'red', Colors.red),
-                  ],
-                ),
-                // 📅 Date Filter
-                Tooltip(
-                  message: 'Filter by Date',
-                  child: InkWell(
-                    onTap: () async {
-                      final now = DateTime.now();
-                      final picked = await showDateRangePicker(
-                        context: context,
-                        initialDateRange: controller.dateRange.value ??
-                            DateTimeRange(
-                              start: now.subtract(const Duration(days: 30)),
-                              end: now,
-                            ),
-                        firstDate: DateTime(now.year - 2),
-                        lastDate: DateTime(now.year + 1),
-                      );
-                      if (picked != null) controller.setDateRange(picked);
-                    },
-                    onLongPress: controller.clearDateRange,
-                    borderRadius: BorderRadius.circular(20),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 8),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(
-                            color: themeController
-                                .getThemeData()
-                                .primaryColor
-                                .withOpacity(0.3)),
-                        color: controller.dateRange.value == null
-                            ? Colors.transparent
-                            : themeController
-                                .getThemeData()
-                                .primaryColor
-                                .withOpacity(0.1),
-                      ),
-                      child: Row(
-                        children: [
-                          const Icon(Icons.calendar_today, size: 16),
-                          const SizedBox(width: 6),
-                          Text(
-                            controller.dateRange.value == null
-                                ? 'Date Range'
-                                : '${DateFormat('MMM dd').format(controller.dateRange.value!.start)} - ${DateFormat('MMM dd').format(controller.dateRange.value!.end)}',
-                            style: const TextStyle(fontWeight: FontWeight.w600),
-                          ),
-                          if (controller.dateRange.value != null) ...[
-                            const SizedBox(width: 6),
-                            GestureDetector(
-                              onTap: controller.clearDateRange,
-                              child: const Icon(Icons.close, size: 16),
-                            ),
-                          ]
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            );
-          }),
-        ),
+          flex: 2,
+          child:   Container())
+        // Expanded(
+        //   flex: 3,
+        //   child: Obx(() {
+        //     return Row(
+        //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        //       children: [
+        //         Wrap(
+        //           spacing: 12,
+        //           children: [
+        //             _buildFilterChip('All', 'all'),
+        //             _buildFilterChip('Low', 'green', Colors.green),
+        //             _buildFilterChip('Medium', 'amber', Colors.amber),
+        //             _buildFilterChip('High', 'red', Colors.red),
+        //           ],
+        //         ),
+        //         // 📅 Date Filter
+        //         Tooltip(
+        //           message: 'Filter by Date',
+        //           child: InkWell(
+        //             onTap: () async {
+        //               final now = DateTime.now();
+        //               final picked = await showDateRangePicker(
+        //                 context: context,
+        //                 initialDateRange: controller.dateRange.value ??
+        //                     DateTimeRange(
+        //                       start: now.subtract(const Duration(days: 30)),
+        //                       end: now,
+        //                     ),
+        //                 firstDate: DateTime(now.year - 2),
+        //                 lastDate: DateTime(now.year + 1),
+        //               );
+        //               if (picked != null) controller.setDateRange(picked);
+        //             },
+        //             onLongPress: controller.clearDateRange,
+        //             borderRadius: BorderRadius.circular(20),
+        //             child: Container(
+        //               padding: const EdgeInsets.symmetric(
+        //                   horizontal: 16, vertical: 8),
+        //               decoration: BoxDecoration(
+        //                 borderRadius: BorderRadius.circular(20),
+        //                 border: Border.all(
+        //                     color: themeController
+        //                         .getThemeData()
+        //                         .primaryColor
+        //                         .withOpacity(0.3)),
+        //                 color: controller.dateRange.value == null
+        //                     ? Colors.transparent
+        //                     : themeController
+        //                         .getThemeData()
+        //                         .primaryColor
+        //                         .withOpacity(0.1),
+        //               ),
+        //               child: Row(
+        //                 children: [
+        //                   const Icon(Icons.calendar_today, size: 16),
+        //                   const SizedBox(width: 6),
+        //                   Text(
+        //                     controller.dateRange.value == null
+        //                         ? 'Date Range'
+        //                         : '${DateFormat('MMM dd').format(controller.dateRange.value!.start)} - ${DateFormat('MMM dd').format(controller.dateRange.value!.end)}',
+        //                     style: const TextStyle(fontWeight: FontWeight.w600),
+        //                   ),
+        //                   if (controller.dateRange.value != null) ...[
+        //                     const SizedBox(width: 6),
+        //                     GestureDetector(
+        //                       onTap: controller.clearDateRange,
+        //                       child: const Icon(Icons.close, size: 16),
+        //                     ),
+        //                   ]
+        //                 ],
+        //               ),
+        //             ),
+        //           ),
+        //         ),
+        //       ],
+        //     );
+        //   }),
+        // ),
       ],
     );
   }

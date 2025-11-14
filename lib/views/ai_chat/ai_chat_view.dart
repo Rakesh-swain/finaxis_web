@@ -1,42 +1,41 @@
+import 'package:finaxis_web/controllers/ai_controller.dart';
+import 'package:finaxis_web/models/local_chat_message.dart';
 import 'package:finaxis_web/widgets/futuristic_layout.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:glassmorphism/glassmorphism.dart';
-import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
-import '../../controllers/ai_chat_controller.dart';
 import '../../controllers/theme_controller.dart';
-import '../../models/chat_message.dart';
-import '../../services/chatgpt_service.dart';
-import '../../widgets/futuristic_sidebar.dart';
 
-/// 🤖 AI Chat Hub - Primary Feature of the Platform
-/// Inspired by Perplexity AI + ChatGPT hybrid interface
-class AiChatView extends GetView<AiChatController> {
+/// 🤖 AI Chat Hub - Enhanced with Hardcoded Responses
+class AiChatView extends StatelessWidget {
   const AiChatView({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    // Initialize controller
+    final controller = Get.put(AiController(), permanent: false);
     final themeController = Get.find<ThemeController>();
 
     return FuturisticLayout(
-      selectedIndex: 0, // AI Chat Hub
+      selectedIndex: 0,
       pageTitle: 'AI Chat Hub',
-      headerActions: [
-        _buildHeaderAction(
-          icon: Icons.settings,
-          label: 'Settings',
-          onTap: () => Get.snackbar('AI Chat Settings', 'Coming soon'),
-          color: Colors.blue,
-        ),
-      ],
-      child: _buildChatInterface(context, themeController),
+      // headerActions: [
+      //   _buildHeaderAction(
+      //     icon: Icons.settings,
+      //     label: 'Settings',
+      //     onTap: () => Get.snackbar('AI Chat Settings', 'Coming soon'),
+      //     color: Colors.blue,
+      //   ),
+      // ],
+      child: GetBuilder<AiController>(
+        init: controller,
+        builder: (ctrl) => _buildChatInterface(context, themeController, ctrl),
+      ),
     );
   }
 
-  // Optional helper to create header actions (like in ConsentView)
   Widget _buildHeaderAction({
     required IconData icon,
     required String label,
@@ -58,68 +57,43 @@ class AiChatView extends GetView<AiChatController> {
     );
   }
 
-
-  /// Build background gradient with particle effects
-  // Widget _buildBackgroundGradient(ThemeController themeController) {
-  //   return AnimatedContainer(
-  //     duration: const Duration(milliseconds: 800),
-  //     decoration: BoxDecoration(
-  //       gradient: LinearGradient(
-  //         begin: Alignment.topLeft,
-  //         end: Alignment.bottomRight,
-  //         colors: [
-  //           themeController.getThemeData().scaffoldBackgroundColor,
-  //           themeController.getThemeData().primaryColor.withOpacity(0.05),
-  //           themeController.getThemeData().scaffoldBackgroundColor,
-  //         ],
-  //         stops: const [0.0, 0.5, 1.0],
-  //       ),
-  //     ),
-  //   );
-  // }
-
   /// Build main chat interface
-Widget _buildChatInterface(BuildContext context, ThemeController themeController) {
-  return Column(
-    children: [
-      // 🎨 Glowing Header (top, full width)
-      _buildGlowingHeader(context, themeController),
+  Widget _buildChatInterface(
+    BuildContext context, 
+    ThemeController themeController,
+    AiController controller,
+  ) {
+    return Obx(() {
+      final hasMessages = controller.localMessages.isNotEmpty;
 
-      // 🧱 Main chat area: Messages + Quick Actions (side by side)
-      Expanded(
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // Left: Messages
-            Expanded(
-              flex: 3,
-              child: _buildMessagesArea(context, themeController),
+      return Column(
+        children: [
+          if (!hasMessages) _buildGlowingHeader(context, themeController),
+          Expanded(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Expanded(
+                  flex: 3,
+                  child: _buildMessagesArea(context, themeController, controller),
+                ),
+                if (!hasMessages)
+                  _buildQuickActions(context, themeController, controller),
+              ],
             ),
+          ),
+          _buildChatInput(context, themeController, controller),
+        ],
+      );
+    });
+  }
 
-            // Right: Quick Actions
-            _buildQuickActions(context, themeController),
-          ],
-        ),
-      ),
-
-      // ⌨️ Chat Input
-      _buildChatInput(context, themeController),
-    ],
-  );
-}
-
-
-
-
-
-
-  /// Build glowing header with Finaxis branding
+  /// Build glowing header
   Widget _buildGlowingHeader(BuildContext context, ThemeController themeController) {
     return Container(
       padding: const EdgeInsets.fromLTRB(32, 24, 32, 16),
       child: Column(
         children: [
-          // 🌟 Main Title with Gradient Effect
           ShaderMask(
             shaderCallback: (bounds) => themeController.getPrimaryGradient()
                 .createShader(bounds),
@@ -139,7 +113,6 @@ Widget _buildChatInterface(BuildContext context, ThemeController themeController
           
           const SizedBox(height: 8),
           
-          // ✨ Subtitle with Typing Effect
           SizedBox(
             height: 30,
             child: AnimatedTextKit(
@@ -160,18 +133,9 @@ Widget _buildChatInterface(BuildContext context, ThemeController themeController
                   ),
                   speed: const Duration(milliseconds: 100),
                 ),
-                TypewriterAnimatedText(
-                  'Real-time Market Intelligence & Compliance',
-                  textStyle: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.7),
-                    letterSpacing: 0.8,
-                  ),
-                  speed: const Duration(milliseconds: 100),
-                ),
               ],
               totalRepeatCount: 1,
               pause: const Duration(seconds: 2),
-              displayFullTextOnTap: true,
             ),
           ).animate()
             .fadeIn(duration: 1000.ms, delay: 1200.ms),
@@ -180,36 +144,104 @@ Widget _buildChatInterface(BuildContext context, ThemeController themeController
     );
   }
 
-  /// Build messages area with chat bubbles
-  Widget _buildMessagesArea(BuildContext context, ThemeController themeController) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24),
-      child: Obx(() {
-        final messages = controller.currentSession.value?.messages ?? [];
-        
-        if (messages.isEmpty) {
-          return _buildEmptyState(context, themeController);
-        }
-        
-        return ListView.builder(
-          padding: const EdgeInsets.only(bottom: 16),
-          itemCount: messages.length,
-          itemBuilder: (context, index) {
-            final message = messages[index];
-            return _buildMessageBubble(
-              message,
-              context,
-              themeController,
-            ).animate(delay: (index * 100).ms)
-              .fadeIn(duration: 600.ms)
-              .slideY(begin: 0.5, end: 0, curve: Curves.easeOutCubic);
-          },
-        );
-      }),
+  /// Build messages area
+  Widget _buildMessagesArea(
+    BuildContext context, 
+    ThemeController themeController,
+    AiController controller,
+  ) {
+    return Obx(() {
+      final messages = controller.localMessages;
+      final isTyping = controller.isTyping.value;
+      
+      if (messages.isEmpty && !isTyping) {
+        return _buildEmptyState(context, themeController);
+      }
+      
+      return ListView.builder(
+        controller: controller.scrollController,
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+        itemCount: messages.length + (isTyping ? 1 : 0),
+        itemBuilder: (context, index) {
+          if (index == messages.length && isTyping) {
+            return _buildTypingIndicator(context, themeController);
+          }
+          
+          final message = messages[index];
+          return _buildMessageBubble(
+            message,
+            context,
+            themeController,
+          ).animate(delay: (index * 100).ms)
+            .fadeIn(duration: 600.ms)
+            .slideY(begin: 0.5, end: 0, curve: Curves.easeOutCubic);
+        },
+      );
+    });
+  }
+
+  /// Build typing indicator
+  Widget _buildTypingIndicator(BuildContext context, ThemeController themeController) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16, right: 60),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildAvatarIcon(false, themeController),
+          const SizedBox(width: 12),
+          
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+            decoration: BoxDecoration(
+              color: isDark ? Colors.grey.shade800 : Colors.white,
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(
+                color: themeController.getThemeData().primaryColor.withOpacity(0.2),
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 10,
+                  spreadRadius: 2,
+                ),
+              ],
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                _buildTypingDot(0, isDark),
+                const SizedBox(width: 6),
+                _buildTypingDot(200, isDark),
+                const SizedBox(width: 6),
+                _buildTypingDot(400, isDark),
+              ],
+            ),
+          ).animate(onPlay: (controller) => controller.repeat())
+            .shimmer(duration: 2000.ms, color: themeController.getThemeData().primaryColor.withOpacity(0.3)),
+        ],
+      ),
     );
   }
 
-  /// Build empty state with welcome animation
+  /// Build individual typing dot
+  Widget _buildTypingDot(int delay, bool isDark) {
+    return Container(
+      width: 10,
+      height: 10,
+      decoration: BoxDecoration(
+        color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
+        shape: BoxShape.circle,
+      ),
+    ).animate(onPlay: (controller) => controller.repeat())
+      .fadeOut(delay: delay.ms, duration: 600.ms)
+      .then()
+      .fadeIn(duration: 600.ms);
+  }
+
+  /// Build empty state
   Widget _buildEmptyState(BuildContext context, ThemeController themeController) {
     return Center(
       child: Padding(
@@ -217,7 +249,6 @@ Widget _buildChatInterface(BuildContext context, ThemeController themeController
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // 🤖 AI Robot Icon
             Container(
               width: 120,
               height: 120,
@@ -246,7 +277,6 @@ Widget _buildChatInterface(BuildContext context, ThemeController themeController
             
             const SizedBox(height: 32),
             
-            // 💭 Welcome Text
             Text(
               'Ask me anything about your',
               style: Theme.of(context).textTheme.headlineMedium?.copyWith(
@@ -260,7 +290,7 @@ Widget _buildChatInterface(BuildContext context, ThemeController themeController
               shaderCallback: (bounds) => themeController.getPrimaryGradient()
                   .createShader(bounds),
               child: Text(
-                'Customer',
+                'Customers',
                 style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                   fontWeight: FontWeight.w700,
                   color: Colors.white,
@@ -273,7 +303,7 @@ Widget _buildChatInterface(BuildContext context, ThemeController themeController
             const SizedBox(height: 16),
             
             Text(
-              'Get instant risk and oppotunity insights',
+              'Get instant risk and opportunity insights',
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                 color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.6),
@@ -287,9 +317,9 @@ Widget _buildChatInterface(BuildContext context, ThemeController themeController
     );
   }
 
-  /// Build individual message bubble
+  /// Build message bubble
   Widget _buildMessageBubble(
-    ChatMessage message,
+    LocalChatMessage message,
     BuildContext context,
     ThemeController themeController,
   ) {
@@ -308,7 +338,7 @@ Widget _buildChatInterface(BuildContext context, ThemeController themeController
           if (!isUser) _buildAvatarIcon(false, themeController),
           if (!isUser) const SizedBox(width: 12),
           
-          Expanded(
+          Flexible(
             child: _buildMessageContent(message, context, themeController),
           ),
           
@@ -348,139 +378,224 @@ Widget _buildChatInterface(BuildContext context, ThemeController themeController
     );
   }
 
-  /// Build message content bubble
-  Widget _buildMessageContent(
-    ChatMessage message,
-    BuildContext context,
-    ThemeController themeController,
-  ) {
-    final isUser = message.isUser;
-    
-    return Column(
-      crossAxisAlignment: isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-      children: [
-        // 💬 Message Bubble
-        GlassmorphicContainer(
-          width: double.infinity,
-          height: 0,
-          borderRadius: 20,
-          blur: 20,
-          alignment: Alignment.bottomCenter,
-          border: 1,
-          linearGradient: LinearGradient(
+  /// Build message content
+Widget _buildMessageContent(
+  LocalChatMessage message,
+  BuildContext context,
+  ThemeController themeController,
+) {
+  final isUser = message.isUser;
+  final isDark = Theme.of(context).brightness == Brightness.dark;
+  
+  return Column(
+    crossAxisAlignment: isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+    children: [
+      Container(
+        constraints: BoxConstraints(
+          maxWidth: MediaQuery.of(context).size.width * 0.65,
+          minWidth: 100,
+        ),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: isUser
                 ? [
-                    themeController.getThemeData().primaryColor.withOpacity(0.2),
-                    themeController.getThemeData().primaryColor.withOpacity(0.1),
+                    themeController.getThemeData().primaryColor.withOpacity(0.15),
+                    themeController.getThemeData().primaryColor.withOpacity(0.08),
                   ]
-                : [
-                    Theme.of(context).cardColor.withOpacity(0.8),
-                    Theme.of(context).cardColor.withOpacity(0.6),
-                  ],
+                : isDark
+                    ? [
+                        Colors.grey.shade800,
+                        Colors.grey.shade900,
+                      ]
+                    : [
+                        Colors.white,
+                        Colors.grey.shade50,
+                      ],
           ),
-          borderGradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              themeController.getThemeData().primaryColor.withOpacity(0.2),
-              themeController.getThemeData().primaryColor.withOpacity(0.1),
-            ],
+          border: Border.all(
+            color: isUser
+                ? themeController.getThemeData().primaryColor.withOpacity(0.3)
+                : isDark
+                    ? Colors.grey.shade700
+                    : Colors.grey.shade200,
+            width: 1.5,
           ),
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // 📝 Message Content
-                isUser
-                    ? SelectableText(
-                        message.content,
-                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          height: 1.4,
-                        ),
-                      )
-                    : MarkdownBody(
-                        data: message.content,
-                        styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context)),
-                      ),
-                
-                // 🎯 Action Buttons
-                if (message.actions != null && message.actions!.isNotEmpty)
-                  ...[
-                    const SizedBox(height: 12),
-                    Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      children: message.actions!.map((action) {
-                        return _buildActionButton(action, themeController,context);
-                      }).toList(),
-                    ),
-                  ],
-                
-                // 📊 Usage Stats (for AI messages)
-                if (!isUser && message.usage != null) ...[
-                  const SizedBox(height: 8),
-                  Text(
-                    message.usage.toString(),
-                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                      color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.5),
-                    ),
-                  ),
-                ],
-              ],
+          boxShadow: [
+            BoxShadow(
+              color: isUser
+                  ? themeController.getThemeData().primaryColor.withOpacity(0.15)
+                  : Colors.black.withOpacity(isDark ? 0.3 : 0.08),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+              spreadRadius: 0,
+            ),
+          ],
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          child: SelectableText(
+            message.content,
+            style: TextStyle(
+              height: 1.5,
+              color: isDark ? Colors.white : Colors.black87,
+              fontWeight: FontWeight.w400,
+              fontSize: 15,
+              letterSpacing: 0.2,
             ),
           ),
         ),
-        
-        // 🕐 Timestamp
-        const SizedBox(height: 4),
-        Text(
+      ),
+      
+      const SizedBox(height: 6),
+      Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 4),
+        child: Text(
           _formatTimestamp(message.timestamp),
           style: Theme.of(context).textTheme.labelSmall?.copyWith(
             color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.5),
+            fontSize: 11,
           ),
         ),
-      ],
+      ),
+    ],
+  );
+}
+
+  /// Build quick actions panel
+  Widget _buildQuickActions(
+    BuildContext context, 
+    ThemeController themeController,
+    AiController controller,
+  ) {
+    final quickActions = [
+      QuickActionItem(
+        icon: '🔴',
+        category: 'Risk Analysis',
+        title: 'Give me the risk distribution of my applicants',
+        message: 'Provide a detailed risk distribution of all applicants, including segments such as low, medium, and high risk, along with key risk indicators.',
+      ),
+      QuickActionItem(
+        icon: '📊',
+        category: 'Portfolio',
+        title: 'What all kind of business, customer segment approach for loan',
+        message: 'Explain the different business types and customer segments eligible for loans, along with their typical loan approaches, risk profiles, and evaluation criteria.',
+      ),
+      QuickActionItem(
+        icon: '✅',
+        category: 'Performance',
+        title: 'Analyze loan approval rates',
+        message: 'Analyze our loan approval rates by category, risk level, and time period. Identify patterns and improvement opportunities.',
+      ),
+    ];
+
+    return Container(
+      width: 200,
+      margin: const EdgeInsets.only(right: 16, top: 8, bottom: 8),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final availableHeight = constraints.maxHeight;
+          final itemCount = quickActions.length;
+          final itemHeight = availableHeight / itemCount;
+
+          return SingleChildScrollView(
+            child: Column(
+              children: [
+                for (int index = 0; index < itemCount; index++)
+                  SizedBox(
+                    height: itemHeight,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 6),
+                      child: _buildQuickActionCard(
+                              quickActions[index], themeController, context, controller)
+                          .animate(delay: (index * 100).ms)
+                          .fadeIn(duration: 500.ms)
+                          .slideY(begin: 0.2, end: 0),
+                    ),
+                  ),
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 
-  /// Build action button
-  Widget _buildActionButton(ChatAction action, ThemeController themeController, BuildContext context) {
+  /// Build quick action card
+  Widget _buildQuickActionCard(
+    QuickActionItem action,
+    ThemeController themeController,
+    BuildContext context,
+    AiController controller,
+  ) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap: () => _handleActionTap(action),
-        borderRadius: BorderRadius.circular(20),
+        onTap: () => controller.sendQuickActionMessage(action.message),
+        borderRadius: BorderRadius.circular(16),
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          padding: const EdgeInsets.symmetric(horizontal: 10),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(
-              color: themeController.getThemeData().primaryColor.withOpacity(0.3),
-            ),
+            borderRadius: BorderRadius.circular(16),
             gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
               colors: [
                 themeController.getThemeData().primaryColor.withOpacity(0.1),
                 themeController.getThemeData().primaryColor.withOpacity(0.05),
               ],
             ),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                action.icon ?? '🔗',
-                style: const TextStyle(fontSize: 12),
+            border: Border.all(
+              color: themeController.getThemeData().primaryColor.withOpacity(0.3),
+              width: 1.5,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: themeController.getThemeData().primaryColor.withOpacity(0.1),
+                blurRadius: 8,
+                spreadRadius: 1,
               ),
-              const SizedBox(width: 6),
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Row(
+                children: [
+                  Text(
+                    action.icon,
+                    style: const TextStyle(fontSize: 15),
+                  ),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: Text(
+                      action.category,
+                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                        color: themeController.getThemeData().primaryColor,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
               Text(
-                action.label,
-                style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: themeController.getThemeData().primaryColor,
-                  fontWeight: FontWeight.w600,
+                action.title,
+                style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                  fontWeight: FontWeight.w900,
+                  fontSize: 13,
+                  height: 1.3,
+                  color: isDark ? Colors.white : Colors.black87,
                 ),
+                maxLines: 4,
+                overflow: TextOverflow.ellipsis,
               ),
             ],
           ),
@@ -489,189 +604,40 @@ Widget _buildChatInterface(BuildContext context, ThemeController themeController
     );
   }
 
-  /// Build quick actions panel
- Widget _buildQuickActions(BuildContext context, ThemeController themeController) {
-  return Obx(() {
-    final quickActions = controller.quickActions;
-    if (quickActions.isEmpty) return const SizedBox.shrink();
-
-    return Container(
-      width: 200, // right panel width
-      margin: const EdgeInsets.only(right: 16, top: 8, bottom: 8),
-      // decoration: BoxDecoration(
-      //   color: Theme.of(context).colorScheme.surface.withOpacity(0.9),
-      //   borderRadius: BorderRadius.circular(16),
-      //   border: Border.all(
-      //     color: Theme.of(context).colorScheme.outline.withOpacity(0.2),
-      //   ),
-      //   boxShadow: [
-      //     BoxShadow(
-      //       color: Colors.black.withOpacity(0.05),
-      //       blurRadius: 8,
-      //       offset: const Offset(0, 4),
-      //     ),
-      //   ],
-      // ),
-      child: Column(
-        children: [
-          // Padding(
-          //   padding: const EdgeInsets.all(12.0),
-          //   child: Text(
-          //     'Quick Actions',
-          //     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-          //           fontWeight: FontWeight.w600,
-          //           color: Theme.of(context)
-          //               .textTheme
-          //               .bodyMedium
-          //               ?.color
-          //               ?.withOpacity(0.8),
-          //         ),
-          //   ),
-          // ),
-          // const Divider(height: 1),
-          Expanded(
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                final availableHeight = constraints.maxHeight;
-                final itemCount = quickActions.length;
-                final itemHeight = availableHeight / itemCount; // 👈 evenly divide space
-
-                return Column(
-                  children: [
-                    for (int index = 0; index < itemCount; index++)
-                      SizedBox(
-                        height: itemHeight,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 6),
-                          child: _buildQuickActionCard(
-                                  quickActions[index], themeController, context)
-                              .animate(delay: (index * 100).ms)
-                              .fadeIn(duration: 500.ms)
-                              .slideY(begin: 0.2, end: 0),
-                        ),
-                      ),
-                  ],
-                );
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-  });
-}
-
-
-
-
-
-  /// Build quick action card
-  Widget _buildQuickActionCard(QuickAction action, ThemeController themeController, BuildContext context) {
-    return Container(
-      width: 200,
-      margin: const EdgeInsets.only(right: 12),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: () => controller.sendQuickAction(action),
-          borderRadius: BorderRadius.circular(16),
-          child: Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16),
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  themeController.getThemeData().primaryColor.withOpacity(0.1),
-                  themeController.getThemeData().primaryColor.withOpacity(0.05),
-                ],
-              ),
-              border: Border.all(
-                color: themeController.getThemeData().primaryColor.withOpacity(0.2),
-              ),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Text(
-                      action.icon,
-                      style: const TextStyle(fontSize: 16),
-                    ),
-                    const SizedBox(width: 6),
-                    Expanded(
-                      child: Text(
-                        action.category,
-                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                          color: themeController.getThemeData().primaryColor,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  action.title,
-                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                    fontWeight: FontWeight.w500,
-                  ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  /// Build chat input area
-  Widget _buildChatInput(BuildContext context, ThemeController themeController) {
+  /// Build chat input
+  Widget _buildChatInput(
+    BuildContext context, 
+    ThemeController themeController,
+    AiController controller,
+  ) {
     return Container(
       padding: const EdgeInsets.all(24),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          // 🎤 Voice Input Button
           _buildVoiceButton(themeController),
-          
           const SizedBox(width: 12),
-          
-          // 📝 Text Input Field
           Expanded(
-            child: _buildTextInput(context, themeController),
+            child: _buildTextInput(context, themeController, controller),
           ),
-          
           const SizedBox(width: 12),
-          
-          // 🚀 Send Button
-          _buildSendButton(themeController),
+          _buildSendButton(themeController, controller),
         ],
       ),
     );
   }
 
-  /// Build voice input button
+  /// Build voice button
   Widget _buildVoiceButton(ThemeController themeController) {
-    return Obx(() => Container(
+    return Container(
       width: 48,
       height: 48,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
-        gradient: controller.isRecording.value
-            ? const LinearGradient(
-                colors: [Color(0xFFFF6B6B), Color(0xFFFF5252)],
-              )
-            : themeController.getPrimaryGradient(),
+        gradient: themeController.getPrimaryGradient(),
         boxShadow: [
           BoxShadow(
-            color: (controller.isRecording.value ? Colors.red : themeController.getThemeData().primaryColor)
-                .withOpacity(0.3),
+            color: themeController.getThemeData().primaryColor.withOpacity(0.3),
             blurRadius: 12,
             spreadRadius: 2,
           ),
@@ -680,20 +646,30 @@ Widget _buildChatInterface(BuildContext context, ThemeController themeController
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          onTap: _toggleVoiceRecording,
+          onTap: () {
+            Get.snackbar(
+              'Voice Input',
+              'Voice recording feature coming soon',
+              snackPosition: SnackPosition.TOP,
+            );
+          },
           borderRadius: BorderRadius.circular(12),
-          child: Icon(
-            controller.isRecording.value ? Icons.mic : Icons.mic_none_rounded,
+          child: const Icon(
+            Icons.mic_none_rounded,
             color: Colors.white,
             size: 20,
           ),
         ),
       ),
-    ));
+    );
   }
 
-  /// Build text input field
-  Widget _buildTextInput(BuildContext context, ThemeController themeController) {
+  /// Build text input
+  Widget _buildTextInput(
+    BuildContext context, 
+    ThemeController themeController,
+    AiController controller,
+  ) {
     return Container(
       constraints: const BoxConstraints(maxHeight: 120),
       decoration: BoxDecoration(
@@ -707,12 +683,12 @@ Widget _buildChatInterface(BuildContext context, ThemeController themeController
         ],
       ),
       child: TextField(
-        onChanged: (value) => controller.currentInput.value = value,
-        onSubmitted: (value) => _handleSendMessage(),
+        controller: controller.textController,
+        onSubmitted: (value) => _handleSendMessage(controller),
         maxLines: null,
         textInputAction: TextInputAction.newline,
         decoration: InputDecoration(
-          hintText: 'Ask Finaxis AI about your customer...',
+          hintText: 'Ask Finaxis AI about your customers...',
           hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
             color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.5),
           ),
@@ -730,14 +706,13 @@ Widget _buildChatInterface(BuildContext context, ThemeController themeController
   }
 
   /// Build send button
-  Widget _buildSendButton(ThemeController themeController) {
-    return Obx(() => AnimatedContainer(
-      duration: const Duration(milliseconds: 200),
+  Widget _buildSendButton(ThemeController themeController, AiController controller) {
+    return Obx(() => Container(
       width: 48,
       height: 48,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
-        gradient: controller.isLoading.value || controller.isStreaming.value
+        gradient: controller.isTyping.value
             ? LinearGradient(
                 colors: [Colors.grey.shade400, Colors.grey.shade600],
               )
@@ -753,12 +728,10 @@ Widget _buildChatInterface(BuildContext context, ThemeController themeController
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          onTap: controller.isLoading.value || controller.isStreaming.value
-              ? null
-              : _handleSendMessage,
+          onTap: controller.isTyping.value ? null : () => _handleSendMessage(controller),
           borderRadius: BorderRadius.circular(12),
           child: Icon(
-            controller.isLoading.value || controller.isStreaming.value
+            controller.isTyping.value
                 ? Icons.hourglass_empty_rounded
                 : Icons.send_rounded,
             color: Colors.white,
@@ -769,67 +742,12 @@ Widget _buildChatInterface(BuildContext context, ThemeController themeController
     ));
   }
 
-  /// Handle navigation from sidebar
-  void _handleNavigation(int index) {
-    final routes = [
-      '/ai-chat',     // 0: AI Chat Hub (current)
-      '/dashboard',   // 1: Dashboard
-      '/applicants',  // 2: Applicants
-      '/consent',     // 3: Consents
-      '/analytics',   // 4: Analytics
-      '/reports',     // 5: Reports
-      '/audit-log',   // 6: Audit Log
-      '/settings',    // 7: Settings
-    ];
-    
-    if (index < routes.length && routes[index] != '/ai-chat') {
-      Get.offNamed(routes[index]);
+  /// Handle send message
+  void _handleSendMessage(AiController controller) {
+    final text = controller.textController.text.trim();
+    if (text.isNotEmpty) {
+      controller.sendHardcodedMessage(text);
     }
-  }
-
-  /// Handle action button tap
-  void _handleActionTap(ChatAction action) {
-    switch (action.type) {
-      case 'navigation':
-        if (action.route != null) {
-          Get.toNamed(action.route!);
-        }
-        break;
-      case 'export':
-        // Handle export logic
-        Get.snackbar(
-          'Export',
-          'Data export functionality will be implemented soon',
-          snackPosition: SnackPosition.TOP,
-        );
-        break;
-      case 'filter':
-        // Handle filter logic
-        Get.snackbar(
-          'Filter',
-          'Filter functionality will be implemented soon',
-          snackPosition: SnackPosition.TOP,
-        );
-        break;
-    }
-  }
-
-  /// Handle sending message
-  void _handleSendMessage() {
-    final input = controller.currentInput.value.trim();
-    if (input.isNotEmpty) {
-      controller.sendMessage(input, useStream: true);
-    }
-  }
-
-  /// Toggle voice recording
-  void _toggleVoiceRecording() {
-    // Voice recording functionality will be implemented
-    Get.snackbar(
-      'Voice Input',
-      'Voice recording feature will be available soon',
-      snackPosition: SnackPosition.TOP,
-    );
   }
 
   /// Format timestamp
@@ -845,68 +763,6 @@ Widget _buildChatInterface(BuildContext context, ThemeController themeController
       return '${difference.inHours}h ago';
     } else {
       return '${timestamp.day}/${timestamp.month}/${timestamp.year}';
-    }
-  }
-  
-  /// Build background gradient based on current theme
-  LinearGradient _buildBackgroundGradient(ThemeController themeController) {
-    final themeName = themeController.currentThemeName;
-    
-    switch (themeName) {
-      case 'Classic Light':
-        return const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Color(0xFFFAFBFC), // Pure White
-            Color(0xFFF8FAFC), // Soft White
-          ],
-        );
-      case 'Emerald Luxe':
-        return const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Color(0xFFF0FDF4), // Mint White
-            Color(0xFFECFDF5), // Light Mint
-          ],
-        );
-      case 'Royal Gold':
-        return const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Color(0xFFFEFCF3), // Cream
-            Color(0xFFFEF3C7), // Light Cream
-          ],
-        );
-      case 'Aurora Green':
-        return const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Color(0xFFECFEFF), // Ice White
-            Color(0xFFCFFAFE), // Light Ice Blue
-          ],
-        );
-      case 'Cyber Violet':
-        return const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Color(0xFFFAF5FF), // Lilac White
-            Color(0xFFF3E8FF), // Light Lilac
-          ],
-        );
-      default:
-        return const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Color(0xFFFAFBFC), // Pure White
-            Color(0xFFF8FAFC), // Soft White
-          ],
-        );
     }
   }
 }

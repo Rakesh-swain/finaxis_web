@@ -34,5 +34,28 @@
 </head>
 <body>
   <script src="flutter_bootstrap.js" async></script>
+  <script>
+function embedPowerBIReport(divId, token, embedUrl) {
+    const models = window['powerbi-client'].models;
+
+    const embedConfig = {
+        type: 'report',
+        tokenType: models.TokenType.Embed,
+        accessToken: token,
+        embedUrl: embedUrl,
+        settings: {
+            panes: {
+                filters: { visible: false },
+                pageNavigation: { visible: true }
+            }
+        }
+    };
+
+    const container = document.getElementById(divId);
+    powerbi.reset(container);
+    powerbi.embed(container, embedConfig);
+}
+</script>
+
 </body>
 </html>

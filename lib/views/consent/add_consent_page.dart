@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:finaxis_web/controllers/theme_controller.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:http/http.dart' as http;
+import 'package:http/io_client.dart';
 
 
 class AddConsentPage extends StatefulWidget {
@@ -229,14 +231,14 @@ class _AddConsentPageState extends State<AddConsentPage> {
       ),
     ),
   );
-
   try {
     // 🔹 Prepare API data
     final url = Uri.parse('https://sandbox-finaxis.bancify.me/auth/v1/login');
+        // final url = Uri.parse('http://10.94.0.101:43331/auth/v1/login');
+
     final headers = {
       'x-clientId': 'testClient',
       'Content-Type': 'application/json',
-      'Access-Control-Allow-Origin': '*',
     };
     final body = jsonEncode({
       "organisationId": "233bcd1d-4216-4b3c-a362-9e4a9282bba7",
@@ -264,7 +266,7 @@ class _AddConsentPageState extends State<AddConsentPage> {
         colorText: Colors.red.shade800,
       );
     }
-  } catch (e) {
+  }  catch (e) {
     Navigator.pop(context); // close loading dialog if error
     debugPrint('❌ Exception: $e');
     Get.snackbar(
