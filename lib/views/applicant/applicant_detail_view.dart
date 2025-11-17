@@ -76,7 +76,7 @@ class ApplicantDetailView extends GetView<ApplicantDetailController> {
                   return Center(child: _buildLoadingSpinner(themeController));
                 }
 
-                final detail = controller.applicantDetail.value;
+                 final detail = controller.currentApplicant.value;
                 if (detail == null) {
                   return Center(child: _buildEmptyState(themeController));
                 }
@@ -102,7 +102,7 @@ class ApplicantDetailView extends GetView<ApplicantDetailController> {
         // 🎯 Hero Profile Card with Glassmorphic Design
         SliverToBoxAdapter(
           child: Padding(
-            padding: const EdgeInsets.all(24),
+            padding: const EdgeInsets.all(20),
             child: _buildHeroProfileCard(context, detail, themeController)
                 .animate()
                 .fadeIn(duration: 800.ms)
@@ -155,7 +155,7 @@ class ApplicantDetailView extends GetView<ApplicantDetailController> {
     ThemeController themeController,
   ) {
     return Container(
-      height: 230,
+      // height: 215,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(32),
         gradient: _buildProfileGradient(themeController),
@@ -174,7 +174,7 @@ class ApplicantDetailView extends GetView<ApplicantDetailController> {
           decoration: BoxDecoration(
             border: Border.all(color: Colors.white.withOpacity(0.2), width: 1),
           ),
-          padding: const EdgeInsets.all(32),
+          padding: const EdgeInsets.only(left: 20,right: 20,top: 15,bottom: 15),
           child: Row(
             children: [
               // 🎭 Animated Avatar Section
@@ -202,8 +202,8 @@ class ApplicantDetailView extends GetView<ApplicantDetailController> {
       children: [
         // Glow effect
         Container(
-          width: 120,
-          height: 120,
+          width: 40,
+          height: 40,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             boxShadow: [
@@ -219,8 +219,8 @@ class ApplicantDetailView extends GetView<ApplicantDetailController> {
         ),
         // Main avatar
         Container(
-              width: 120,
-              height: 120,
+              width: 110,
+              height: 110,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 gradient: themeController.getPrimaryGradient(),
@@ -264,45 +264,27 @@ class ApplicantDetailView extends GetView<ApplicantDetailController> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Name with gradient text
-        Text(
-              detail.applicant.name,
-              style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                color: Colors.white,
-                fontWeight: FontWeight.w800,
-                letterSpacing: -0.5,
-              ),
-            )
-            .animate()
-            .fadeIn(duration: 800.ms, delay: 200.ms)
-            .slideX(begin: -0.3, end: 0),
+        Row(
+          children: [
+            Text(
+                  detail.applicant.name,
+                  style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: -0.5,
+                  ),
+                )
+                .animate()
+                .fadeIn(duration: 800.ms, delay: 200.ms)
+                .slideX(begin: -0.3, end: 0),
+                const SizedBox(width: 15),
+            _pillChip(Icons.badge_outlined, detail.applicant.cif),
+          ],
+        ),
 
-        const SizedBox(height: 16),
+        const SizedBox(height: 20),
 
         // Pills with enhanced styling
-        Wrap(
-          spacing: 12,
-          runSpacing: 8,
-          children:
-              [
-                    _pillChip(Icons.badge_outlined, detail.applicant.cif),
-                    _pillChip(
-                      Icons.shield_outlined,
-                      'Risk: ${detail.applicant.ragStatus.toUpperCase() == "AMBER" ? "Medium" : detail.applicant.ragStatus.toUpperCase()}',
-                    ),
-                    _pillChip(
-                      Icons.score_rounded,
-                      'Score: ${detail.applicant.creditScore}',
-                    ),
-                  ]
-                  .map(
-                    (pill) => pill
-                        .animate()
-                        .fadeIn(duration: 600.ms, delay: 400.ms)
-                        .scale(),
-                  )
-                  .toList(),
-        ),
-        const SizedBox(height: 25),
         _buildQuickChatBar(context, themeController, detail),
       ],
     );
@@ -314,8 +296,8 @@ class ApplicantDetailView extends GetView<ApplicantDetailController> {
     dynamic detail,
   ) {
     return FuturisticCard(
-          width: 600,
-          height: 64,
+          width: 380,
+          height: 55,
           padding: const EdgeInsets.all(8),
           onTap: () => Get.to(
             CustomerAiChatView(
@@ -367,20 +349,45 @@ class ApplicantDetailView extends GetView<ApplicantDetailController> {
     dynamic detail,
     ThemeController themeController,
   ) {
-    return Row(
+    return Column(
       children: [
-        _buildFloatingScoreCard(
-          'AECB Score',
-          detail.applicant.creditScore.toString(),
-          const Color.fromARGB(255, 161, 252, 202),
-          themeController,
+        Row(
+          children: [
+            _buildFloatingScoreCard(
+              'AECB Score',
+              detail.applicant.creditScore.toString(),
+              const Color.fromARGB(255, 161, 252, 202),
+              themeController,
+            ),
+            const SizedBox(width: 16),
+            _buildFloatingScoreCard(
+              'Finaxis Credit Score',
+              detail.applicant.riskScore.toStringAsFixed(0),
+              Colors.amber,
+              themeController,
+            ),
+          ],
         ),
-        const SizedBox(width: 16),
-        _buildFloatingScoreCard(
-          'Finaxis Credit Score',
-          detail.applicant.riskScore.toStringAsFixed(0),
-          Colors.amber,
-          themeController,
+        SizedBox(height: 15),
+         Wrap(
+          spacing: 12,
+          runSpacing: 8,
+          children:
+              [
+                    
+                    _pillChip(
+                      Icons.shield_outlined,
+                      'Risk: ${detail.applicant.ragStatus.toUpperCase() == "AMBER" ? "Medium" : detail.applicant.ragStatus.toUpperCase()}',
+                    ),
+                   
+                  ]
+                  .map(
+                    (pill) => pill
+                        .animate()
+                        .fadeIn(duration: 600.ms, delay: 400.ms)
+                        .scale(),
+                  )
+                  .toList(),
         ),
       ],
     );
@@ -419,7 +426,7 @@ class ApplicantDetailView extends GetView<ApplicantDetailController> {
           child: ClipRRect(
             borderRadius: BorderRadius.circular(20),
             child: Padding(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -1004,17 +1011,41 @@ class ApplicantDetailView extends GetView<ApplicantDetailController> {
     final riskCategory = riskCategoryFromRag(rag);
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(24),
+      // padding: const EdgeInsets.only(left: 24,right: 24,bottom: 24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // 🔹 Top row: Basic Info
+          Padding(
+            padding: const EdgeInsets.only(left: 16.0, bottom: 16.0),
+            child: Text(
+                'Application Details',
+                style: TextStyle(
+                  fontWeight: FontWeight.w900,
+                  fontSize: 20,
+                  letterSpacing: 0.4,
+                  color: Colors.black,
+                ),
+              ),
+          ),
+          Row(
+            children: [
+              Expanded(child: _infoCard('Amount', 'AED 5,00,000')),
+              const SizedBox(width: 16),
+              Expanded(
+                child: _infoCard('Tenure', '36 months', ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(child: _infoCard('Interest Rate', '12%')),
+            ],
+          ),
+
           Row(
             children: [
               Expanded(child: _infoCard('Application No.', cif)),
               const SizedBox(width: 16),
               Expanded(
-                child: _infoCard('Customer Name', name, emphasize: true),
+                child: _infoCard('Customer Name', name,),
               ),
               const SizedBox(width: 16),
               Expanded(child: _infoCard('Customer Type', custType)),

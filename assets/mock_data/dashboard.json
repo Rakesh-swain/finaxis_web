@@ -3,7 +3,8 @@
     "activeCustomers": 1,
     "activeConsents": 8,
     "expiringConsents": 0,
-    "totalTransactions": 48300,
+    "totalTransactions": 4,
+    "totalAmount": 48300,
     "failedTxnPercent": 1.2,
     "openAlerts": 4
   },

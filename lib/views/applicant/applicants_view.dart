@@ -1,3 +1,4 @@
+import 'package:finaxis_web/controllers/applicant_detail_controller.dart';
 import 'package:finaxis_web/views/dashboard/dashboard_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -267,7 +268,15 @@ void setToDate(DateTime date) {
   }
 
   void navigateToDetail(String cif) {
-    Get.toNamed('/applicant/$cif');
+    // Check if we're already on detail page
+    if (Get.currentRoute.contains('/applicant/')) {
+      // We're already on detail page, just switch applicant
+      final detailController = Get.find<ApplicantDetailController>();
+      detailController.switchToApplicant(cif);
+    } else {
+      // Navigate to detail page with CIF
+      Get.toNamed('/applicant/$cif');
+    }
   }
 }
 
@@ -611,19 +620,19 @@ Widget _buildDateFilterSection(
                       // icon: Icons.security_rounded,
                     ),
                     const FuturisticTableColumn(
-                      title: 'Bank',
+                      title: 'Loan Amount',
                       // icon: Icons.account_balance_rounded,
                     ),
                     // const FuturisticTableColumn(
                     //   title: 'Loan Type',
                     //   // icon: Icons.category_rounded,
                     // ),
+                    // const FuturisticTableColumn(
+                    //   title: 'Last Updated',
+                    //   // icon: Icons.schedule_rounded,
+                    // ),
                     const FuturisticTableColumn(
-                      title: 'Last Updated',
-                      // icon: Icons.schedule_rounded,
-                    ),
-                    const FuturisticTableColumn(
-                      title: '',
+                      title: 'Status',
                       sortable: false,
                     ),
                   ],
@@ -771,8 +780,9 @@ Widget _buildDateFilterSection(
                                       decoration: BoxDecoration(
                                         color: AppTheme.getRagColor(
                                           applicant.ragStatus,
-                                        ).withOpacity(0.2),
-                                        borderRadius: BorderRadius.circular(12),
+                                        ),
+                                        // borderRadius: BorderRadius.circular(50),
+                                        shape: BoxShape.circle,
                                         border: Border.all(
                                           color: AppTheme.getRagColor(
                                             applicant.ragStatus,
@@ -794,23 +804,23 @@ Widget _buildDateFilterSection(
                                             ),
                                           ),
                                           const SizedBox(width: 6),
-                                          Text(
-                                            applicant.ragStatus.toUpperCase() ==
-                                                    "GREEN"
-                                                ? "Low"
-                                                : applicant.ragStatus
-                                                          .toUpperCase() ==
-                                                      "AMBER"
-                                                ? "Medium"
-                                                : "High",
-                                            style: TextStyle(
-                                              color: AppTheme.getRagColor(
-                                                applicant.ragStatus,
-                                              ),
-                                              fontWeight: FontWeight.w700,
-                                              fontSize: 11,
-                                            ),
-                                          ),
+                                          // Text(
+                                          //   applicant.ragStatus.toUpperCase() ==
+                                          //           "GREEN"
+                                          //       ? "Low"
+                                          //       : applicant.ragStatus
+                                          //                 .toUpperCase() ==
+                                          //             "AMBER"
+                                          //       ? "Medium"
+                                          //       : "High",
+                                          //   style: TextStyle(
+                                          //     color: AppTheme.getRagColor(
+                                          //       applicant.ragStatus,
+                                          //     ),
+                                          //     fontWeight: FontWeight.w700,
+                                          //     fontSize: 11,
+                                          //   ),
+                                          // ),
                                         ],
                                       ),
                                     ),
@@ -818,7 +828,7 @@ Widget _buildDateFilterSection(
                             FuturisticTableCell(
                               text: applicant.bankName.isEmpty
                                   ? ''
-                                  : applicant.bankName,
+                                  : '5,00,000',
                               widget: applicant.creditScore.toString() == '0'
                                   ? Container(
                                       padding: const EdgeInsets.symmetric(
@@ -848,7 +858,7 @@ Widget _buildDateFilterSection(
                                         borderRadius: BorderRadius.circular(8),
                                       ),
                                       child: Text(
-                                        applicant.bankName.toString(),
+                                        '5,00,000',
                                         style: const TextStyle(
                                           color: Colors.white,
                                           fontWeight: FontWeight.w600,
@@ -889,28 +899,28 @@ Widget _buildDateFilterSection(
                             //     ),
                             //   ),
                             // ),
-                            FuturisticTableCell(
-                              text: DateFormat(
-                                'MMM dd, yy',
-                              ).format(applicant.lastUpdated),
-                              widget: Text(
-                                DateFormat(
-                                  'MMM dd, yy',
-                                ).format(applicant.lastUpdated),
-                                style: TextStyle(
-                                  color: Theme.of(context)
-                                      .textTheme
-                                      .bodyMedium
-                                      ?.color
-                                      ?.withOpacity(0.7),
-                                  fontSize: 13,
-                                ),
-                              ),
-                            ),
+                            // FuturisticTableCell(
+                            //   text: DateFormat(
+                            //     'MMM dd, yy',
+                            //   ).format(applicant.lastUpdated),
+                            //   widget: Text(
+                            //     DateFormat(
+                            //       'MMM dd, yy',
+                            //     ).format(applicant.lastUpdated),
+                            //     style: TextStyle(
+                            //       color: Theme.of(context)
+                            //           .textTheme
+                            //           .bodyMedium
+                            //           ?.color
+                            //           ?.withOpacity(0.7),
+                            //       fontSize: 13,
+                            //     ),
+                            //   ),
+                            // ),
                             FuturisticTableCell(
                               text: applicant.mobile?.isEmpty ?? true
                                   ? 'Pending'
-                                  : 'Open',
+                                  : 'Approved',
                               widget: ElevatedButton.icon(
                                 onPressed: (applicant.mobile?.isEmpty ?? true)
                                     ? null // disable button if mobile is empty
@@ -921,13 +931,13 @@ Widget _buildDateFilterSection(
                                 icon: Icon(
                                   (applicant.mobile?.isEmpty ?? true)
                                       ? Icons.hourglass_empty_rounded
-                                      : Icons.auto_stories_rounded,
+                                      : Icons.check_box,
                                   size: 16,
                                 ),
                                 label: Text(
                                   (applicant.mobile?.isEmpty ?? true)
                                       ? 'Pending'
-                                      : 'Open',
+                                      : 'Approved',
                                 ),
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor:

@@ -32,7 +32,8 @@ class KpiData {
   final int activeCustomers;          // Active in last 30 days
   final int activeConsents;           // Total active consents
   final int expiringConsents;         // Expiring in next 30 days
-  final int totalTransactions;        // Current month transactions
+  final int totalTransactions;
+  final int totalAmount;       
   final double failedTxnPercent;      // Failed transaction rate
   final int openAlerts;               // Compliance / risk alerts
 
@@ -41,6 +42,7 @@ class KpiData {
     required this.activeConsents,
     required this.expiringConsents,
     required this.totalTransactions,
+    required this.totalAmount,
     required this.failedTxnPercent,
     required this.openAlerts,
   });
@@ -51,6 +53,7 @@ class KpiData {
       activeConsents: json['activeConsents'] ?? 0,
       expiringConsents: json['expiringConsents'] ?? 0,
       totalTransactions: json['totalTransactions'] ?? 0,
+      totalAmount: json['totalAmount'] ?? 0,
       failedTxnPercent:
           (json['failedTxnPercent'] ?? 0).toDouble(),
       openAlerts: json['openAlerts'] ?? 0,
@@ -63,6 +66,7 @@ class KpiData {
       'activeConsents': activeConsents,
       'expiringConsents': expiringConsents,
       'totalTransactions': totalTransactions,
+      'totalAmount': totalAmount,
       'failedTxnPercent': failedTxnPercent,
       'openAlerts': openAlerts,
     };

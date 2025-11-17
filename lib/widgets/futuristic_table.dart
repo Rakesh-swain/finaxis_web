@@ -318,7 +318,7 @@ class _FuturisticTableState extends State<FuturisticTable>
             return MouseRegion(
               onEnter: (_) => setState(() => _hoveredRowIndex = index),
               onExit: (_) => setState(() => _hoveredRowIndex = null),
-              child: GestureDetector(
+              child: InkWell(
                 onTap: widget.onRowTap != null ? () => widget.onRowTap!(index) : null,
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 300),

@@ -45,17 +45,16 @@ class DashboardView extends GetView<DashboardController> {
               // 📅 Date Filter Section
               // _buildDateFilterSection(context, themeController),
 
-              const SizedBox(height: 32),
 
               // 📊 Executive Metrics Row
               _buildExecutiveMetrics(context, themeController),
 
-              const SizedBox(height: 32),
+              const SizedBox(height: 20),
 
               // 📈 Charts & Analytics Row
               _buildChartsSection(context, themeController),
 
-              const SizedBox(height: 32),
+              const SizedBox(height: 20),
 
               // 👥 Recent Applicants Grid (Futuristic)
               _buildRecentApplicants(context, themeController),
@@ -446,7 +445,7 @@ Widget _buildDateFilterSection(
           ),
           _buildFloatingMetricCard(
             'Total Loans Approved (Week)',
-            'AED ${dashboardData?.kpis.totalTransactions.toString()}' ?? 'AED 0',
+            '${dashboardData?.kpis.totalTransactions.toString()}' ?? '0',
             Icons.swap_horiz_rounded,
             LinearGradient(
               colors: [Colors.purple.shade400, Colors.deepPurple.shade600],
@@ -458,12 +457,12 @@ Widget _buildDateFilterSection(
           ),
           _buildFloatingMetricCard(
             'Total Amount Sanctioned (Week)',
-              'AED ${dashboardData?.kpis.totalTransactions.toString()}' ?? 'AED 0',
+            'AED ${NumberFormat('#,###').format(dashboardData?.kpis.totalAmount ?? 0)}',
             Icons.error_outline_rounded,
             LinearGradient(
               colors: [Colors.teal.shade400, Colors.teal.shade700],
             ),
-            '-1.4%',
+            '+1.4%',
             context,
             themeController,
             index: 4,
@@ -522,7 +521,7 @@ Widget _buildDateFilterSection(
           ),
           _buildFloatingMetricCard(
             'Total Loans Approved (Current Month)',
-             'AED ${dashboardData?.kpis.totalTransactions.toString()}' ?? 'AED 0',
+             '${dashboardData?.kpis.totalTransactions.toString()}' ?? '0',
             Icons.swap_horiz_rounded,
             LinearGradient(
               colors: [Colors.purple.shade400, Colors.deepPurple.shade600],
@@ -534,12 +533,12 @@ Widget _buildDateFilterSection(
           ),
           _buildFloatingMetricCard(
             'Total Amount Sanctioned',
-           'AED ${dashboardData?.kpis.totalTransactions.toString()}' ?? 'AED 0',
+           'AED ${NumberFormat('#,###').format(dashboardData?.kpis.totalAmount ?? 0)}',
             Icons.error_outline_rounded,
             LinearGradient(
               colors: [Colors.teal.shade400, Colors.teal.shade700],
             ),
-            '-1.4%',
+            '+1.4%',
             context,
             themeController,
             index: 4,
@@ -931,10 +930,10 @@ Widget _buildDateFilterSection(
                     title: 'Risk Status',
                   ),
                   const FuturisticTableColumn(
-                    title: 'Bank',
+                    title: 'Loan Amount',
                   ),
                   const FuturisticTableColumn(
-                    title: '',
+                    title: 'Status',
                     sortable: false,
                   ),
                 ],
@@ -1049,8 +1048,9 @@ Widget _buildDateFilterSection(
                                     decoration: BoxDecoration(
                                       color: AppTheme.getRagColor(
                                         applicant.ragStatus,
-                                      ).withOpacity(0.2),
-                                      borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      // borderRadius: BorderRadius.circular(12),
+                                      shape: BoxShape.circle,
                                       border: Border.all(
                                         color: AppTheme.getRagColor(
                                           applicant.ragStatus,
@@ -1072,23 +1072,23 @@ Widget _buildDateFilterSection(
                                           ),
                                         ),
                                         const SizedBox(width: 6),
-                                        Text(
-                                          applicant.ragStatus.toUpperCase() ==
-                                                  "GREEN"
-                                              ? "Low"
-                                              : applicant.ragStatus
-                                                        .toUpperCase() ==
-                                                    "AMBER"
-                                              ? "Medium"
-                                              : "High",
-                                          style: TextStyle(
-                                            color: AppTheme.getRagColor(
-                                              applicant.ragStatus,
-                                            ),
-                                            fontWeight: FontWeight.w700,
-                                            fontSize: 11,
-                                          ),
-                                        ),
+                                        // Text(
+                                        //   applicant.ragStatus.toUpperCase() ==
+                                        //           "GREEN"
+                                        //       ? "Low"
+                                        //       : applicant.ragStatus
+                                        //                 .toUpperCase() ==
+                                        //             "AMBER"
+                                        //       ? "Medium"
+                                        //       : "High",
+                                        //   style: TextStyle(
+                                        //     color: AppTheme.getRagColor(
+                                        //       applicant.ragStatus,
+                                        //     ),
+                                        //     fontWeight: FontWeight.w700,
+                                        //     fontSize: 11,
+                                        //   ),
+                                        // ),
                                       ],
                                     ),
                                   ),
@@ -1096,7 +1096,7 @@ Widget _buildDateFilterSection(
                           FuturisticTableCell(
                             text: applicant.bankName.isEmpty
                                 ? ''
-                                : applicant.bankName,
+                                : '5,00,000',
                             widget: applicant.creditScore.toString() == '0'
                                 ? Container(
                                     padding: const EdgeInsets.symmetric(
@@ -1125,7 +1125,7 @@ Widget _buildDateFilterSection(
                                       borderRadius: BorderRadius.circular(8),
                                     ),
                                     child: Text(
-                                      applicant.bankName.toString(),
+                                      '5,00,000',
                                       style: const TextStyle(
                                         color: Colors.white,
                                         fontWeight: FontWeight.w600,
@@ -1137,7 +1137,7 @@ Widget _buildDateFilterSection(
                           FuturisticTableCell(
                             text: applicant.mobile?.isEmpty ?? true
                                 ? 'Pending'
-                                : 'Open',
+                                : 'Approved',
                             widget: ElevatedButton.icon(
                               onPressed: (applicant.mobile?.isEmpty ?? true)
                                   ? null
@@ -1147,13 +1147,13 @@ Widget _buildDateFilterSection(
                               icon: Icon(
                                 (applicant.mobile?.isEmpty ?? true)
                                     ? Icons.hourglass_empty_rounded
-                                    : Icons.auto_stories_rounded,
+                                    : Icons.check_box,
                                 size: 16,
                               ),
                               label: Text(
                                 (applicant.mobile?.isEmpty ?? true)
                                     ? 'Pending'
-                                    : 'Open',
+                                    : 'Approved',
                               ),
                               style: ElevatedButton.styleFrom(
                                 backgroundColor:
