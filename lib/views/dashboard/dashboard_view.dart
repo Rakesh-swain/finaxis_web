@@ -34,6 +34,7 @@ class DashboardView extends GetView<DashboardController> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+<<<<<<< HEAD
               const SizedBox(height: 0),
               _buildExecutiveMetrics(
                 context,
@@ -48,6 +49,26 @@ class DashboardView extends GetView<DashboardController> {
                 themeController,
                 platformController,
               ),
+=======
+              const SizedBox(height: 16),
+
+              // 📅 Date Filter Section
+              // _buildDateFilterSection(context, themeController),
+
+
+              // 📊 Executive Metrics Row
+              _buildExecutiveMetrics(context, themeController),
+
+              const SizedBox(height: 20),
+
+              // 📈 Charts & Analytics Row
+              _buildChartsSection(context, themeController),
+
+              const SizedBox(height: 20),
+
+              // 👥 Recent Applicants Grid (Futuristic)
+              _buildRecentApplicants(context, themeController),
+>>>>>>> e6060cf36e158e2cc0ade1de5c3ea57ccd9cc827
             ],
           ),
         );
@@ -412,6 +433,7 @@ Widget _buildExecutiveMetrics(
               themeController,
               index: 2,
             ),
+<<<<<<< HEAD
             _buildFloatingMetricCard(
                'Total Loans Approved (Week)',
               '${dashboardData?.kpis.totalTransactions.toString()}' ?? '0',
@@ -444,6 +466,43 @@ Widget _buildExecutiveMetrics(
               context,
               themeController,
               index: 5,
+=======
+            '0%',
+            context,
+            themeController,
+            index: 2,
+          ),
+          _buildFloatingMetricCard(
+            'Total Loans Approved (Week)',
+            '${dashboardData?.kpis.totalTransactions.toString()}' ?? '0',
+            Icons.swap_horiz_rounded,
+            LinearGradient(
+              colors: [Colors.purple.shade400, Colors.deepPurple.shade600],
+            ),
+            '+12.1%',
+            context,
+            themeController,
+            index: 3,
+          ),
+          _buildFloatingMetricCard(
+            'Total Amount Sanctioned (Week)',
+            'AED ${NumberFormat('#,###').format(dashboardData?.kpis.totalAmount ?? 0)}',
+            Icons.error_outline_rounded,
+            LinearGradient(
+              colors: [Colors.teal.shade400, Colors.teal.shade700],
+            ),
+            '+1.4%',
+            context,
+            themeController,
+            index: 4,
+          ),
+          _buildFloatingMetricCard(
+            'Risk Alerts (Week)',
+            '${dashboardData?.kpis.openAlerts ?? 0}',
+            Icons.warning_amber_rounded,
+            LinearGradient(
+              colors: [Colors.redAccent.shade400, Colors.red.shade700],
+>>>>>>> e6060cf36e158e2cc0ade1de5c3ea57ccd9cc827
             ),
           ];
         } else {
@@ -554,6 +613,7 @@ Widget _buildExecutiveMetrics(
               themeController,
               index: 2,
             ),
+<<<<<<< HEAD
           ];
         } else if (selectedFilter == DateFilterType.week) {
           cards = [
@@ -589,6 +649,43 @@ Widget _buildExecutiveMetrics(
               context,
               themeController,
               index: 2,
+=======
+            '0%',
+            context,
+            themeController,
+            index: 2,
+          ),
+          _buildFloatingMetricCard(
+            'Total Loans Approved (Current Month)',
+             '${dashboardData?.kpis.totalTransactions.toString()}' ?? '0',
+            Icons.swap_horiz_rounded,
+            LinearGradient(
+              colors: [Colors.purple.shade400, Colors.deepPurple.shade600],
+            ),
+            '+12.1%',
+            context,
+            themeController,
+            index: 3,
+          ),
+          _buildFloatingMetricCard(
+            'Total Amount Sanctioned',
+           'AED ${NumberFormat('#,###').format(dashboardData?.kpis.totalAmount ?? 0)}',
+            Icons.error_outline_rounded,
+            LinearGradient(
+              colors: [Colors.teal.shade400, Colors.teal.shade700],
+            ),
+            '+1.4%',
+            context,
+            themeController,
+            index: 4,
+          ),
+          _buildFloatingMetricCard(
+            'Risk Alerts',
+            '${dashboardData?.kpis.openAlerts ?? 0}',
+            Icons.warning_amber_rounded,
+            LinearGradient(
+              colors: [Colors.redAccent.shade400, Colors.red.shade700],
+>>>>>>> e6060cf36e158e2cc0ade1de5c3ea57ccd9cc827
             ),
           ];
         } else if (selectedFilter == DateFilterType.month) {
@@ -930,6 +1027,7 @@ Widget _buildExecutiveMetrics(
             child: Obx(
               () => FuturisticTable(
                 columns: [
+<<<<<<< HEAD
                   const FuturisticTableColumn(title: 'Application No.'),
                   const FuturisticTableColumn(title: 'Name'),
                 
@@ -938,6 +1036,30 @@ Widget _buildExecutiveMetrics(
                   const FuturisticTableColumn(title: 'Loan Amount'),
                     const FuturisticTableColumn(title: 'DateTime'),
                   const FuturisticTableColumn(title: 'Status', sortable: false),
+=======
+                  const FuturisticTableColumn(
+                    title: 'Application No.',
+                  ),
+                  const FuturisticTableColumn(
+                    title: 'Name',
+                  ),
+                  const FuturisticTableColumn(
+                    title: 'AECB Score',
+                  ),
+                  const FuturisticTableColumn(
+                    title: 'Finaxis Credit Score',
+                  ),
+                  const FuturisticTableColumn(
+                    title: 'Risk Status',
+                  ),
+                  const FuturisticTableColumn(
+                    title: 'Loan Amount',
+                  ),
+                  const FuturisticTableColumn(
+                    title: 'Status',
+                    sortable: false,
+                  ),
+>>>>>>> e6060cf36e158e2cc0ade1de5c3ea57ccd9cc827
                 ],
                 rows: applicants
                     .map(
@@ -1102,7 +1224,13 @@ Widget _buildExecutiveMetrics(
                                   ),
                           ),
                           FuturisticTableCell(
+<<<<<<< HEAD
                             text: applicant.bankName.isEmpty ? '' : '150,000',
+=======
+                            text: applicant.bankName.isEmpty
+                                ? ''
+                                : '5,00,000',
+>>>>>>> e6060cf36e158e2cc0ade1de5c3ea57ccd9cc827
                             widget: applicant.creditScore.toString() == '0'
                                 ? Container(
                                     padding: const EdgeInsets.symmetric(
@@ -1133,7 +1261,11 @@ Widget _buildExecutiveMetrics(
                                       borderRadius: BorderRadius.circular(8),
                                     ),
                                     child: Text(
+<<<<<<< HEAD
                                       '150,000',
+=======
+                                      '5,00,000',
+>>>>>>> e6060cf36e158e2cc0ade1de5c3ea57ccd9cc827
                                       style: const TextStyle(
                                         color: Colors.white,
                                         fontWeight: FontWeight.w600,
@@ -1142,6 +1274,7 @@ Widget _buildExecutiveMetrics(
                                     ),
                                   ),
                           ),
+<<<<<<< HEAD
                                                     FuturisticTableCell(
                             text: DateFormat(
                               'MMM dd, yy',
@@ -1174,6 +1307,40 @@ Widget _buildExecutiveMetrics(
                                       ? Icons.hourglass_empty_rounded
                                       : applicant.status == "New"?Icons.new_label:Icons.cancel,
                                   size: 16,
+=======
+                          FuturisticTableCell(
+                            text: applicant.mobile?.isEmpty ?? true
+                                ? 'Pending'
+                                : 'Approved',
+                            widget: ElevatedButton.icon(
+                              onPressed: (applicant.mobile?.isEmpty ?? true)
+                                  ? null
+                                  : () => controller.navigateToApplicantDetail(
+                                      applicant.cif,
+                                    ),
+                              icon: Icon(
+                                (applicant.mobile?.isEmpty ?? true)
+                                    ? Icons.hourglass_empty_rounded
+                                    : Icons.check_box,
+                                size: 16,
+                              ),
+                              label: Text(
+                                (applicant.mobile?.isEmpty ?? true)
+                                    ? 'Pending'
+                                    : 'Approved',
+                              ),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor:
+                                    (applicant.mobile?.isEmpty ?? true)
+                                    ? Colors.grey
+                                    : themeController
+                                          .getThemeData()
+                                          .primaryColor,
+                                foregroundColor: Colors.white,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 8,
+>>>>>>> e6060cf36e158e2cc0ade1de5c3ea57ccd9cc827
                                 ),
                                 label: Text(applicant.status),
                                 style: ElevatedButton.styleFrom(

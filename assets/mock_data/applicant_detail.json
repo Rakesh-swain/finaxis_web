@@ -20,7 +20,11 @@
       "loanType": "Personal Loan",
       "employmentType": "Salaried",
       "creditScore": 712,
+<<<<<<< HEAD
       "riskScore": 741,
+=======
+      "riskScore": 620,
+>>>>>>> e6060cf36e158e2cc0ade1de5c3ea57ccd9cc827
       "ragStatus": "amber",
       "lastUpdated": "2025-11-02T10:30:00Z"
     },
@@ -69,7 +73,11 @@
     "otherLoans": [
       {
         "loanType": "Home Loan",
+<<<<<<< HEAD
         "lender": "FAB",
+=======
+        "lender": "HDFC Bank",
+>>>>>>> e6060cf36e158e2cc0ade1de5c3ea57ccd9cc827
         "sanctionedAmount": 5000000.0,
         "outstandingAmount": 3200000.0,
         "tenure": 240,
@@ -78,7 +86,11 @@
       },
       {
         "loanType": "Car Loan",
+<<<<<<< HEAD
         "lender": "ADCB",
+=======
+        "lender": "ICICI Bank",
+>>>>>>> e6060cf36e158e2cc0ade1de5c3ea57ccd9cc827
         "sanctionedAmount": 800000.0,
         "outstandingAmount": 250000.0,
         "tenure": 84,
@@ -590,6 +602,7 @@
         "balanceUrl": null
       }
     ]
+<<<<<<< HEAD
   },
   {
     "applicant": {
@@ -740,5 +753,7 @@
         "balanceUrl": null
       }
     ]
+=======
+>>>>>>> e6060cf36e158e2cc0ade1de5c3ea57ccd9cc827
   }
 ]

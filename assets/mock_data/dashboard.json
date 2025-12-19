@@ -1,10 +1,17 @@
 {
   "kpis": {
     "activeCustomers": 1,
+<<<<<<< HEAD
     "activeConsents": 1,
     "expiringConsents": 1,
     "totalTransactions": 1,
     "totalAmount": 150000,
+=======
+    "activeConsents": 8,
+    "expiringConsents": 0,
+    "totalTransactions": 4,
+    "totalAmount": 48300,
+>>>>>>> e6060cf36e158e2cc0ade1de5c3ea57ccd9cc827
     "failedTxnPercent": 1.2,
     "openAlerts": 1
   },

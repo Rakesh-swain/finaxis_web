@@ -88,8 +88,35 @@ class ApplicantDetailView extends GetView<ApplicantDetailController> {
             ],
           ),
         ),
+<<<<<<< HEAD
       );
     });
+=======
+        child: Column(
+          children: [
+            // 📱 Custom Header (no sidebar)
+            _buildCustomHeader(context, themeController),
+
+            // 📖 Main Book Content
+            Expanded(
+              child: Obx(() {
+                if (controller.isLoading.value) {
+                  return Center(child: _buildLoadingSpinner(themeController));
+                }
+
+                 final detail = controller.currentApplicant.value;
+                if (detail == null) {
+                  return Center(child: _buildEmptyState(themeController));
+                }
+
+                return _buildBookOpenLayout(context, detail, themeController);
+              }),
+            ),
+          ],
+        ),
+      ),
+    );
+>>>>>>> e6060cf36e158e2cc0ade1de5c3ea57ccd9cc827
   }
 
   Widget _buildBookOpenLayout(
@@ -104,6 +131,7 @@ class ApplicantDetailView extends GetView<ApplicantDetailController> {
         SliverToBoxAdapter(
           child: Padding(
             padding: const EdgeInsets.all(20),
+<<<<<<< HEAD
             child:
                 _buildHeroProfileCard(
                       context,
@@ -114,6 +142,12 @@ class ApplicantDetailView extends GetView<ApplicantDetailController> {
                     .animate()
                     .fadeIn(duration: 800.ms)
                     .slideY(begin: -0.3, end: 0, curve: Curves.easeOutBack),
+=======
+            child: _buildHeroProfileCard(context, detail, themeController)
+                .animate()
+                .fadeIn(duration: 800.ms)
+                .slideY(begin: -0.3, end: 0, curve: Curves.easeOutBack),
+>>>>>>> e6060cf36e158e2cc0ade1de5c3ea57ccd9cc827
           ),
         ),
         SliverToBoxAdapter(
@@ -163,6 +197,10 @@ class ApplicantDetailView extends GetView<ApplicantDetailController> {
     bool isDarkMode,
   ) {
     return Container(
+<<<<<<< HEAD
+=======
+      // height: 215,
+>>>>>>> e6060cf36e158e2cc0ade1de5c3ea57ccd9cc827
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(32),
         gradient: _buildProfileGradient(themeController),
@@ -173,12 +211,16 @@ class ApplicantDetailView extends GetView<ApplicantDetailController> {
           decoration: BoxDecoration(
             border: Border.all(color: Colors.white.withOpacity(0.2), width: 1),
           ),
+<<<<<<< HEAD
           padding: const EdgeInsets.only(
             left: 20,
             right: 20,
             top: 15,
             bottom: 15,
           ),
+=======
+          padding: const EdgeInsets.only(left: 20,right: 20,top: 15,bottom: 15),
+>>>>>>> e6060cf36e158e2cc0ade1de5c3ea57ccd9cc827
           child: Row(
             children: [
               _buildAnimatedAvatar(detail, themeController),
@@ -263,6 +305,10 @@ class ApplicantDetailView extends GetView<ApplicantDetailController> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+<<<<<<< HEAD
+=======
+        // Name with gradient text
+>>>>>>> e6060cf36e158e2cc0ade1de5c3ea57ccd9cc827
         Row(
           children: [
             Text(
@@ -276,11 +322,22 @@ class ApplicantDetailView extends GetView<ApplicantDetailController> {
                 .animate()
                 .fadeIn(duration: 800.ms, delay: 200.ms)
                 .slideX(begin: -0.3, end: 0),
+<<<<<<< HEAD
             const SizedBox(width: 15),
             _pillChip(Icons.badge_outlined, detail.applicant.cif),
           ],
         ),
         const SizedBox(height: 20),
+=======
+                const SizedBox(width: 15),
+            _pillChip(Icons.badge_outlined, detail.applicant.cif),
+          ],
+        ),
+
+        const SizedBox(height: 20),
+
+        // Pills with enhanced styling
+>>>>>>> e6060cf36e158e2cc0ade1de5c3ea57ccd9cc827
         _buildQuickChatBar(context, themeController, detail),
       ],
     );
@@ -344,11 +401,15 @@ class ApplicantDetailView extends GetView<ApplicantDetailController> {
     dynamic detail,
     ThemeController themeController,
   ) {
+<<<<<<< HEAD
     print(detail.applicant.ragStatus);
+=======
+>>>>>>> e6060cf36e158e2cc0ade1de5c3ea57ccd9cc827
     return Column(
       children: [
         Row(
           children: [
+<<<<<<< HEAD
             // _buildFloatingScoreCard(
             //   'AECB Score',
             //   detail.applicant.creditScore.toString(),
@@ -359,11 +420,24 @@ class ApplicantDetailView extends GetView<ApplicantDetailController> {
             _buildFloatingScoreCard(
               'Finaxis Credit Score',
               detail.applicant.riskScore.toString(),
+=======
+            _buildFloatingScoreCard(
+              'AECB Score',
+              detail.applicant.creditScore.toString(),
+              const Color.fromARGB(255, 161, 252, 202),
+              themeController,
+            ),
+            const SizedBox(width: 16),
+            _buildFloatingScoreCard(
+              'Finaxis Credit Score',
+              detail.applicant.riskScore.toStringAsFixed(0),
+>>>>>>> e6060cf36e158e2cc0ade1de5c3ea57ccd9cc827
               Colors.amber,
               themeController,
             ),
           ],
         ),
+<<<<<<< HEAD
         const SizedBox(height: 15),
         Wrap(
           spacing: 12,
@@ -374,6 +448,28 @@ class ApplicantDetailView extends GetView<ApplicantDetailController> {
               'Risk: ${detail.applicant.ragStatus == "amber" ? "Medium" :detail.applicant.ragStatus == "green" ? "Low" :"High"}',
             ).animate().fadeIn(duration: 600.ms, delay: 400.ms).scale(),
           ],
+=======
+        SizedBox(height: 15),
+         Wrap(
+          spacing: 12,
+          runSpacing: 8,
+          children:
+              [
+                    
+                    _pillChip(
+                      Icons.shield_outlined,
+                      'Risk: ${detail.applicant.ragStatus.toUpperCase() == "AMBER" ? "Medium" : detail.applicant.ragStatus.toUpperCase()}',
+                    ),
+                   
+                  ]
+                  .map(
+                    (pill) => pill
+                        .animate()
+                        .fadeIn(duration: 600.ms, delay: 400.ms)
+                        .scale(),
+                  )
+                  .toList(),
+>>>>>>> e6060cf36e158e2cc0ade1de5c3ea57ccd9cc827
         ),
       ],
     );
@@ -926,6 +1022,7 @@ class ApplicantDetailView extends GetView<ApplicantDetailController> {
     final ckyc = (applicant.ckycCompliance ?? '').toString();
 
     return SingleChildScrollView(
+<<<<<<< HEAD
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -938,6 +1035,43 @@ class ApplicantDetailView extends GetView<ApplicantDetailController> {
                 fontSize: 20,
                 letterSpacing: 0.4,
                 color: isDarkMode ? Colors.white : Colors.black,
+=======
+      // padding: const EdgeInsets.only(left: 24,right: 24,bottom: 24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 🔹 Top row: Basic Info
+          Padding(
+            padding: const EdgeInsets.only(left: 16.0, bottom: 16.0),
+            child: Text(
+                'Application Details',
+                style: TextStyle(
+                  fontWeight: FontWeight.w900,
+                  fontSize: 20,
+                  letterSpacing: 0.4,
+                  color: Colors.black,
+                ),
+              ),
+          ),
+          Row(
+            children: [
+              Expanded(child: _infoCard('Amount', 'AED 5,00,000')),
+              const SizedBox(width: 16),
+              Expanded(
+                child: _infoCard('Tenure', '36 months', ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(child: _infoCard('Interest Rate', '12%')),
+            ],
+          ),
+
+          Row(
+            children: [
+              Expanded(child: _infoCard('Application No.', cif)),
+              const SizedBox(width: 16),
+              Expanded(
+                child: _infoCard('Customer Name', name,),
+>>>>>>> e6060cf36e158e2cc0ade1de5c3ea57ccd9cc827
               ),
             ),
           ),

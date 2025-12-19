@@ -1,5 +1,8 @@
 import 'package:finaxis_web/controllers/applicant_detail_controller.dart';
+<<<<<<< HEAD
 import 'package:finaxis_web/controllers/platform_controller.dart';
+=======
+>>>>>>> e6060cf36e158e2cc0ade1de5c3ea57ccd9cc827
 import 'package:finaxis_web/views/dashboard/dashboard_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -274,7 +277,10 @@ class ApplicantsController extends GetxController {
   }
 
   void navigateToDetail(String cif) {
+<<<<<<< HEAD
     //  Get.toNamed('/assessment/:caseId');
+=======
+>>>>>>> e6060cf36e158e2cc0ade1de5c3ea57ccd9cc827
     // Check if we're already on detail page
     if (Get.currentRoute.contains('/applicant/')) {
       // We're already on detail page, just switch applicant
@@ -606,6 +612,7 @@ class ApplicantsView extends GetView<ApplicantsController> {
           _buildSearchAndFilters(context, themeController),
           const SizedBox(height: 24),
           Obx(
+<<<<<<< HEAD
             () => SizedBox(
               height: 600,
               child: FuturisticTable(
@@ -660,6 +667,65 @@ class ApplicantsView extends GetView<ApplicantsController> {
                           //             horizontal: 8,
                           //             vertical: 4,
                           //           ),
+=======
+              () => SizedBox(
+                height: 600,
+                child: FuturisticTable(
+                  columns: [
+                    const FuturisticTableColumn(
+                      title: 'Application No.',
+                      // icon: Icons.fingerprint_rounded,
+                    ),
+                    const FuturisticTableColumn(
+                      title: 'Name',
+                      // icon: Icons.person_rounded,
+                    ),
+                    const FuturisticTableColumn(
+                      title: 'AECB Score',
+                      // icon: Icons.star_rounded,
+                    ),
+                    const FuturisticTableColumn(
+                      title: 'Finaxis Credit Score',
+                      // icon: Icons.analytics_rounded,
+                    ),
+                    const FuturisticTableColumn(
+                      title: 'Risk Status',
+                      // icon: Icons.security_rounded,
+                    ),
+                    const FuturisticTableColumn(
+                      title: 'Loan Amount',
+                      // icon: Icons.account_balance_rounded,
+                    ),
+                    // const FuturisticTableColumn(
+                    //   title: 'Loan Type',
+                    //   // icon: Icons.category_rounded,
+                    // ),
+                    // const FuturisticTableColumn(
+                    //   title: 'Last Updated',
+                    //   // icon: Icons.schedule_rounded,
+                    // ),
+                    const FuturisticTableColumn(
+                      title: 'Status',
+                      sortable: false,
+                    ),
+                  ],
+                  rows: controller.filtered
+                      .map(
+                        (applicant) => FuturisticTableRow(
+                          cells: [
+                            FuturisticTableCell(text: applicant.cif),
+                            FuturisticTableCell(text: applicant.name),
+                            FuturisticTableCell(
+                              text: applicant.creditScore.toString() == '0'
+                                  ? ''
+                                  : applicant.creditScore.toString(),
+                              widget: applicant.creditScore.toString() == '0'
+                                  ? Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 8,
+                                        vertical: 4,
+                                      ),
+>>>>>>> e6060cf36e158e2cc0ade1de5c3ea57ccd9cc827
 
                           //           child: Text(
                           //             applicant.creditScore.toString() == '0'
@@ -800,6 +866,7 @@ class ApplicantsView extends GetView<ApplicantsController> {
                                       border: Border.all(
                                         color: AppTheme.getRagColor(
                                           applicant.ragStatus,
+<<<<<<< HEAD
                                         ),
                                         width: 1.5,
                                       ),
@@ -938,15 +1005,176 @@ class ApplicantsView extends GetView<ApplicantsController> {
                                     () => controller.navigateToDetail(
                                       applicant.cif,
                                     ),
+=======
+                                        ),
+                                        // borderRadius: BorderRadius.circular(50),
+                                        shape: BoxShape.circle,
+                                        border: Border.all(
+                                          color: AppTheme.getRagColor(
+                                            applicant.ragStatus,
+                                          ),
+                                          width: 1.5,
+                                        ),
+                                      ),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Container(
+                                            width: 8,
+                                            height: 8,
+                                            decoration: BoxDecoration(
+                                              color: AppTheme.getRagColor(
+                                                applicant.ragStatus,
+                                              ),
+                                              shape: BoxShape.circle,
+                                            ),
+                                          ),
+                                          const SizedBox(width: 6),
+                                          // Text(
+                                          //   applicant.ragStatus.toUpperCase() ==
+                                          //           "GREEN"
+                                          //       ? "Low"
+                                          //       : applicant.ragStatus
+                                          //                 .toUpperCase() ==
+                                          //             "AMBER"
+                                          //       ? "Medium"
+                                          //       : "High",
+                                          //   style: TextStyle(
+                                          //     color: AppTheme.getRagColor(
+                                          //       applicant.ragStatus,
+                                          //     ),
+                                          //     fontWeight: FontWeight.w700,
+                                          //     fontSize: 11,
+                                          //   ),
+                                          // ),
+                                        ],
+                                      ),
+                                    ),
+                            ),
+                            FuturisticTableCell(
+                              text: applicant.bankName.isEmpty
+                                  ? ''
+                                  : '5,00,000',
+                              widget: applicant.creditScore.toString() == '0'
+                                  ? Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 8,
+                                        vertical: 4,
+                                      ),
+
+                                      child: Text(
+                                        applicant.bankName.toString() == ''
+                                            ? '_'
+                                            : applicant.bankName.toString(),
+                                        style: const TextStyle(
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 13,
+                                        ),
+                                      ),
+                                    )
+                                  : Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 8,
+                                        vertical: 4,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        gradient: themeController
+                                            .getPrimaryGradient(),
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: Text(
+                                        '5,00,000',
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 13,
+                                        ),
+                                      ),
+                                    ),
+                            ),
+                            // FuturisticTableCell(
+                            //   text:
+                            //       controller.loanTypeByCif[applicant.cif] ??
+                            //       'Unknown',
+                            //   widget: Container(
+                            //     padding: const EdgeInsets.symmetric(
+                            //       horizontal: 8,
+                            //       vertical: 4,
+                            //     ),
+                            //     decoration: BoxDecoration(
+                            //       color: Theme.of(
+                            //         context,
+                            //       ).primaryColor.withOpacity(0.1),
+                            //       borderRadius: BorderRadius.circular(8),
+                            //       border: Border.all(
+                            //         color: Theme.of(
+                            //           context,
+                            //         ).primaryColor.withOpacity(0.3),
+                            //         width: 1,
+                            //       ),
+                            //     ),
+                            //     child: Text(
+                            //       controller.loanTypeByCif[applicant.cif] ??
+                            //           'Unknown',
+                            //       style: TextStyle(
+                            //         color: Theme.of(context).primaryColor,
+                            //         fontWeight: FontWeight.w500,
+                            //         fontSize: 12,
+                            //       ),
+                            //     ),
+                            //   ),
+                            // ),
+                            // FuturisticTableCell(
+                            //   text: DateFormat(
+                            //     'MMM dd, yy',
+                            //   ).format(applicant.lastUpdated),
+                            //   widget: Text(
+                            //     DateFormat(
+                            //       'MMM dd, yy',
+                            //     ).format(applicant.lastUpdated),
+                            //     style: TextStyle(
+                            //       color: Theme.of(context)
+                            //           .textTheme
+                            //           .bodyMedium
+                            //           ?.color
+                            //           ?.withOpacity(0.7),
+                            //       fontSize: 13,
+                            //     ),
+                            //   ),
+                            // ),
+                            FuturisticTableCell(
+                              text: applicant.mobile?.isEmpty ?? true
+                                  ? 'Pending'
+                                  : 'Approved',
+                              widget: ElevatedButton.icon(
+                                onPressed: (applicant.mobile?.isEmpty ?? true)
+                                    ? null // disable button if mobile is empty
+                                    : () =>
+                                          controller.navigateToDetail(
+                                            applicant.cif,
+                                          ),
+>>>>>>> e6060cf36e158e2cc0ade1de5c3ea57ccd9cc827
                                 icon: Icon(
                                   applicant.status == "Approved"
                                       ? Icons.check_box
                                       : applicant.status == "Pending"
                                       ? Icons.hourglass_empty_rounded
+<<<<<<< HEAD
                                       : applicant.status == "New"?Icons.new_label:Icons.cancel,
                                   size: 16,
                                 ),
                                 label: Text(applicant.status),
+=======
+                                      : Icons.check_box,
+                                  size: 16,
+                                ),
+                                label: Text(
+                                  (applicant.mobile?.isEmpty ?? true)
+                                      ? 'Pending'
+                                      : 'Approved',
+                                ),
+>>>>>>> e6060cf36e158e2cc0ade1de5c3ea57ccd9cc827
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: applicant.status == "Pending"
                                       ? Colors.grey
