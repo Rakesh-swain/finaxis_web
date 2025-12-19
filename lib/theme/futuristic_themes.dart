@@ -21,7 +21,28 @@ class FuturisticThemes {
     );
   }
 
-  // ==================== THEME 2: EMERALD LUXE ====================
+  // ==================== THEME 2: DEEP NAVY DARK ====================
+  /// Deep Navy background (#0f172a) with Electric Blue accents (#0066cc)
+  /// Matches the HTML dashboard design exactly
+  static ThemeData get deepNavyTheme {
+    return _buildFuturisticTheme(
+      brightness: Brightness.dark,
+      primary: AppTheme.deepNavyPrimary, // #0066CC Electric Blue
+      secondary: AppTheme.deepNavySecondary, // #0052A3 Deep Blue
+      tertiary: AppTheme.deepNavyAccent, // #3B82F6 Bright Blue
+      background: AppTheme.deepNavyBackground, // #0F172A Deep Navy
+      surface: AppTheme.deepNavySurface, // #1E293B Slate
+      cardBg: AppTheme.deepNavyCardBg, // #1E2A3A Navy Card
+      textColor: AppTheme.deepNavyTextPrimary, // #CBD5E1 Light slate text
+      textSecondary: AppTheme.deepNavyTextSecondary, // #94A3B8 Slate secondary text
+      gradient: AppTheme.deepNavyGradient,
+    );
+  }
+
+  // Legacy: CYBER VIOLET (maps to Deep Navy for backward compatibility)
+  static ThemeData get cyberVioletTheme => deepNavyTheme;
+
+  // ==================== THEME 3: EMERALD LUXE ====================
   static ThemeData get emeraldLuxeTheme {
     return _buildFuturisticTheme(
       brightness: Brightness.light,
@@ -37,7 +58,7 @@ class FuturisticThemes {
     );
   }
 
-  // ==================== THEME 3: ROYAL GOLD ====================
+  // ==================== THEME 4: ROYAL GOLD ====================
   static ThemeData get royalGoldTheme {
     return _buildFuturisticTheme(
       brightness: Brightness.light,
@@ -53,7 +74,7 @@ class FuturisticThemes {
     );
   }
 
-  // ==================== THEME 4: AURORA GREEN ====================
+  // ==================== THEME 5: AURORA GREEN ====================
   static ThemeData get auroraGreenTheme {
     return _buildFuturisticTheme(
       brightness: Brightness.light,
@@ -66,22 +87,6 @@ class FuturisticThemes {
       textColor: const Color(0xFF0D9488),
       textSecondary: const Color(0xFF0891B2),
       gradient: AppTheme.auroraGreenGradient,
-    );
-  }
-
-  // ==================== THEME 5: CYBER VIOLET ====================
-  static ThemeData get cyberVioletTheme {
-    return _buildFuturisticTheme(
-      brightness: Brightness.light,
-      primary: AppTheme.cyberVioletPrimary,
-      secondary: AppTheme.cyberVioletSecondary,
-      tertiary: AppTheme.cyberVioletAccent,
-      background: AppTheme.cyberVioletBackground,
-      surface: AppTheme.cyberVioletSurface,
-      cardBg: AppTheme.cyberVioletCardBg,
-      textColor: const Color(0xFF581C87),
-      textSecondary: const Color(0xFF7C2D92),
-      gradient: AppTheme.cyberVioletGradient,
     );
   }
 
@@ -98,6 +103,11 @@ class FuturisticThemes {
     required Color textSecondary,
     required LinearGradient gradient,
   }) {
+    // Determine border color based on theme
+    final borderColor = brightness == Brightness.dark
+        ? AppTheme.deepNavyBorder // #334155 for dark theme
+        : textSecondary.withOpacity(0.3);
+
     return ThemeData(
       useMaterial3: true,
       brightness: brightness,
@@ -118,7 +128,7 @@ class FuturisticThemes {
         onBackground: textColor,
         surface: surface,
         onSurface: textColor,
-        outline: textSecondary.withOpacity(0.3),
+        outline: borderColor,
         shadow: textColor.withOpacity(0.1),
       ),
 
@@ -213,13 +223,13 @@ class FuturisticThemes {
 
       // 🎴 GLASSMORPHIC CARDS - 3D Depth + Soft Glow
       cardTheme: CardThemeData(
-        color: cardBg.withOpacity(0.7), // Semi-transparent for glassmorphism
+        color: cardBg.withOpacity(brightness == Brightness.dark ? 0.9 : 0.7),
         elevation: 0,
         shadowColor: Colors.transparent,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20), // More rounded for 2050 feel
+          borderRadius: BorderRadius.circular(20),
           side: BorderSide(
-            color: primary.withOpacity(0.1),
+            color: borderColor,
             width: 1.5,
           ),
         ),
@@ -291,7 +301,7 @@ class FuturisticThemes {
         ),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(25), // Fully rounded pills
+          borderRadius: BorderRadius.circular(25),
           side: BorderSide(color: tertiary.withOpacity(0.3)),
         ),
         brightness: brightness,
@@ -300,15 +310,15 @@ class FuturisticThemes {
       // 📝 INPUT FIELDS - Glassmorphic with Floating Labels
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: surface.withOpacity(0.6),
+        fillColor: surface.withOpacity(brightness == Brightness.dark ? 0.8 : 0.6),
         contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide(color: textSecondary.withOpacity(0.2)),
+          borderSide: BorderSide(color: borderColor),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide(color: textSecondary.withOpacity(0.2)),
+          borderSide: BorderSide(color: borderColor),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
@@ -364,7 +374,7 @@ class FuturisticThemes {
 
       // 🏠 APP BAR - Glassmorphic Top Bar
       appBarTheme: AppBarTheme(
-        backgroundColor: surface.withOpacity(0.8), // Semi-transparent
+        backgroundColor: surface.withOpacity(0.8),
         foregroundColor: textColor,
         elevation: 0,
         scrolledUnderElevation: 8,
@@ -405,7 +415,7 @@ class FuturisticThemes {
           color: surface.withOpacity(0.4),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: primary.withOpacity(0.1),
+            color: borderColor,
             width: 1,
           ),
         ),
@@ -425,7 +435,7 @@ class FuturisticThemes {
 
       // 🎨 DIVIDER THEME - Subtle Separators
       dividerTheme: DividerThemeData(
-        color: textSecondary.withOpacity(0.15),
+        color: borderColor,
         thickness: 1,
         space: 16,
       ),
@@ -476,14 +486,19 @@ class FuturisticThemes {
     switch (themeName) {
       case 'Classic Light':
         return classicLightTheme;
+      case 'Deep Navy':
+      case 'Deep Navy Dark':
+        return deepNavyTheme;
       case 'Emerald Luxe':
         return emeraldLuxeTheme;
       case 'Royal Gold':
         return royalGoldTheme;
       case 'Aurora Green':
         return auroraGreenTheme;
+      // Legacy theme names
       case 'Cyber Violet':
-        return cyberVioletTheme;
+      case 'Dark':
+        return cyberVioletTheme; // Maps to deepNavyTheme
       default:
         return classicLightTheme;
     }
@@ -494,14 +509,19 @@ class FuturisticThemes {
     switch (themeName) {
       case 'Classic Light':
         return AppTheme.classicLightGradient;
+      case 'Deep Navy':
+      case 'Deep Navy Dark':
+      case 'Dark':
+        return AppTheme.deepNavyGradient;
       case 'Emerald Luxe':
         return AppTheme.emeraldLuxeGradient;
       case 'Royal Gold':
         return AppTheme.royalGoldGradient;
       case 'Aurora Green':
         return AppTheme.auroraGreenGradient;
+      // Legacy
       case 'Cyber Violet':
-        return AppTheme.cyberVioletGradient;
+        return AppTheme.deepNavyGradient;
       default:
         return AppTheme.classicLightGradient;
     }
@@ -516,6 +536,16 @@ class FuturisticThemes {
           AppTheme.classicLightAccent,
           const Color(0xFF059669),
           const Color(0xFF0891B2),
+        ];
+      case 'Deep Navy':
+      case 'Deep Navy Dark':
+      case 'Dark':
+      case 'Cyber Violet':
+        return [
+          AppTheme.deepNavyPrimary,
+          AppTheme.deepNavyAccent,
+          const Color(0xFF0EA5E9),
+          const Color(0xFF6366F1),
         ];
       case 'Emerald Luxe':
         return [
@@ -537,13 +567,6 @@ class FuturisticThemes {
           AppTheme.auroraGreenSecondary,
           AppTheme.auroraGreenAccent,
           const Color(0xFF06B6D4),
-        ];
-      case 'Cyber Violet':
-        return [
-          AppTheme.cyberVioletPrimary,
-          AppTheme.cyberVioletSecondary,
-          AppTheme.cyberVioletAccent,
-          const Color(0xFFA855F7),
         ];
       default:
         return [AppTheme.classicLightPrimary, AppTheme.classicLightAccent];

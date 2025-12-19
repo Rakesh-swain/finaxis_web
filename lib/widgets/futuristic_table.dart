@@ -87,30 +87,22 @@ class _FuturisticTableState extends State<FuturisticTable>
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(20),
-        child: Stack(
+        child: Column(
           children: [
-            // 🌌 Particle Background
-            _buildParticleBackground(),
-
-            // 📊 Main Table Content
-            Column(
-              children: [
-                // 🎯 Holographic Header
-                _buildHolographicHeader(),
-
-                // 📋 Table Body
-                widget.isLoading
-                    ? _buildLoadingState()
-                    : widget.rows.isEmpty
-                        ? _buildEmptyState()
-                        : Expanded(
-                            child: SingleChildScrollView(
-                              scrollDirection: Axis.vertical,
-                              child: _buildTableBody(),
-                            ),
-                          ),
-              ],
-            ),
+            // 🎯 Holographic Header
+            _buildHolographicHeader(),
+        
+            // 📋 Table Body
+            widget.isLoading
+                ? _buildLoadingState()
+                : widget.rows.isEmpty
+                    ? _buildEmptyState()
+                    : Expanded(
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.vertical,
+                          child: _buildTableBody(),
+                        ),
+                      ),
           ],
         ),
       ),
@@ -318,7 +310,7 @@ class _FuturisticTableState extends State<FuturisticTable>
             return MouseRegion(
               onEnter: (_) => setState(() => _hoveredRowIndex = index),
               onExit: (_) => setState(() => _hoveredRowIndex = null),
-              child: GestureDetector(
+              child: InkWell(
                 onTap: widget.onRowTap != null ? () => widget.onRowTap!(index) : null,
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 300),

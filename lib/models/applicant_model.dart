@@ -20,6 +20,7 @@ class ApplicantModel {
   final int creditScore;
   final double riskScore;
   final String ragStatus;
+  final String status;
   final DateTime lastUpdated;
 
   ApplicantModel({
@@ -44,6 +45,7 @@ class ApplicantModel {
     required this.creditScore,
     required this.riskScore,
     required this.ragStatus,
+    required this.status,
     required this.lastUpdated,
   });
 
@@ -84,6 +86,7 @@ class ApplicantModel {
           ? json['riskScore'].toDouble()
           : double.tryParse(json['riskScore'] ?? '0') ?? 0,
       ragStatus: json['ragStatus'] ?? '',
+      status: json['status'] ?? '',
       lastUpdated: DateTime.tryParse(json['lastUpdated'] ?? '') ??
           DateTime.now(),
     );
@@ -112,6 +115,7 @@ class ApplicantModel {
       'creditScore': creditScore,
       'riskScore': riskScore,
       'ragStatus': ragStatus,
+      'status':status,
       'lastUpdated': lastUpdated.toIso8601String(),
     };
   }

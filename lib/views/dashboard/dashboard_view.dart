@@ -1,19 +1,14 @@
-import 'package:finaxis_web/views/dashboard/date_picker.dart';
-import 'package:finaxis_web/widgets/animated_kpi_card.dart';
-import 'package:finaxis_web/widgets/responsive_layout.dart';
+import 'package:finaxis_web/widgets/futuristic_table.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:intl/intl.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:flutter_animate/flutter_animate.dart';
-import 'package:glassmorphism/glassmorphism.dart';
-import 'package:animated_text_kit/animated_text_kit.dart';
 import '../../controllers/dashboard_controller.dart';
 import '../../controllers/theme_controller.dart';
+import '../../controllers/platform_controller.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/futuristic_layout.dart';
-import '../../widgets/futuristic_sidebar.dart';
-import '../../widgets/futuristic_table.dart';
 
 enum DateFilterType { today, week, month, calendar }
 
@@ -24,13 +19,12 @@ class DashboardView extends GetView<DashboardController> {
   @override
   Widget build(BuildContext context) {
     final themeController = Get.find<ThemeController>();
+    final platformController = Get.find<PlatformController>();
 
     return FuturisticLayout(
-      selectedIndex: 1, // Dashboard index (AI Chat Hub=0, Dashboard=1)
+      selectedIndex: 1,
       pageTitle: 'Good morning AHMED FALASI',
-      headerActions: [
-        _buildDateFilterSection(context, themeController),
-      ],
+      headerActions: [_buildDateFilterSection(context, themeController)],
       child: Obx(() {
         if (controller.isLoading.value) {
           return Center(child: _buildLoadingState(context, themeController));
@@ -40,25 +34,20 @@ class DashboardView extends GetView<DashboardController> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 16),
-
-              // 📅 Date Filter Section
-              // _buildDateFilterSection(context, themeController),
-
-              const SizedBox(height: 32),
-
-              // 📊 Executive Metrics Row
-              _buildExecutiveMetrics(context, themeController),
-
-              const SizedBox(height: 32),
-
-              // 📈 Charts & Analytics Row
+              const SizedBox(height: 0),
+              _buildExecutiveMetrics(
+                context,
+                themeController,
+                platformController,
+              ),
+              const SizedBox(height: 20),
               _buildChartsSection(context, themeController),
-
-              const SizedBox(height: 32),
-
-              // 👥 Recent Applicants Grid (Futuristic)
-              _buildRecentApplicants(context, themeController),
+              const SizedBox(height: 20),
+              _buildRecentApplicants(
+                context,
+                themeController,
+                platformController,
+              ),
             ],
           ),
         );
@@ -67,188 +56,178 @@ class DashboardView extends GetView<DashboardController> {
   }
 
   /// Build Date Filter Section
-Widget _buildDateFilterSection(
-  BuildContext context,
-  ThemeController themeController,
-) {
-  return Obx(() {
-    final selectedFilter = controller.selectedDateFilter.value;
-    final fromDate = controller.fromDate.value;
-    final toDate = controller.toDate.value;
+  Widget _buildDateFilterSection(
+    BuildContext context,
+    ThemeController themeController,
+  ) {
+    return Obx(() {
+      final selectedFilter = controller.selectedDateFilter.value;
+      final fromDate = controller.fromDate.value;
+      final toDate = controller.toDate.value;
 
-    return Container(
-      // padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        // color: Theme.of(context).cardColor,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // 🔹 Filter buttons row
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              ToggleButtons(
-                isSelected: [
-                  selectedFilter == DateFilterType.today,
-                  selectedFilter == DateFilterType.week,
-                  selectedFilter == DateFilterType.month,
-                  selectedFilter == DateFilterType.calendar,
-                ],
-                onPressed: (index) {
-                  final filterType = DateFilterType.values[index];
-                  controller.setDateFilter(filterType);
+      return Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                ToggleButtons(
+                  isSelected: [
+                    selectedFilter == DateFilterType.today,
+                    selectedFilter == DateFilterType.week,
+                    selectedFilter == DateFilterType.month,
+                    selectedFilter == DateFilterType.calendar,
+                  ],
+                  onPressed: (index) {
+                    final filterType = DateFilterType.values[index];
+                    controller.setDateFilter(filterType);
 
-                  if (filterType == DateFilterType.calendar) {
-                    _showCalendarPicker(context);
-                  }
-                },
-                borderRadius: BorderRadius.circular(12),
-                selectedColor: Colors.white,
-                fillColor: themeController.getThemeData().primaryColor,
-                color: themeController.getThemeData().primaryColor,
-                constraints: const BoxConstraints(
-                  minHeight: 36.0,
-                  minWidth: 70.0,
+                    if (filterType == DateFilterType.calendar) {
+                      _showCalendarPicker(context);
+                    }
+                  },
+                  borderRadius: BorderRadius.circular(12),
+                  selectedColor: Colors.white,
+                  fillColor: themeController.getThemeData().primaryColor,
+                  color: themeController.getThemeData().primaryColor,
+                  constraints: const BoxConstraints(
+                    minHeight: 36.0,
+                    minWidth: 70.0,
+                  ),
+                  children: const [
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 12),
+                      child: Text('Today'),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 12),
+                      child: Text('Week'),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 12),
+                      child: Text('Month'),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 12),
+                      child: Text('Calendar'),
+                    ),
+                  ],
                 ),
-                children: const [
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 12),
-                    child: Text('Today'),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 12),
-                    child: Text('Week'),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 12),
-                    child: Text('Month'),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 12),
-                    child: Text('Calendar'),
-                  ),
-                ],
-              ),
-            ],
-          ),
-
-          const SizedBox(height: 12),
-
-          // 🔹 Compact From-To Row (aligned to right)
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              _buildDatePickerCard(
-                context,
-                themeController,
-                'From',
-                fromDate,
-                isEnabled: selectedFilter != DateFilterType.today,
-                onTap: selectedFilter != DateFilterType.today
-                    ? () => _showDatePicker(context, true)
-                    : null,
-                small: true, // custom flag for smaller size
-              ),
-              const SizedBox(width: 10),
-              Icon(
-                Icons.arrow_forward,
-                color: themeController.getThemeData().primaryColor,
-                size: 20,
-              ),
-              const SizedBox(width: 10),
-              _buildDatePickerCard(
-                context,
-                themeController,
-                'To',
-                toDate,
-                isEnabled: selectedFilter != DateFilterType.today,
-                onTap: selectedFilter != DateFilterType.today
-                    ? () => _showDatePicker(context, false)
-                    : null,
-                small: true,
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  });
-}
-
+              ],
+            ),
+            const SizedBox(height: 12),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                _buildDatePickerCard(
+                  context,
+                  themeController,
+                  'From',
+                  fromDate,
+                  isEnabled: selectedFilter != DateFilterType.today,
+                  onTap: selectedFilter != DateFilterType.today
+                      ? () => _showDatePicker(context, true)
+                      : null,
+                  small: true,
+                ),
+                const SizedBox(width: 10),
+                Icon(
+                  Icons.arrow_forward,
+                  color: themeController.getThemeData().primaryColor,
+                  size: 20,
+                ),
+                const SizedBox(width: 10),
+                _buildDatePickerCard(
+                  context,
+                  themeController,
+                  'To',
+                  toDate,
+                  isEnabled: selectedFilter != DateFilterType.today,
+                  onTap: selectedFilter != DateFilterType.today
+                      ? () => _showDatePicker(context, false)
+                      : null,
+                  small: true,
+                ),
+              ],
+            ),
+          ],
+        ),
+      );
+    });
+  }
 
   /// Build Date Picker Card
   Widget _buildDatePickerCard(
-  BuildContext context,
-  ThemeController themeController,
-  String label,
-  DateTime date, {
-  bool isEnabled = true,
-  VoidCallback? onTap,
-  bool small = false, // new flag
-}) {
-  final textTheme = Theme.of(context).textTheme;
+    BuildContext context,
+    ThemeController themeController,
+    String label,
+    DateTime date, {
+    bool isEnabled = true,
+    VoidCallback? onTap,
+    bool small = false,
+  }) {
+    final textTheme = Theme.of(context).textTheme;
 
-  return GestureDetector(
-    onTap: isEnabled ? onTap : null,
-    child: Container(
-      padding: EdgeInsets.symmetric(
-        vertical: small ? 6 : 12,
-        horizontal: small ? 10 : 16,
-      ),
-      decoration: BoxDecoration(
-        color: isEnabled
-            ? Theme.of(context).cardColor
-            : Colors.grey.shade200,
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(
-          color: themeController.getThemeData().primaryColor.withOpacity(0.3),
+    return GestureDetector(
+      onTap: isEnabled ? onTap : null,
+      child: Container(
+        padding: EdgeInsets.symmetric(
+          vertical: small ? 6 : 12,
+          horizontal: small ? 10 : 16,
+        ),
+        decoration: BoxDecoration(
+          color: isEnabled ? Theme.of(context).cardColor : Colors.grey.shade200,
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(
+            color: themeController.getThemeData().primaryColor.withOpacity(0.3),
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.calendar_today,
+              size: small ? 14 : 18,
+              color: themeController.getThemeData().primaryColor,
+            ),
+            const SizedBox(width: 6),
+            Text(
+              '${label}: ${DateFormat('dd MMM').format(date)}',
+              style: textTheme.bodyMedium?.copyWith(
+                fontSize: small ? 13 : 15,
+                color: isEnabled
+                    ? themeController.getThemeData().primaryColor
+                    : Colors.grey,
+              ),
+            ),
+          ],
         ),
       ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            Icons.calendar_today,
-            size: small ? 14 : 18,
-            color: themeController.getThemeData().primaryColor,
-          ),
-          const SizedBox(width: 6),
-          Text(
-            '${label}: ${DateFormat('dd MMM').format(date)}',
-            style: textTheme.bodyMedium?.copyWith(
-              fontSize: small ? 13 : 15,
-              color: isEnabled
-                  ? themeController.getThemeData().primaryColor
-                  : Colors.grey,
-            ),
-          ),
-        ],
-      ),
-    ),
-  );
-}
-
+    );
+  }
 
   /// Show Date Picker
   Future<void> _showDatePicker(BuildContext context, bool isFromDate) async {
     final selectedFilter = controller.selectedDateFilter.value;
-    final currentDate = isFromDate ? controller.fromDate.value : controller.toDate.value;
-    
+    final currentDate = isFromDate
+        ? controller.fromDate.value
+        : controller.toDate.value;
+
     DateTime? firstDate;
     DateTime? lastDate;
-    
-    // Set constraints based on filter type
+
     if (selectedFilter == DateFilterType.week) {
-      // For week, limit to 7 days range
       if (isFromDate) {
         firstDate = DateTime(2020);
         lastDate = controller.toDate.value.subtract(const Duration(days: 1));
@@ -260,7 +239,7 @@ Widget _buildDateFilterSection(
       firstDate = DateTime(2020);
       lastDate = DateTime.now().add(const Duration(days: 365));
     }
-    
+
     final picked = await showDatePicker(
       context: context,
       initialDate: currentDate,
@@ -277,12 +256,11 @@ Widget _buildDateFilterSection(
         );
       },
     );
-    
+
     if (picked != null) {
       if (isFromDate) {
         controller.setFromDate(picked);
-        
-        // Auto-adjust toDate for week filter
+
         if (selectedFilter == DateFilterType.week) {
           final newToDate = picked.add(const Duration(days: 6));
           if (newToDate.isAfter(DateTime.now())) {
@@ -294,360 +272,493 @@ Widget _buildDateFilterSection(
       } else {
         controller.setToDate(picked);
       }
-      
+
       controller.fetchDashboardData();
     }
   }
 
   /// Show Calendar Range Picker
- Future<void> _showCalendarPicker(BuildContext context) async {
-  final theme = Get.find<ThemeController>().getThemeData();
+  Future<void> _showCalendarPicker(BuildContext context) async {
+    final theme = Get.find<ThemeController>().getThemeData();
 
-  // Use Flutter's built-in date range picker wrapped in a Dialog
-  final DateTimeRange? picked = await showDateRangePicker(
-    context: context,
-    firstDate: DateTime(2020),
-    lastDate: DateTime.now().add(const Duration(days: 365)),
-    initialDateRange: DateTimeRange(
-      start: controller.fromDate.value,
-      end: controller.toDate.value,
-    ),
-    builder: (context, child) {
-      return Dialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        insetPadding: const EdgeInsets.all(20),
-        child: Container(
-          constraints: const BoxConstraints(
-            maxWidth: 450,
-            maxHeight: 600,
+    final DateTimeRange? picked = await showDateRangePicker(
+      context: context,
+      firstDate: DateTime(2020),
+      lastDate: DateTime.now().add(const Duration(days: 365)),
+      initialDateRange: DateTimeRange(
+        start: controller.fromDate.value,
+        end: controller.toDate.value,
+      ),
+      builder: (context, child) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
           ),
-          child: Theme(
-            data: Theme.of(context).copyWith(
-              colorScheme: ColorScheme.light(
-                primary: theme.primaryColor,
-                onPrimary: Colors.white,
-                onSurface: theme.textTheme.bodyLarge?.color ?? Colors.black,
-              ),
-              dialogTheme: DialogThemeData(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
+          insetPadding: const EdgeInsets.all(20),
+          child: Container(
+            constraints: const BoxConstraints(maxWidth: 450, maxHeight: 600),
+            child: Theme(
+              data: Theme.of(context).copyWith(
+                colorScheme: ColorScheme.light(
+                  primary: theme.primaryColor,
+                  onPrimary: Colors.white,
+                  onSurface: theme.textTheme.bodyLarge?.color ?? Colors.black,
+                ),
+                dialogTheme: DialogThemeData(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
                 ),
               ),
+              child: child!,
             ),
-            child: child!,
           ),
-        ),
-      );
-    },
-  );
+        );
+      },
+    );
 
-  // Update dates if user selected a range
-  if (picked != null) {
-    controller.setFromDate(picked.start);
-    controller.setToDate(picked.end);
-    controller.fetchDashboardData();
+    if (picked != null) {
+      controller.setFromDate(picked.start);
+      controller.setToDate(picked.end);
+      controller.fetchDashboardData();
+    }
   }
-}
 
-
-
-
-
-  /// Build executive metrics with floating cards
-  Widget _buildExecutiveMetrics(
+  /// Build executive metrics - NOW ONLY 3 CARDS
+Widget _buildExecutiveMetrics(
     BuildContext context,
     ThemeController themeController,
+    PlatformController platformController,
   ) {
     return Obx(() {
       final dashboardData = controller.dashboardData.value;
       final selectedFilter = controller.selectedDateFilter.value;
-      
-      // Define cards based on filter type
+
+      // Define cards based on filter type and platform
       List<Widget> cards = [];
-      
-      if (selectedFilter == DateFilterType.today) {
-        // Show only 3 cards for Today
-        cards = [
-          _buildFloatingMetricCard(
-            'Total Consent Requests (Today)',
-            '${dashboardData?.kpis.activeCustomers ?? 0}',
-            Icons.people_alt_rounded,
-            LinearGradient(
-              colors: [Colors.blue.shade400, Colors.blue.shade700],
+
+      if (platformController.isLending) {
+        // LENDING PLATFORM CARDS
+        if (selectedFilter == DateFilterType.today) {
+          // Show only 3 cards for Today
+          cards = [
+            _buildFloatingMetricCard(
+              'Total Consent Requests (Today)',
+              '${dashboardData?.kpis.activeCustomers ?? 0}',
+              Icons.people_alt_rounded,
+              LinearGradient(
+                colors: [Colors.blue.shade400, Colors.blue.shade700],
+              ),
+              context,
+              themeController,
+              index: 0,
             ),
-            '+5.2%',
-            context,
-            themeController,
-            index: 0,
-          ),
-          _buildFloatingMetricCard(
-            'Consents Granted (Today)',
-            '${dashboardData?.kpis.activeConsents ?? 0}',
-            Icons.verified_user_rounded,
-            LinearGradient(
-              colors: [Colors.green.shade400, Colors.green.shade600],
+            _buildFloatingMetricCard(
+              'Consents Granted (Today)',
+              '${dashboardData?.kpis.activeConsents ?? 0}',
+              Icons.verified_user_rounded,
+              LinearGradient(
+                colors: [Colors.green.shade400, Colors.green.shade600],
+              ),
+              context,
+              themeController,
+              index: 1,
             ),
-            '+8.3%',
-            context,
-            themeController,
-            index: 1,
-          ),
-          _buildFloatingMetricCard(
-            'Consents Pending (Today)',
-            '${dashboardData?.kpis.expiringConsents ?? 0}',
-            Icons.timer_rounded,
-            LinearGradient(
-              colors: [Colors.orange.shade400, Colors.deepOrange.shade600],
+            _buildFloatingMetricCard(
+               'Consents Pending (Today)',
+              '${dashboardData?.kpis.expiringConsents ?? 0}',
+              Icons.timer_rounded,
+              LinearGradient(
+                colors: [Colors.orange.shade400, Colors.deepOrange.shade600],
+              ),
+              context,
+              themeController,
+              index: 2,
             ),
-            '0%',
-            context,
-            themeController,
-            index: 2,
-          ),
-        ];
-      } else if (selectedFilter == DateFilterType.week) {
-        // Show all 6 cards for Week
-        cards = [
-          _buildFloatingMetricCard(
-            'Total Consent Requests (Week)',
-            '${dashboardData?.kpis.activeCustomers ?? 0}',
-            Icons.people_alt_rounded,
-            LinearGradient(
-              colors: [Colors.blue.shade400, Colors.blue.shade700],
+          ];
+        } else if (selectedFilter == DateFilterType.week) {
+          // Show all 6 cards for Week
+          cards = [
+            _buildFloatingMetricCard(
+             'Total Consent Requests (Week)',
+              '${dashboardData?.kpis.activeCustomers ?? 0}',
+              Icons.people_alt_rounded,
+              LinearGradient(
+                colors: [Colors.blue.shade400, Colors.blue.shade700],
+              ),
+              context,
+              themeController,
+              index: 0,
             ),
-            '+5.2%',
-            context,
-            themeController,
-            index: 0,
-          ),
-          _buildFloatingMetricCard(
-            'Consents Granted (Week)',
-            '${dashboardData?.kpis.activeConsents ?? 0}',
-            Icons.verified_user_rounded,
-            LinearGradient(
-              colors: [Colors.green.shade400, Colors.green.shade600],
+            _buildFloatingMetricCard(
+              'Consents Granted (Week)',
+              '${dashboardData?.kpis.activeConsents ?? 0}',
+              Icons.verified_user_rounded,
+              LinearGradient(
+                colors: [Colors.green.shade400, Colors.green.shade600],
+              ),
+              context,
+              themeController,
+              index: 1,
             ),
-            '+8.3%',
-            context,
-            themeController,
-            index: 1,
-          ),
-          _buildFloatingMetricCard(
-            'Consents Pending (Week)',
-            '${dashboardData?.kpis.expiringConsents ?? 0}',
-            Icons.timer_rounded,
-            LinearGradient(
-              colors: [Colors.orange.shade400, Colors.deepOrange.shade600],
+            _buildFloatingMetricCard(
+              'Consents Pending (Week)',
+              '${dashboardData?.kpis.expiringConsents ?? 0}',
+              Icons.timer_rounded,
+              LinearGradient(
+                colors: [Colors.orange.shade400, Colors.deepOrange.shade600],
+              ),
+              context,
+              themeController,
+              index: 2,
             ),
-            '0%',
-            context,
-            themeController,
-            index: 2,
-          ),
-          _buildFloatingMetricCard(
-            'Total Loans Approved (Week)',
-            'AED ${dashboardData?.kpis.totalTransactions.toString()}' ?? 'AED 0',
-            Icons.swap_horiz_rounded,
-            LinearGradient(
-              colors: [Colors.purple.shade400, Colors.deepPurple.shade600],
+            _buildFloatingMetricCard(
+               'Total Loans Approved (Week)',
+              '${dashboardData?.kpis.totalTransactions.toString()}' ?? '0',
+              Icons.swap_horiz_rounded,
+              LinearGradient(
+                colors: [Colors.purple.shade400, Colors.deepPurple.shade600],
+              ),
+              context,
+              themeController,
+              index: 3,
             ),
-            '+12.1%',
-            context,
-            themeController,
-            index: 3,
-          ),
-          _buildFloatingMetricCard(
-            'Total Amount Sanctioned (Week)',
-              'AED ${dashboardData?.kpis.totalTransactions.toString()}' ?? 'AED 0',
-            Icons.error_outline_rounded,
-            LinearGradient(
-              colors: [Colors.teal.shade400, Colors.teal.shade700],
+            _buildFloatingMetricCard(
+              'Total Amount Sanctioned (Week)',
+              'AED ${NumberFormat('#,###').format(dashboardData?.kpis.totalAmount ?? 0)}',
+              Icons.error_outline_rounded,
+              LinearGradient(
+                colors: [Colors.teal.shade400, Colors.teal.shade700],
+              ),
+              context,
+              themeController,
+              index: 4,
             ),
-            '-1.4%',
-            context,
-            themeController,
-            index: 4,
-          ),
-          _buildFloatingMetricCard(
-            'Risk Alerts (Week)',
-            '${dashboardData?.kpis.openAlerts ?? 0}',
-            Icons.warning_amber_rounded,
-            LinearGradient(
-              colors: [Colors.redAccent.shade400, Colors.red.shade700],
+            _buildFloatingMetricCard(
+              'Risk Alerts (Week)',
+              '${dashboardData?.kpis.openAlerts ?? 0}',
+              Icons.warning_amber_rounded,
+              LinearGradient(
+                colors: [Colors.redAccent.shade400, Colors.red.shade700],
+              ),
+              context,
+              themeController,
+              index: 5,
             ),
-            'Monitor',
-            context,
-            themeController,
-            index: 5,
-          ),
-        ];
+          ];
+        } else {
+          // Show all 6 cards for Month and Calendar
+          cards = [
+            _buildFloatingMetricCard(
+              'Total Consent Requests (30 Days)',
+              '${dashboardData?.kpis.activeCustomers ?? 0}',
+              Icons.people_alt_rounded,
+              LinearGradient(
+                colors: [Colors.blue.shade400, Colors.blue.shade700],
+              ),
+              context,
+              themeController,
+              index: 0,
+            ),
+            _buildFloatingMetricCard(
+              'Consents Granted (Total Active)',
+              '${dashboardData?.kpis.activeConsents ?? 0}',
+              Icons.verified_user_rounded,
+              LinearGradient(
+                colors: [Colors.green.shade400, Colors.green.shade600],
+              ),
+              context,
+              themeController,
+              index: 1,
+            ),
+            _buildFloatingMetricCard(
+               'Consents Pending Action',
+              '${dashboardData?.kpis.expiringConsents ?? 0}',
+              Icons.timer_rounded,
+              LinearGradient(
+                colors: [Colors.orange.shade400, Colors.deepOrange.shade600],
+              ),
+              context,
+              themeController,
+              index: 2,
+            ),
+            _buildFloatingMetricCard(
+              'Total Loans Approved (Current Month)',
+              '${dashboardData?.kpis.totalTransactions.toString()}' ?? '0',
+              Icons.swap_horiz_rounded,
+              LinearGradient(
+                colors: [Colors.purple.shade400, Colors.deepPurple.shade600],
+              ),
+              context,
+              themeController,
+              index: 3,
+            ),
+            _buildFloatingMetricCard(
+              'Total Amount Sanctioned',
+              'AED ${NumberFormat('#,###').format(dashboardData?.kpis.totalAmount ?? 0)}',
+              Icons.error_outline_rounded,
+              LinearGradient(
+                colors: [Colors.teal.shade400, Colors.teal.shade700],
+              ),
+              context,
+              themeController,
+              index: 4,
+            ),
+            _buildFloatingMetricCard(
+              'Risk Alerts',
+              '${dashboardData?.kpis.openAlerts ?? 0}',
+              Icons.warning_amber_rounded,
+              LinearGradient(
+                colors: [Colors.redAccent.shade400, Colors.red.shade700],
+              ),
+              context,
+              themeController,
+              index: 5,
+            ),
+          ];
+        }
       } else {
-        // Show all 6 cards for Month and Calendar
-        cards = [
-          _buildFloatingMetricCard(
-            'Total Consent Requests (30 Days)',
-            '${dashboardData?.kpis.activeCustomers ?? 0}',
-            Icons.people_alt_rounded,
-            LinearGradient(
-              colors: [Colors.blue.shade400, Colors.blue.shade700],
+        // BILLING PLATFORM CARDS - EMI METRICS
+        if (selectedFilter == DateFilterType.today) {
+          cards = [
+            _buildFloatingMetricCard(
+              'Total EMIs',
+              '${dashboardData?.kpis.activeConsents ?? 0}',
+              Icons.receipt_long_rounded,
+              LinearGradient(
+                colors: [Colors.blue.shade400, Colors.blue.shade700],
+              ),
+              context,
+              themeController,
+              index: 0,
             ),
-            '+5.2%',
-            context,
-            themeController,
-            index: 0,
-          ),
-          _buildFloatingMetricCard(
-            'Consents Granted (Total Active)',
-            '${dashboardData?.kpis.activeConsents ?? 0}',
-            Icons.verified_user_rounded,
-            LinearGradient(
-              colors: [Colors.green.shade400, Colors.green.shade600],
+            _buildFloatingMetricCard(
+              'Active EMIs',
+              '${dashboardData?.kpis.activeCustomers ?? 0}',
+              Icons.check_circle_rounded,
+              LinearGradient(
+                colors: [Colors.green.shade400, Colors.green.shade600],
+              ),
+              context,
+              themeController,
+              index: 1,
             ),
-            '+8.3%',
-            context,
-            themeController,
-            index: 1,
-          ),
-          _buildFloatingMetricCard(
-            'Consents Pending Action',
-            '${dashboardData?.kpis.expiringConsents ?? 0}',
-            Icons.timer_rounded,
-            LinearGradient(
-              colors: [Colors.orange.shade400, Colors.deepOrange.shade600],
+            _buildFloatingMetricCard(
+              'Pending EMIs',
+              '${dashboardData?.kpis.expiringConsents ?? 0}',
+              Icons.hourglass_empty_rounded,
+              LinearGradient(
+                colors: [Colors.orange.shade400, Colors.deepOrange.shade600],
+              ),
+              context,
+              themeController,
+              index: 2,
             ),
-            '0%',
-            context,
-            themeController,
-            index: 2,
-          ),
-          _buildFloatingMetricCard(
-            'Total Loans Approved (Current Month)',
-             'AED ${dashboardData?.kpis.totalTransactions.toString()}' ?? 'AED 0',
-            Icons.swap_horiz_rounded,
-            LinearGradient(
-              colors: [Colors.purple.shade400, Colors.deepPurple.shade600],
+          ];
+        } else if (selectedFilter == DateFilterType.week) {
+          cards = [
+            _buildFloatingMetricCard(
+              'Total EMIs',
+              '${dashboardData?.kpis.activeConsents ?? 0}',
+              Icons.receipt_long_rounded,
+              LinearGradient(
+                colors: [Colors.blue.shade400, Colors.blue.shade700],
+              ),
+              context,
+              themeController,
+              index: 0,
             ),
-            '+12.1%',
-            context,
-            themeController,
-            index: 3,
-          ),
-          _buildFloatingMetricCard(
-            'Total Amount Sanctioned',
-           'AED ${dashboardData?.kpis.totalTransactions.toString()}' ?? 'AED 0',
-            Icons.error_outline_rounded,
-            LinearGradient(
-              colors: [Colors.teal.shade400, Colors.teal.shade700],
+            _buildFloatingMetricCard(
+              'Active EMIs',
+              '${dashboardData?.kpis.activeCustomers ?? 0}',
+              Icons.check_circle_rounded,
+              LinearGradient(
+                colors: [Colors.green.shade400, Colors.green.shade600],
+              ),
+              context,
+              themeController,
+              index: 1,
             ),
-            '-1.4%',
-            context,
-            themeController,
-            index: 4,
-          ),
-          _buildFloatingMetricCard(
-            'Risk Alerts',
-            '${dashboardData?.kpis.openAlerts ?? 0}',
-            Icons.warning_amber_rounded,
-            LinearGradient(
-              colors: [Colors.redAccent.shade400, Colors.red.shade700],
+            _buildFloatingMetricCard(
+              'Pending EMIs',
+              '${dashboardData?.kpis.expiringConsents ?? 0}',
+              Icons.hourglass_empty_rounded,
+              LinearGradient(
+                colors: [Colors.orange.shade400, Colors.deepOrange.shade600],
+              ),
+              context,
+              themeController,
+              index: 2,
             ),
-            'Monitor',
-            context,
-            themeController,
-            index: 5,
-          ),
-        ];
+          ];
+        } else if (selectedFilter == DateFilterType.month) {
+          cards = [
+            _buildFloatingMetricCard(
+              'Total EMIs',
+              '${dashboardData?.kpis.activeConsents ?? 0}',
+              Icons.receipt_long_rounded,
+              LinearGradient(
+                colors: [Colors.blue.shade400, Colors.blue.shade700],
+              ),
+              context,
+              themeController,
+              index: 0,
+            ),
+            _buildFloatingMetricCard(
+              'Active EMIs',
+              '${dashboardData?.kpis.activeCustomers ?? 0}',
+              Icons.check_circle_rounded,
+              LinearGradient(
+                colors: [Colors.green.shade400, Colors.green.shade600],
+              ),
+              context,
+              themeController,
+              index: 1,
+            ),
+            _buildFloatingMetricCard(
+              'Pending EMIs',
+              '${dashboardData?.kpis.expiringConsents ?? 0}',
+              Icons.hourglass_empty_rounded,
+              LinearGradient(
+                colors: [Colors.orange.shade400, Colors.deepOrange.shade600],
+              ),
+              context,
+              themeController,
+              index: 2,
+            ),
+          ];
+        } else if (selectedFilter == DateFilterType.calendar) {
+          cards = [
+            _buildFloatingMetricCard(
+              'Total EMIs',
+              '${dashboardData?.kpis.activeCustomers ?? 0}',
+              Icons.receipt_long_rounded,
+              LinearGradient(
+                colors: [Colors.blue.shade400, Colors.blue.shade700],
+              ),
+              context,
+              themeController,
+              index: 0,
+            ),
+            _buildFloatingMetricCard(
+              'Active EMIs',
+              '${dashboardData?.kpis.activeConsents ?? 0}',
+              Icons.check_circle_rounded,
+              LinearGradient(
+                colors: [Colors.green.shade400, Colors.green.shade600],
+              ),
+              context,
+              themeController,
+              index: 1,
+            ),
+            _buildFloatingMetricCard(
+              'Pending EMIs',
+              '${dashboardData?.kpis.expiringConsents ?? 0}',
+              Icons.hourglass_empty_rounded,
+              LinearGradient(
+                colors: [Colors.orange.shade400, Colors.deepOrange.shade600],
+              ),
+              context,
+              themeController,
+              index: 2,
+            ),
+          ];
+        }
       }
 
-      return GridView.count(
-        crossAxisCount: 3,
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        childAspectRatio: 1.9,
-        crossAxisSpacing: 24,
-        mainAxisSpacing: 24,
-        children: cards,
+      return LayoutBuilder(
+        builder: (context, constraints) {
+    int crossAxisCount;
+    double width = constraints.maxWidth;
+
+    if (width < 600) {
+      crossAxisCount = 1;
+    } else if (width < 900) {
+      crossAxisCount = 2;
+    } else {
+      crossAxisCount = 3;
+    }
+
+    return GridView.count(
+      crossAxisCount: crossAxisCount,
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      childAspectRatio: 1.9,
+      crossAxisSpacing: 12,
+      mainAxisSpacing: 0,
+      children: cards,
+    );
+
+        }
       );
     });
   }
 
-  /// Build floating metric card with animations
+  /// Build floating metric card with animations - no overflow
   Widget _buildFloatingMetricCard(
     String title,
     String value,
     IconData icon,
     LinearGradient gradient,
-    String percentage,
     BuildContext context,
     ThemeController themeController, {
     required int index,
   }) {
-    return FuturisticCard(
-          height: 120,
-          isElevated: true,
-          gradient: gradient,
+    return SingleChildScrollView(
+      child: FuturisticCard(
+        height: 150,
+        isElevated: true,
+        gradient: gradient,
+        child: Padding(
+          padding: const EdgeInsets.all(5),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
-                      color: Colors.white.withOpacity(0.2),
-                    ),
-                    child: Icon(icon, color: Colors.white, size: 20),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 4,
-                    ),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
-                      color: Colors.white.withOpacity(0.2),
-                    ),
-                    child: Text(
-                      percentage,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ],
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: Colors.white.withOpacity(0.2),
+                ),
+                child: Icon(icon, color: Colors.white, size: 18),
               ),
-              const SizedBox(height: 16),
+              const Spacer(),
               Text(
                 title,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                textScaleFactor: 1.0,
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
+                  height: 1.2,
                 ),
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: 5),
               Text(
                 value,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                textScaleFactor: 1.0,
                 style: const TextStyle(
                   color: Colors.white,
-                  fontSize: 23,
+                  fontSize: 22,
                   fontWeight: FontWeight.w600,
+                  height: 1.2,
                 ),
               ),
             ],
           ),
-        )
+        ),
+      ),
+    )
         .animate(delay: (index * 200).ms)
         .fadeIn(duration: 600.ms)
         .slideY(begin: 0.3, end: 0)
         .then()
         .shimmer(duration: 1500.ms, delay: 800.ms);
   }
-
   /// Build charts section
   Widget _buildChartsSection(
     BuildContext context,
@@ -658,8 +769,7 @@ Widget _buildDateFilterSection(
       children: [
         Expanded(child: _buildPortfolioChart(context, themeController)),
         const SizedBox(width: 24),
-        Expanded(child: Container())
-        // Expanded(child: _buildPipelineFunnel(context, themeController)),
+        Expanded(child: Container()),
       ],
     );
   }
@@ -754,109 +864,6 @@ Widget _buildDateFilterSection(
     });
   }
 
-  /// Build pipeline funnel
-  Widget _buildPipelineFunnel(
-    BuildContext context,
-    ThemeController themeController,
-  ) {
-    return Obx(() {
-      final dashboardData = controller.dashboardData.value;
-      if (dashboardData == null) return const SizedBox();
-
-      final funnel = dashboardData.funnelStages;
-
-      return FuturisticCard(
-        height: 350,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Application Pipeline',
-              style: Theme.of(
-                context,
-              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700),
-            ),
-            const SizedBox(height: 24),
-            Expanded(
-              child: BarChart(
-                BarChartData(
-                  barGroups: List.generate(funnel.length, (index) {
-                    final stage = funnel[index];
-                    return BarChartGroupData(
-                      x: index,
-                      barRods: [
-                        BarChartRodData(
-                          toY: stage.count.toDouble(),
-                          width: 32,
-                          gradient: themeController.getPrimaryGradient(),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ],
-                    );
-                  }),
-                  titlesData: FlTitlesData(
-                    leftTitles: AxisTitles(
-                      sideTitles: SideTitles(
-                        showTitles: true,
-                        reservedSize: 40,
-                        getTitlesWidget: (value, meta) {
-                          if (value % 1 == 0) {
-                            return Text(
-                              value.toInt().toString(),
-                              style: Theme.of(context).textTheme.labelSmall,
-                            );
-                          }
-                          return const SizedBox.shrink();
-                        },
-                      ),
-                    ),
-                    bottomTitles: AxisTitles(
-                      sideTitles: SideTitles(
-                        showTitles: true,
-                        reservedSize: 36,
-                        getTitlesWidget: (value, meta) {
-                          final index = value.toInt();
-                          if (index >= 0 && index < funnel.length) {
-                            return Padding(
-                              padding: const EdgeInsets.only(top: 8),
-                              child: Text(
-                                funnel[index].stage.split(' ').first,
-                                style: Theme.of(context).textTheme.labelSmall,
-                              ),
-                            );
-                          }
-                          return const SizedBox.shrink();
-                        },
-                      ),
-                    ),
-                    topTitles: const AxisTitles(
-                      sideTitles: SideTitles(showTitles: false),
-                    ),
-                    rightTitles: const AxisTitles(
-                      sideTitles: SideTitles(showTitles: false),
-                    ),
-                  ),
-                  gridData: FlGridData(
-                    show: false,
-                    drawVerticalLine: false,
-                    horizontalInterval: 5,
-                  ),
-                  borderData: FlBorderData(
-                    show: true,
-                    border: const Border(
-                      left: BorderSide(color: Colors.grey, width: 1),
-                      bottom: BorderSide(color: Colors.grey, width: 1),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      );
-    });
-  }
-
   /// Build legend item
   Widget _buildLegendItem(Color color, String label, int value) {
     return Row(
@@ -876,14 +883,16 @@ Widget _buildDateFilterSection(
     );
   }
 
-  /// Build recent applicants futuristic table
+  /// Build recent applicants table
   Widget _buildRecentApplicants(
     BuildContext context,
     ThemeController themeController,
+    PlatformController platformController,
   ) {
     return Obx(() {
       final applicants = controller.filteredApplicants.take(10).toList();
-
+      final platform = platformController.currentPlatform.value;
+      final isLending = platform == PlatformType.lending;
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -891,9 +900,14 @@ Widget _buildDateFilterSection(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                '👥 Recent Applicants',
+                platformController.isBilling
+                    ? '💳 Recent Payments'
+                    : '👥 Recent Applicants',
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                   fontWeight: FontWeight.w700,
+                  color: isLending
+                      ? const Color(0xFF1E3A8A) // Navy for light
+                      : const Color(0xFFFFFFFF),
                 ),
               ),
               ElevatedButton.icon(
@@ -910,33 +924,20 @@ Widget _buildDateFilterSection(
             ],
           ),
           const SizedBox(height: 16),
+          // Your existing table code here
           SizedBox(
             height: 500,
             child: Obx(
               () => FuturisticTable(
                 columns: [
-                  const FuturisticTableColumn(
-                    title: 'Application No.',
-                  ),
-                  const FuturisticTableColumn(
-                    title: 'Name',
-                  ),
-                  const FuturisticTableColumn(
-                    title: 'AECB Score',
-                  ),
-                  const FuturisticTableColumn(
-                    title: 'Finaxis Credit Score',
-                  ),
-                  const FuturisticTableColumn(
-                    title: 'Risk Status',
-                  ),
-                  const FuturisticTableColumn(
-                    title: 'Bank',
-                  ),
-                  const FuturisticTableColumn(
-                    title: '',
-                    sortable: false,
-                  ),
+                  const FuturisticTableColumn(title: 'Application No.'),
+                  const FuturisticTableColumn(title: 'Name'),
+                
+                  const FuturisticTableColumn(title: 'Finaxis Credit Score'),
+                  const FuturisticTableColumn(title: 'Risk Status'),
+                  const FuturisticTableColumn(title: 'Loan Amount'),
+                    const FuturisticTableColumn(title: 'DateTime'),
+                  const FuturisticTableColumn(title: 'Status', sortable: false),
                 ],
                 rows: applicants
                     .map(
@@ -944,47 +945,49 @@ Widget _buildDateFilterSection(
                         cells: [
                           FuturisticTableCell(text: applicant.cif),
                           FuturisticTableCell(text: applicant.name),
-                          FuturisticTableCell(
-                            text: applicant.creditScore.toString() == '0'
-                                ? ''
-                                : applicant.creditScore.toString(),
-                            widget: applicant.creditScore.toString() == '0'
-                                ? Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 8,
-                                      vertical: 4,
-                                    ),
-                                    child: Text(
-                                      applicant.creditScore.toString() == '0'
-                                          ? '_'
-                                          : applicant.creditScore.toString(),
-                                      style: const TextStyle(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 13,
-                                      ),
-                                    ),
-                                  )
-                                : Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 8,
-                                      vertical: 4,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      gradient: themeController
-                                          .getPrimaryGradient(),
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    child: Text(
-                                      applicant.creditScore.toString(),
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 13,
-                                      ),
-                                    ),
-                                  ),
-                          ),
+                          // FuturisticTableCell(
+                          //   text: applicant.creditScore.toString() == '0'
+                          //       ? ''
+                          //       : applicant.creditScore.toString(),
+                          //   widget: applicant.creditScore.toString() == '0'
+                          //       ? Container(
+                          //           padding: const EdgeInsets.symmetric(
+                          //             horizontal: 8,
+                          //             vertical: 4,
+                          //           ),
+                          //           child: Text(
+                          //             applicant.creditScore.toString() == '0'
+                          //                 ? '_'
+                          //                 : applicant.creditScore.toString(),
+                          //             style: TextStyle(
+                          //               color: isLending
+                          //                   ? const Color(0xFF1E3A8A)
+                          //                   : const Color(0xFFFFFFFF),
+                          //               fontWeight: FontWeight.w600,
+                          //               fontSize: 13,
+                          //             ),
+                          //           ),
+                          //         )
+                          //       : Container(
+                          //           padding: const EdgeInsets.symmetric(
+                          //             horizontal: 8,
+                          //             vertical: 4,
+                          //           ),
+                          //           decoration: BoxDecoration(
+                          //             gradient: themeController
+                          //                 .getPrimaryGradient(),
+                          //             borderRadius: BorderRadius.circular(8),
+                          //           ),
+                          //           child: Text(
+                          //             applicant.creditScore.toString(),
+                          //             style: const TextStyle(
+                          //               color: Colors.white,
+                          //               fontWeight: FontWeight.w600,
+                          //               fontSize: 13,
+                          //             ),
+                          //           ),
+                          //         ),
+                          // ),
                           FuturisticTableCell(
                             text: applicant.riskScore.toString() == '0'
                                 ? ''
@@ -999,8 +1002,10 @@ Widget _buildDateFilterSection(
                                       applicant.riskScore.toString() == '0'
                                           ? '_'
                                           : applicant.riskScore.toString(),
-                                      style: const TextStyle(
-                                        color: Colors.black,
+                                      style: TextStyle(
+                                        color: isLending
+                                            ? const Color(0xFF1E3A8A)
+                                            : const Color(0xFFFFFFFF),
                                         fontWeight: FontWeight.w600,
                                         fontSize: 13,
                                       ),
@@ -1035,8 +1040,10 @@ Widget _buildDateFilterSection(
                                     applicant.ragStatus.isEmpty
                                         ? '_'
                                         : applicant.ragStatus,
-                                    style: const TextStyle(
-                                      color: Colors.black,
+                                    style: TextStyle(
+                                      color: isLending
+                                          ? const Color(0xFF1E3A8A)
+                                          : const Color(0xFFFFFFFF),
                                       fontWeight: FontWeight.w600,
                                       fontSize: 13,
                                     ),
@@ -1049,8 +1056,9 @@ Widget _buildDateFilterSection(
                                     decoration: BoxDecoration(
                                       color: AppTheme.getRagColor(
                                         applicant.ragStatus,
-                                      ).withOpacity(0.2),
-                                      borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      // borderRadius: BorderRadius.circular(12),
+                                      shape: BoxShape.circle,
                                       border: Border.all(
                                         color: AppTheme.getRagColor(
                                           applicant.ragStatus,
@@ -1072,31 +1080,29 @@ Widget _buildDateFilterSection(
                                           ),
                                         ),
                                         const SizedBox(width: 6),
-                                        Text(
-                                          applicant.ragStatus.toUpperCase() ==
-                                                  "GREEN"
-                                              ? "Low"
-                                              : applicant.ragStatus
-                                                        .toUpperCase() ==
-                                                    "AMBER"
-                                              ? "Medium"
-                                              : "High",
-                                          style: TextStyle(
-                                            color: AppTheme.getRagColor(
-                                              applicant.ragStatus,
-                                            ),
-                                            fontWeight: FontWeight.w700,
-                                            fontSize: 11,
-                                          ),
-                                        ),
+                                        // Text(
+                                        //   applicant.ragStatus.toUpperCase() ==
+                                        //           "GREEN"
+                                        //       ? "Low"
+                                        //       : applicant.ragStatus
+                                        //                 .toUpperCase() ==
+                                        //             "AMBER"
+                                        //       ? "Medium"
+                                        //       : "High",
+                                        //   style: TextStyle(
+                                        //     color: AppTheme.getRagColor(
+                                        //       applicant.ragStatus,
+                                        //     ),
+                                        //     fontWeight: FontWeight.w700,
+                                        //     fontSize: 11,
+                                        //   ),
+                                        // ),
                                       ],
                                     ),
                                   ),
                           ),
                           FuturisticTableCell(
-                            text: applicant.bankName.isEmpty
-                                ? ''
-                                : applicant.bankName,
+                            text: applicant.bankName.isEmpty ? '' : '150,000',
                             widget: applicant.creditScore.toString() == '0'
                                 ? Container(
                                     padding: const EdgeInsets.symmetric(
@@ -1107,8 +1113,10 @@ Widget _buildDateFilterSection(
                                       applicant.bankName.toString() == ''
                                           ? '_'
                                           : applicant.bankName.toString(),
-                                      style: const TextStyle(
-                                        color: Colors.black,
+                                      style: TextStyle(
+                                        color: isLending
+                                            ? const Color(0xFF1E3A8A)
+                                            : const Color(0xFFFFFFFF),
                                         fontWeight: FontWeight.w600,
                                         fontSize: 13,
                                       ),
@@ -1125,7 +1133,7 @@ Widget _buildDateFilterSection(
                                       borderRadius: BorderRadius.circular(8),
                                     ),
                                     child: Text(
-                                      applicant.bankName.toString(),
+                                      '150,000',
                                       style: const TextStyle(
                                         color: Colors.white,
                                         fontWeight: FontWeight.w600,
@@ -1134,43 +1142,56 @@ Widget _buildDateFilterSection(
                                     ),
                                   ),
                           ),
-                          FuturisticTableCell(
-                            text: applicant.mobile?.isEmpty ?? true
-                                ? 'Pending'
-                                : 'Open',
-                            widget: ElevatedButton.icon(
-                              onPressed: (applicant.mobile?.isEmpty ?? true)
-                                  ? null
-                                  : () => controller.navigateToApplicantDetail(
+                                                    FuturisticTableCell(
+                            text: DateFormat(
+                              'MMM dd, yy',
+                            ).format(applicant.lastUpdated),
+                            widget: Text(
+                              DateFormat(
+                                'MMM dd, yy',
+                              ).format(applicant.lastUpdated),
+                              style: TextStyle(
+                                color: Theme.of(
+                                  context,
+                                ).textTheme.bodyMedium?.color?.withOpacity(0.7),
+                                fontSize: 13,
+                              ),
+                            ),
+                          ),
+                                                    FuturisticTableCell(
+                            text: applicant.status,
+                            widget: SizedBox(
+                              width: 105, 
+                              child: ElevatedButton.icon(
+                                onPressed: () =>
+                                    () => controller.navigateToApplicantDetail(
                                       applicant.cif,
                                     ),
-                              icon: Icon(
-                                (applicant.mobile?.isEmpty ?? true)
-                                    ? Icons.hourglass_empty_rounded
-                                    : Icons.auto_stories_rounded,
-                                size: 16,
-                              ),
-                              label: Text(
-                                (applicant.mobile?.isEmpty ?? true)
-                                    ? 'Pending'
-                                    : 'Open',
-                              ),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor:
-                                    (applicant.mobile?.isEmpty ?? true)
-                                    ? Colors.grey
-                                    : themeController
-                                          .getThemeData()
-                                          .primaryColor,
-                                foregroundColor: Colors.white,
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                  vertical: 8,
+                                icon: Icon(
+                                  applicant.status == "Approved"
+                                      ? Icons.check_box
+                                      : applicant.status == "Pending"
+                                      ? Icons.hourglass_empty_rounded
+                                      : applicant.status == "New"?Icons.new_label:Icons.cancel,
+                                  size: 16,
                                 ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
+                                label: Text(applicant.status),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: applicant.status == "Pending"
+                                      ? Colors.grey
+                                      : applicant.status == "Rejected"?Colors.red:themeController
+                                            .getThemeData()
+                                            .primaryColor,
+                                  foregroundColor: Colors.white,
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                    vertical: 8,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  textStyle: const TextStyle(fontSize: 12),
                                 ),
-                                textStyle: const TextStyle(fontSize: 12),
                               ),
                             ),
                           ),
@@ -1239,7 +1260,7 @@ Widget _buildDateFilterSection(
   }
 }
 
-// Custom FuturisticCard Widget (if not already defined in your project)
+/// 🎨 Futuristic Card
 class FuturisticCard extends StatelessWidget {
   final Widget child;
   final double? width;

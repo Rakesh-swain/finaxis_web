@@ -3,37 +3,122 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Power BI Embed (Dynamic Reports)</title>
-
-  <!-- Load MSAL and Power BI SDK -->
+  <title>Power BI Analytics Dashboard</title>
   <script src="https://alcdn.msauth.net/browser/2.37.0/js/msal-browser.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/powerbi-client@2.23.1/dist/powerbi.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: white;
+      overflow: hidden;
+    }
+
+    #reportContainer {
+      width: 100%;
+      height: 100%;
+      background: white;
+    }
+
+    .loading {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      color: #667eea;
+      font-size: 18px;
+      z-index: 1000;
+      background: white;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .loading.active {
+      display: block;
+    }
+
+    .spinner {
+      border: 3px solid rgba(102, 126, 234, 0.2);
+      border-top: 3px solid #667eea;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 10px auto;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .error-container {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      padding: 40px;
+      border-radius: 12px;
+      text-align: center;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+      z-index: 1000;
+    }
+
+    .error-container.active {
+      display: block;
+    }
+
+    .error-container p {
+      color: #e53e3e;
+      margin: 10px 0;
+    }
+  </style>
 </head>
 <body>
-  <h3>Power BI Report Embed</h3>
+  <div class="loading" id="loading">
+    <div class="spinner"></div>
+    <p>Loading Report...</p>
+  </div>
 
-  <!-- Buttons for different reports -->
-  <button onclick="embedReport('46c6e5b0-e695-45ed-a5fa-c10701849cab')">Balance Analysis</button>
-  <button onclick="embedReport('743c5c51-16eb-4904-ac28-e64b396ccbca')">Transaction Analysis</button>
-  <button onclick="embedReport('d8bd547b-5e24-435f-bd37-62d0c4223133')">Expense</button>
-  <button onclick="embedReport('079cb597-4452-403c-b26b-124da4a8c25f')">Alarming Transactions</button>
-  <button onclick="embedReport('19acc25b-3cee-48f9-af8c-6f55dfc3ccda')">FOIR Distribution</button>
-  <button onclick="embedReport('01a4e87d-aafe-427e-9d71-965e20036e35')">Cashflow</button>
+  <div class="error-container" id="errorContainer">
+    <p>Failed to load report</p>
+    <p id="errorMessage"></p>
+  </div>
 
-  <div id="reportContainer" style="height:90vh;width:100%;border:1px solid #ccc;margin-top:1rem;"></div>
+  <div id="reportContainer"></div>
 
 <script>
-/** 🔹 Replace with your details **/
 const TENANT_ID = "ebc33efd-7258-4e11-8899-d85c565d0051";
 const CLIENT_ID = "783763bd-c12a-4cda-b9eb-b7f962806474";
 const WORKSPACE_ID = "e03bca69-7e6a-4b1c-91ee-9429f902e690";
 
-/** 🔹 MSAL Configuration **/
+const REPORTS = {
+  'balance': '80cd5173-8055-49c5-a21b-b7209c3e4a14',
+  'transaction': '743c5c51-16eb-4904-ac28-e64b396ccbca',
+  'expense': 'd8bd547b-5e24-435f-bd37-62d0c4223133',
+  'alarming': '079cb597-4452-403c-b26b-124da4a8c25f',
+  'foir': '19acc25b-3cee-48f9-af8c-6f55dfc3ccda',
+  'dsr': 'e28c7ac0-ed7b-4db2-bca7-231b907f4afb',
+  'cashflow': '01a4e87d-aafe-427e-9d71-965e20036e35'
+};
+
 const msalConfig = {
   auth: {
     clientId: CLIENT_ID,
     authority: `https://login.microsoftonline.com/${TENANT_ID}`,
-    redirectUri: "http://localhost:5500/",
+    redirectUri: window.location.origin,
   },
   cache: {
     cacheLocation: "localStorage",
@@ -43,7 +128,6 @@ const msalConfig = {
 
 const msalInstance = new msal.PublicClientApplication(msalConfig);
 
-/** 🔹 Get Access Token **/
 async function getAccessToken() {
   const tokenRequest = {
     scopes: ["https://analysis.windows.net/powerbi/api/.default"],
@@ -71,11 +155,20 @@ async function getAccessToken() {
   }
 }
 
-/** 🔹 Embed any report dynamically **/
-async function embedReport(reportId) {
+async function embedReport(reportKey) {
   try {
+    const reportId = REPORTS[reportKey];
+    if (!reportId) {
+      console.error("Report key not found:", reportKey);
+      showError('Report not found: ' + reportKey);
+      return;
+    }
+
+    document.getElementById('loading').classList.add('active');
+    document.getElementById('errorContainer').classList.remove('active');
+
     const accessToken = await getAccessToken();
-    console.log("✅ Access Token acquired");
+    console.log("✅ Access Token acquired for report:", reportKey);
 
     const embedUrl = `https://app.powerbi.com/reportEmbed?reportId=${reportId}&groupId=${WORKSPACE_ID}`;
     const models = window['powerbi-client'].models;
@@ -94,13 +187,46 @@ async function embedReport(reportId) {
     };
 
     const container = document.getElementById('reportContainer');
-    powerbi.reset(container); // Clear any previous report
-    powerbi.embed(container, embedConfig);
+    powerbi.reset(container);
+    const report = powerbi.embed(container, embedConfig);
+
+    report.on('loaded', function() {
+      console.log("✅ Report loaded successfully");
+      document.getElementById('loading').classList.remove('active');
+    });
+
+    report.on('error', function(event) {
+      console.error("❌ Report error:", event.detail);
+      document.getElementById('loading').classList.remove('active');
+      showError('Error loading report: ' + (event.detail?.message || 'Unknown error'));
+    });
 
   } catch (err) {
     console.error("❌ Embed failed:", err);
+    document.getElementById('loading').classList.remove('active');
+    // showError(err.message || 'Failed to load report');
   }
 }
+
+function showError(message) {
+  document.getElementById('errorMessage').textContent = message;
+  document.getElementById('errorContainer').classList.add('active');
+}
+
+// Listen for messages from Dart
+window.addEventListener('message', (event) => {
+  if (event.data && event.data.action === 'loadReport') {
+    embedReport(event.data.reportKey);
+  }
+});
+
+// Expose function globally for Dart to call
+window.loadPowerBIReport = function(reportKey) {
+  console.log("Loading report:", reportKey);
+  embedReport(reportKey);
+};
+
+console.log("Power BI embed ready");
 </script>
 </body>
 </html>

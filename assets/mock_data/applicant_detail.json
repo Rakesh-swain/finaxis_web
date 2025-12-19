@@ -1,150 +1,744 @@
-{
-  "applicant":  {
-    "cif": "CIF001235",
-    "name": "Mohammed Al Mansoori",
-    "dateOfBirth": "01-01-1960",
-    "email": "mohammed.almansoori@gmail.com",
-    "pan": "KEKPS1943B",
-    "ckycCompliance": "Y",
-    "mobile": "+971 9482 4051",
-    "bankName": "Emirates NBD",
-    "branch": "Deira City Centre Branch",
-    "accountNumber": "*****122",
-    "accountType": "Current",
-    "accountOpeningDate": "2012-01-01",
-    "closingBalance": "212211.00",
-    "averageQuarterlyBalanceLatest": "382811.00",
-    "averageQuarterlyBalancePrevious": "182211.00",
-    "odCcLimit": "90000.00",
-    "loanType": "Personal Loan",
-    "employmentType": "Salaried",
-    "creditScore": 712,
-    "riskScore": 20,
-    "ragStatus": "amber",
-    "lastUpdated": "2025-11-10T10:30:00Z"
+[
+  {
+    "applicant": {
+      "cif": "CIF001235",
+      "name": "Mohammed Al Mansoori",
+      "dateOfBirth": "01-01-1960",
+      "email": "mohammed.almansoori@gmail.com",
+      "pan": "KEKPS1943B",
+      "ckycCompliance": "Y",
+      "mobile": "+971 9482 4051",
+      "bankName": "Emirates NBD",
+      "branch": "Deira City Centre Branch",
+      "accountNumber": "*****122",
+      "accountType": "Current",
+      "accountOpeningDate": "2012-01-01",
+      "closingBalance": "212211.00",
+      "averageQuarterlyBalanceLatest": "382811.00",
+      "averageQuarterlyBalancePrevious": "182211.00",
+      "odCcLimit": "90000.00",
+      "loanType": "Personal Loan",
+      "employmentType": "Salaried",
+      "creditScore": 712,
+      "riskScore": 741,
+      "ragStatus": "amber",
+      "lastUpdated": "2025-11-02T10:30:00Z"
+    },
+    "affordability": {
+      "affordabilityRatio": 0.68,
+      "creditUtilizationRatio": 0.42
+    },
+    "balanceTrends": [
+      {"date": "2023-11-01", "balance": 45000.0, "marker": null},
+      {"date": "2023-12-01", "balance": 52000.0, "marker": "Salary Credit"},
+      {"date": "2024-01-01", "balance": 48000.0, "marker": null},
+      {"date": "2024-02-01", "balance": 55000.0, "marker": "Salary Credit"},
+      {"date": "2024-03-01", "balance": 51000.0, "marker": "Loan Repayment"},
+      {"date": "2024-04-01", "balance": 58000.0, "marker": "Salary Credit"},
+      {"date": "2024-05-01", "balance": 54000.0, "marker": null},
+      {"date": "2024-06-01", "balance": 61000.0, "marker": "Salary Credit"},
+      {"date": "2024-07-01", "balance": 57000.0, "marker": null},
+      {"date": "2024-08-01", "balance": 63000.0, "marker": "Salary Credit"},
+      {"date": "2024-09-01", "balance": 59000.0, "marker": null},
+      {"date": "2024-10-01", "balance": 65000.0, "marker": "Salary Credit"}
+    ],
+    "spendData": [
+      {"category": "Card Payment", "amount": 25000.0, "channel": "UPI"},
+      {"category": "Edutech", "amount": 15000.0, "channel": "EFT"},
+      {"category": "Loan Repayment", "amount": 18000.0, "channel": "EFT"},
+      {"category": "Utilities", "amount": 8000.0, "channel": "UPI"},
+      {"category": "Groceries", "amount": 12000.0, "channel": "Card"},
+      {"category": "Entertainment", "amount": 5000.0, "channel": "UPI"},
+      {"category": "Cash Withdrawal", "amount": 10000.0, "channel": "Cash"},
+      {"category": "Investment", "amount": 20000.0, "channel": "Cheque"}
+    ],
+    "keyFeatures": [
+      {"name": "Alarming Transactions", "value": 2, "trend": "down", "ragStatus": "green"},
+      {"name": "Payment Revoke", "value": 0, "trend": "stable", "ragStatus": "green"},
+      {"name": "Avg Balance Repayment Week", "value": 45000, "trend": "up", "ragStatus": "green"},
+      {"name": "Earning to Spend Ratio", "value": 1.8, "trend": "up", "ragStatus": "green"},
+      {"name": "Investment Analysis", "value": 0.25, "trend": "up", "ragStatus": "green"},
+      {"name": "Loan Enquiry Count", "value": 3, "trend": "stable", "ragStatus": "amber"},
+      {"name": "Credit Utilization", "value": 1500, "trend": "down", "ragStatus": "green"},
+      {"name": "Debt to Income", "value": 0.35, "trend": "down", "ragStatus": "green"},
+      {"name": "Monthly Savings", "value": 15000, "trend": "up", "ragStatus": "green"},
+      {"name": "EMI Bounce Rate", "value": 0, "trend": "stable", "ragStatus": "green"},
+      {"name": "Cash Dependency", "value": 0.12, "trend": "down", "ragStatus": "green"},
+      {"name": "Financial Discipline Score", "value": 8.5, "trend": "up", "ragStatus": "green"}
+    ],
+    "otherLoans": [
+      {
+        "loanType": "Home Loan",
+        "lender": "FAB",
+        "sanctionedAmount": 5000000.0,
+        "outstandingAmount": 3200000.0,
+        "tenure": 240,
+        "status": "ACTIVE",
+        "startDate": "2020-06-15"
+      },
+      {
+        "loanType": "Car Loan",
+        "lender": "ADCB",
+        "sanctionedAmount": 800000.0,
+        "outstandingAmount": 250000.0,
+        "tenure": 84,
+        "status": "ACTIVE",
+        "startDate": "2021-03-20"
+      }
+    ],
+    "creditCards": [
+      {
+        "cardProvider": "HDFC Regalia",
+        "creditLimit": 500000.0,
+        "outstandingAmount": 85000.0,
+        "utilizationRate": 17.0,
+        "status": "ACTIVE"
+      },
+      {
+        "cardProvider": "ICICI Platinum",
+        "creditLimit": 300000.0,
+        "outstandingAmount": 42000.0,
+        "utilizationRate": 14.0,
+        "status": "ACTIVE"
+      }
+    ],
+    "inquiries": [
+      {
+        "inquiryType": "Hard Inquiry",
+        "lender": "HDFC Bank",
+        "date": "2025-10-15",
+        "purpose": "Personal Loan"
+      },
+      {
+        "inquiryType": "Soft Inquiry",
+        "lender": "Axis Bank",
+        "date": "2025-09-20",
+        "purpose": "Credit Card"
+      },
+      {
+        "inquiryType": "Hard Inquiry",
+        "lender": "SBI",
+        "date": "2025-08-10",
+        "purpose": "Business Loan"
+      }
+    ],
+    "accessRequests": [
+      {
+        "accessId": "ACC001234",
+        "consentId": "CNS001234",
+        "loanNumber": "LN2025001234",
+        "status": "INITIATED",
+        "requestedAt": "2025-11-04T11:00:00Z",
+        "balanceUrl": null
+      },
+      {
+        "accessId": "ACC001236",
+        "consentId": "CNS001234",
+        "loanNumber": "LN2025001234",
+        "status": "FAILED",
+        "requestedAt": "2025-11-03T14:20:00Z",
+        "balanceUrl": null
+      }
+    ]
   },
-  "affordability": {
-    "affordabilityRatio": 0.68,
-    "creditUtilizationRatio": 0.42
+  {
+    "applicant": {
+      "cif": "CIF006201",
+      "name": "Fahad Al Mazrouei",
+      "dateOfBirth": "",
+      "email": "",
+      "pan": "",
+      "ckycCompliance": "",
+      "mobile": "",
+      "bankName": "",
+      "branch": "",
+      "accountNumber": "",
+      "accountType": "",
+      "accountOpeningDate": "",
+      "closingBalance": "",
+      "averageQuarterlyBalanceLatest": "",
+      "averageQuarterlyBalancePrevious": "",
+      "odCcLimit": "",
+      "loanType": "",
+      "employmentType": "",
+      "creditScore": 0,
+      "riskScore": 0,
+      "ragStatus": "",
+      "lastUpdated": "2025-11-11T09:45:00Z"
+    },
+    "affordability": {
+      "affordabilityRatio": 0.68,
+      "creditUtilizationRatio": 0.42
+    },
+    "balanceTrends": [
+      {"date": "2023-11-01", "balance": 45000.0, "marker": null},
+      {"date": "2023-12-01", "balance": 52000.0, "marker": "Salary Credit"},
+      {"date": "2024-01-01", "balance": 48000.0, "marker": null},
+      {"date": "2024-02-01", "balance": 55000.0, "marker": "Salary Credit"},
+      {"date": "2024-03-01", "balance": 51000.0, "marker": "Loan Repayment"},
+      {"date": "2024-04-01", "balance": 58000.0, "marker": "Salary Credit"},
+      {"date": "2024-05-01", "balance": 54000.0, "marker": null},
+      {"date": "2024-06-01", "balance": 61000.0, "marker": "Salary Credit"},
+      {"date": "2024-07-01", "balance": 57000.0, "marker": null},
+      {"date": "2024-08-01", "balance": 63000.0, "marker": "Salary Credit"},
+      {"date": "2024-09-01", "balance": 59000.0, "marker": null},
+      {"date": "2024-10-01", "balance": 65000.0, "marker": "Salary Credit"}
+    ],
+    "spendData": [
+      {"category": "Card Payment", "amount": 25000.0, "channel": "UPI"},
+      {"category": "Edutech", "amount": 15000.0, "channel": "EFT"},
+      {"category": "Loan Repayment", "amount": 18000.0, "channel": "EFT"},
+      {"category": "Utilities", "amount": 8000.0, "channel": "UPI"},
+      {"category": "Groceries", "amount": 12000.0, "channel": "Card"},
+      {"category": "Entertainment", "amount": 5000.0, "channel": "UPI"},
+      {"category": "Cash Withdrawal", "amount": 10000.0, "channel": "Cash"},
+      {"category": "Investment", "amount": 20000.0, "channel": "Cheque"}
+    ],
+    "keyFeatures": [
+      {"name": "Alarming Transactions", "value": 2, "trend": "down", "ragStatus": "green"},
+      {"name": "Payment Revoke", "value": 0, "trend": "stable", "ragStatus": "green"},
+      {"name": "Avg Balance Repayment Week", "value": 45000, "trend": "up", "ragStatus": "green"},
+      {"name": "Earning to Spend Ratio", "value": 1.8, "trend": "up", "ragStatus": "green"},
+      {"name": "Investment Analysis", "value": 0.25, "trend": "up", "ragStatus": "green"},
+      {"name": "Loan Enquiry Count", "value": 3, "trend": "stable", "ragStatus": "amber"},
+      {"name": "Credit Utilization", "value": 1500, "trend": "down", "ragStatus": "green"},
+      {"name": "Debt to Income", "value": 0.35, "trend": "down", "ragStatus": "green"},
+      {"name": "Monthly Savings", "value": 15000, "trend": "up", "ragStatus": "green"},
+      {"name": "EMI Bounce Rate", "value": 0, "trend": "stable", "ragStatus": "green"},
+      {"name": "Cash Dependency", "value": 0.12, "trend": "down", "ragStatus": "green"},
+      {"name": "Financial Discipline Score", "value": 8.5, "trend": "up", "ragStatus": "green"}
+    ],
+    "otherLoans": [
+      {
+        "loanType": "Home Loan",
+        "lender": "HDFC Bank",
+        "sanctionedAmount": 5000000.0,
+        "outstandingAmount": 3200000.0,
+        "tenure": 240,
+        "status": "ACTIVE",
+        "startDate": "2020-06-15"
+      },
+      {
+        "loanType": "Car Loan",
+        "lender": "ICICI Bank",
+        "sanctionedAmount": 800000.0,
+        "outstandingAmount": 250000.0,
+        "tenure": 84,
+        "status": "ACTIVE",
+        "startDate": "2021-03-20"
+      }
+    ],
+    "creditCards": [
+      {
+        "cardProvider": "HDFC Regalia",
+        "creditLimit": 500000.0,
+        "outstandingAmount": 85000.0,
+        "utilizationRate": 17.0,
+        "status": "ACTIVE"
+      },
+      {
+        "cardProvider": "ICICI Platinum",
+        "creditLimit": 300000.0,
+        "outstandingAmount": 42000.0,
+        "utilizationRate": 14.0,
+        "status": "ACTIVE"
+      }
+    ],
+       "inquiries": [
+      {
+        "inquiryType": "Hard Inquiry",
+        "lender": "HDFC Bank",
+        "date": "2025-10-15",
+        "purpose": "Personal Loan"
+      },
+      {
+        "inquiryType": "Soft Inquiry",
+        "lender": "Axis Bank",
+        "date": "2025-09-20",
+        "purpose": "Credit Card"
+      },
+      {
+        "inquiryType": "Hard Inquiry",
+        "lender": "SBI",
+        "date": "2025-08-10",
+        "purpose": "Business Loan"
+      }
+    ],
+        "accessRequests": [
+      {
+        "accessId": "ACC001234",
+        "consentId": "CNS001234",
+        "loanNumber": "LN2025001234",
+        "status": "FETCHED",
+        "requestedAt": "2025-11-04T10:30:00Z",
+        "balanceUrl": "https://api.finaxis.com/balance/ACC001234"
+      },
+      {
+        "accessId": "ACC001235",
+        "consentId": "CNS001234",
+        "loanNumber": "LN2025001234",
+        "status": "INITIATED",
+        "requestedAt": "2025-11-04T11:00:00Z",
+        "balanceUrl": null
+      },
+      {
+        "accessId": "ACC001236",
+        "consentId": "CNS001234",
+        "loanNumber": "LN2025001234",
+        "status": "FAILED",
+        "requestedAt": "2025-11-03T14:20:00Z",
+        "balanceUrl": null
+      }
+    ]
   },
-  "balanceTrends": [
-    {"date": "2023-11-01", "balance": 45000.0, "marker": null},
-    {"date": "2023-12-01", "balance": 52000.0, "marker": "Salary Credit"},
-    {"date": "2024-01-01", "balance": 48000.0, "marker": null},
-    {"date": "2024-02-01", "balance": 55000.0, "marker": "Salary Credit"},
-    {"date": "2024-03-01", "balance": 51000.0, "marker": "Loan Repayment"},
-    {"date": "2024-04-01", "balance": 58000.0, "marker": "Salary Credit"},
-    {"date": "2024-05-01", "balance": 54000.0, "marker": null},
-    {"date": "2024-06-01", "balance": 61000.0, "marker": "Salary Credit"},
-    {"date": "2024-07-01", "balance": 57000.0, "marker": null},
-    {"date": "2024-08-01", "balance": 63000.0, "marker": "Salary Credit"},
-    {"date": "2024-09-01", "balance": 59000.0, "marker": null},
-    {"date": "2024-10-01", "balance": 65000.0, "marker": "Salary Credit"}
-  ],
-  "spendData": [
-    {"category": "Card Payment", "amount": 25000.0, "channel": "UPI"},
-    {"category": "Edutech", "amount": 15000.0, "channel": "EFT"},
-    {"category": "Loan Repayment", "amount": 18000.0, "channel": "EFT"},
-    {"category": "Utilities", "amount": 8000.0, "channel": "UPI"},
-    {"category": "Groceries", "amount": 12000.0, "channel": "Card"},
-    {"category": "Entertainment", "amount": 5000.0, "channel": "UPI"},
-    {"category": "Cash Withdrawal", "amount": 10000.0, "channel": "Cash"},
-    {"category": "Investment", "amount": 20000.0, "channel": "Cheque"}
-  ],
-  "keyFeatures": [
-    {"name": "Alarming Transactions", "value": 2, "trend": "down", "ragStatus": "green"},
-    {"name": "Payment Revoke", "value": 0, "trend": "stable", "ragStatus": "green"},
-    {"name": "Avg Balance Repayment Week", "value": 45000, "trend": "up", "ragStatus": "green"},
-    {"name": "Earning to Spend Ratio", "value": 1.8, "trend": "up", "ragStatus": "green"},
-    {"name": "Investment Analysis", "value": 0.25, "trend": "up", "ragStatus": "green"},
-    {"name": "Loan Enquiry Count", "value": 3, "trend": "stable", "ragStatus": "amber"},
-    {"name": "Credit Utilization", "value": 1500, "trend": "down", "ragStatus": "green"},
-    {"name": "Debt to Income", "value": 0.35, "trend": "down", "ragStatus": "green"},
-    {"name": "Monthly Savings", "value": 15000, "trend": "up", "ragStatus": "green"},
-    {"name": "EMI Bounce Rate", "value": 0, "trend": "stable", "ragStatus": "green"},
-    {"name": "Cash Dependency", "value": 0.12, "trend": "down", "ragStatus": "green"},
-    {"name": "Financial Discipline Score", "value": 8.5, "trend": "up", "ragStatus": "green"}
-  ],
-  "otherLoans": [
-    {
-      "loanType": "Home Loan",
-      "lender": "HDFC Bank",
-      "sanctionedAmount": 5000000.0,
-      "outstandingAmount": 3200000.0,
-      "tenure": 240,
-      "status": "ACTIVE",
-      "startDate": "2020-06-15"
+  {
+    "applicant": {
+      "cif": "CIF003276",
+      "name": "Sultan Al Harthi",
+      "dateOfBirth": "",
+      "email": "",
+      "pan": "",
+      "ckycCompliance": "",
+      "mobile": "",
+      "bankName": "",
+      "branch": "",
+      "accountNumber": "",
+      "accountType": "",
+      "accountOpeningDate": "",
+      "closingBalance": "",
+      "averageQuarterlyBalanceLatest": "",
+      "averageQuarterlyBalancePrevious": "",
+      "odCcLimit": "",
+      "loanType": "",
+      "employmentType": "",
+      "creditScore": 0,
+      "riskScore": 0,
+      "ragStatus": "",
+      "lastUpdated": "2025-11-10T10:30:00Z"
     },
-    {
-      "loanType": "Car Loan",
-      "lender": "ICICI Bank",
-      "sanctionedAmount": 800000.0,
-      "outstandingAmount": 250000.0,
-      "tenure": 84,
-      "status": "ACTIVE",
-      "startDate": "2021-03-20"
-    }
-  ],
-  "creditCards": [
-    {
-      "cardProvider": "HDFC Regalia",
-      "creditLimit": 500000.0,
-      "outstandingAmount": 85000.0,
-      "utilizationRate": 17.0,
-      "status": "ACTIVE"
+    "affordability": {
+      "affordabilityRatio": 0.68,
+      "creditUtilizationRatio": 0.42
     },
-    {
-      "cardProvider": "ICICI Platinum",
-      "creditLimit": 300000.0,
-      "outstandingAmount": 42000.0,
-      "utilizationRate": 14.0,
-      "status": "ACTIVE"
-    }
-  ],
-  "inquiries": [
-    {
-      "inquiryType": "Hard Inquiry",
-      "lender": "HDFC Bank",
-      "date": "2025-10-15",
-      "purpose": "Personal Loan"
+    "balanceTrends": [
+      {"date": "2023-11-01", "balance": 45000.0, "marker": null},
+      {"date": "2023-12-01", "balance": 52000.0, "marker": "Salary Credit"},
+      {"date": "2024-01-01", "balance": 48000.0, "marker": null},
+      {"date": "2024-02-01", "balance": 55000.0, "marker": "Salary Credit"},
+      {"date": "2024-03-01", "balance": 51000.0, "marker": "Loan Repayment"},
+      {"date": "2024-04-01", "balance": 58000.0, "marker": "Salary Credit"},
+      {"date": "2024-05-01", "balance": 54000.0, "marker": null},
+      {"date": "2024-06-01", "balance": 61000.0, "marker": "Salary Credit"},
+      {"date": "2024-07-01", "balance": 57000.0, "marker": null},
+      {"date": "2024-08-01", "balance": 63000.0, "marker": "Salary Credit"},
+      {"date": "2024-09-01", "balance": 59000.0, "marker": null},
+      {"date": "2024-10-01", "balance": 65000.0, "marker": "Salary Credit"}
+    ],
+    "spendData": [
+      {"category": "Card Payment", "amount": 25000.0, "channel": "UPI"},
+      {"category": "Edutech", "amount": 15000.0, "channel": "EFT"},
+      {"category": "Loan Repayment", "amount": 18000.0, "channel": "EFT"},
+      {"category": "Utilities", "amount": 8000.0, "channel": "UPI"},
+      {"category": "Groceries", "amount": 12000.0, "channel": "Card"},
+      {"category": "Entertainment", "amount": 5000.0, "channel": "UPI"},
+      {"category": "Cash Withdrawal", "amount": 10000.0, "channel": "Cash"},
+      {"category": "Investment", "amount": 20000.0, "channel": "Cheque"}
+    ],
+    "keyFeatures": [
+      {"name": "Alarming Transactions", "value": 2, "trend": "down", "ragStatus": "green"},
+      {"name": "Payment Revoke", "value": 0, "trend": "stable", "ragStatus": "green"},
+      {"name": "Avg Balance Repayment Week", "value": 45000, "trend": "up", "ragStatus": "green"},
+      {"name": "Earning to Spend Ratio", "value": 1.8, "trend": "up", "ragStatus": "green"},
+      {"name": "Investment Analysis", "value": 0.25, "trend": "up", "ragStatus": "green"},
+      {"name": "Loan Enquiry Count", "value": 3, "trend": "stable", "ragStatus": "amber"},
+      {"name": "Credit Utilization", "value": 1500, "trend": "down", "ragStatus": "green"},
+      {"name": "Debt to Income", "value": 0.35, "trend": "down", "ragStatus": "green"},
+      {"name": "Monthly Savings", "value": 15000, "trend": "up", "ragStatus": "green"},
+      {"name": "EMI Bounce Rate", "value": 0, "trend": "stable", "ragStatus": "green"},
+      {"name": "Cash Dependency", "value": 0.12, "trend": "down", "ragStatus": "green"},
+      {"name": "Financial Discipline Score", "value": 8.5, "trend": "up", "ragStatus": "green"}
+    ],
+    "otherLoans": [
+      {
+        "loanType": "Home Loan",
+        "lender": "HDFC Bank",
+        "sanctionedAmount": 5000000.0,
+        "outstandingAmount": 3200000.0,
+        "tenure": 240,
+        "status": "ACTIVE",
+        "startDate": "2020-06-15"
+      },
+      {
+        "loanType": "Car Loan",
+        "lender": "ICICI Bank",
+        "sanctionedAmount": 800000.0,
+        "outstandingAmount": 250000.0,
+        "tenure": 84,
+        "status": "ACTIVE",
+        "startDate": "2021-03-20"
+      }
+    ],
+    "creditCards": [
+      {
+        "cardProvider": "HDFC Regalia",
+        "creditLimit": 500000.0,
+        "outstandingAmount": 85000.0,
+        "utilizationRate": 17.0,
+        "status": "ACTIVE"
+      },
+      {
+        "cardProvider": "ICICI Platinum",
+        "creditLimit": 300000.0,
+        "outstandingAmount": 42000.0,
+        "utilizationRate": 14.0,
+        "status": "ACTIVE"
+      }
+    ],
+    "inquiries": [
+      {
+        "inquiryType": "Hard Inquiry",
+        "lender": "HDFC Bank",
+        "date": "2025-10-15",
+        "purpose": "Personal Loan"
+      },
+      {
+        "inquiryType": "Soft Inquiry",
+        "lender": "Axis Bank",
+        "date": "2025-09-20",
+        "purpose": "Credit Card"
+      },
+      {
+        "inquiryType": "Hard Inquiry",
+        "lender": "SBI",
+        "date": "2025-08-10",
+        "purpose": "Business Loan"
+      }
+    ],
+    "accessRequests": [
+      {
+        "accessId": "ACC001234",
+        "consentId": "CNS001234",
+        "loanNumber": "LN2025001234",
+        "status": "FETCHED",
+        "requestedAt": "2025-11-04T10:30:00Z",
+        "balanceUrl": "https://api.finaxis.com/balance/ACC001234"
+      },
+      {
+        "accessId": "ACC001235",
+        "consentId": "CNS001234",
+        "loanNumber": "LN2025001234",
+        "status": "INITIATED",
+        "requestedAt": "2025-11-04T11:00:00Z",
+        "balanceUrl": null
+      },
+      {
+        "accessId": "ACC001236",
+        "consentId": "CNS001234",
+        "loanNumber": "LN2025001234",
+        "status": "FAILED",
+        "requestedAt": "2025-11-03T14:20:00Z",
+        "balanceUrl": null
+      }
+    ]
+  },
+  {
+    "applicant": {
+      "cif": "CIF005138",
+      "name": "Saeed Marri",
+      "dateOfBirth": "",
+      "email": "",
+      "pan": "",
+      "ckycCompliance": "",
+      "mobile": "",
+      "bankName": "",
+      "branch": "",
+      "accountNumber": "",
+      "accountType": "",
+      "accountOpeningDate": "",
+      "closingBalance": "",
+      "averageQuarterlyBalanceLatest": "",
+      "averageQuarterlyBalancePrevious": "",
+      "odCcLimit": "",
+      "loanType": "",
+      "employmentType": "",
+      "creditScore": 0,
+      "riskScore": 0,
+      "ragStatus": "",
+      "lastUpdated": "2025-11-10T10:30:00Z"
     },
-    {
-      "inquiryType": "Soft Inquiry",
-      "lender": "Axis Bank",
-      "date": "2025-09-20",
-      "purpose": "Credit Card"
+    "affordability": {
+      "affordabilityRatio": 0.68,
+      "creditUtilizationRatio": 0.42
     },
-    {
-      "inquiryType": "Hard Inquiry",
-      "lender": "SBI",
-      "date": "2025-08-10",
-      "purpose": "Business Loan"
-    }
-  ],
-  "accessRequests": [
-    {
-      "accessId": "ACC001234",
-      "consentId": "CNS001234",
-      "loanNumber": "LN2025001234",
-      "status": "FETCHED",
-      "requestedAt": "2025-11-04T10:30:00Z",
-      "balanceUrl": "https://api.finaxis.com/balance/ACC001234"
+    "balanceTrends": [
+      {"date": "2023-11-01", "balance": 45000.0, "marker": null},
+      {"date": "2023-12-01", "balance": 52000.0, "marker": "Salary Credit"},
+      {"date": "2024-01-01", "balance": 48000.0, "marker": null},
+      {"date": "2024-02-01", "balance": 55000.0, "marker": "Salary Credit"},
+      {"date": "2024-03-01", "balance": 51000.0, "marker": "Loan Repayment"},
+      {"date": "2024-04-01", "balance": 58000.0, "marker": "Salary Credit"},
+      {"date": "2024-05-01", "balance": 54000.0, "marker": null},
+      {"date": "2024-06-01", "balance": 61000.0, "marker": "Salary Credit"},
+      {"date": "2024-07-01", "balance": 57000.0, "marker": null},
+      {"date": "2024-08-01", "balance": 63000.0, "marker": "Salary Credit"},
+      {"date": "2024-09-01", "balance": 59000.0, "marker": null},
+      {"date": "2024-10-01", "balance": 65000.0, "marker": "Salary Credit"}
+    ],
+    "spendData": [
+      {"category": "Card Payment", "amount": 25000.0, "channel": "UPI"},
+      {"category": "Edutech", "amount": 15000.0, "channel": "EFT"},
+      {"category": "Loan Repayment", "amount": 18000.0, "channel": "EFT"},
+      {"category": "Utilities", "amount": 8000.0, "channel": "UPI"},
+      {"category": "Groceries", "amount": 12000.0, "channel": "Card"},
+      {"category": "Entertainment", "amount": 5000.0, "channel": "UPI"},
+      {"category": "Cash Withdrawal", "amount": 10000.0, "channel": "Cash"},
+      {"category": "Investment", "amount": 20000.0, "channel": "Cheque"}
+    ],
+    "keyFeatures": [
+      {"name": "Alarming Transactions", "value": 2, "trend": "down", "ragStatus": "green"},
+      {"name": "Payment Revoke", "value": 0, "trend": "stable", "ragStatus": "green"},
+      {"name": "Avg Balance Repayment Week", "value": 45000, "trend": "up", "ragStatus": "green"},
+      {"name": "Earning to Spend Ratio", "value": 1.8, "trend": "up", "ragStatus": "green"},
+      {"name": "Investment Analysis", "value": 0.25, "trend": "up", "ragStatus": "green"},
+      {"name": "Loan Enquiry Count", "value": 3, "trend": "stable", "ragStatus": "amber"},
+      {"name": "Credit Utilization", "value": 1500, "trend": "down", "ragStatus": "green"},
+      {"name": "Debt to Income", "value": 0.35, "trend": "down", "ragStatus": "green"},
+      {"name": "Monthly Savings", "value": 15000, "trend": "up", "ragStatus": "green"},
+      {"name": "EMI Bounce Rate", "value": 0, "trend": "stable", "ragStatus": "green"},
+      {"name": "Cash Dependency", "value": 0.12, "trend": "down", "ragStatus": "green"},
+      {"name": "Financial Discipline Score", "value": 8.5, "trend": "up", "ragStatus": "green"}
+    ],
+    "otherLoans": [
+      {
+        "loanType": "Home Loan",
+        "lender": "HDFC Bank",
+        "sanctionedAmount": 5000000.0,
+        "outstandingAmount": 3200000.0,
+        "tenure": 240,
+        "status": "ACTIVE",
+        "startDate": "2020-06-15"
+      },
+      {
+        "loanType": "Car Loan",
+        "lender": "ICICI Bank",
+        "sanctionedAmount": 800000.0,
+        "outstandingAmount": 250000.0,
+        "tenure": 84,
+        "status": "ACTIVE",
+        "startDate": "2021-03-20"
+      }
+    ],
+    "creditCards": [
+      {
+        "cardProvider": "HDFC Regalia",
+        "creditLimit": 500000.0,
+        "outstandingAmount": 85000.0,
+        "utilizationRate": 17.0,
+        "status": "ACTIVE"
+      },
+      {
+        "cardProvider": "ICICI Platinum",
+        "creditLimit": 300000.0,
+        "outstandingAmount": 42000.0,
+        "utilizationRate": 14.0,
+        "status": "ACTIVE"
+      }
+    ],
+    "inquiries": [
+      {
+        "inquiryType": "Hard Inquiry",
+        "lender": "HDFC Bank",
+        "date": "2025-10-15",
+        "purpose": "Personal Loan"
+      },
+      {
+        "inquiryType": "Soft Inquiry",
+        "lender": "Axis Bank",
+        "date": "2025-09-20",
+        "purpose": "Credit Card"
+      },
+      {
+        "inquiryType": "Hard Inquiry",
+        "lender": "SBI",
+        "date": "2025-08-10",
+        "purpose": "Business Loan"
+      }
+    ],
+    "accessRequests": [
+      {
+        "accessId": "ACC001234",
+        "consentId": "CNS001234",
+        "loanNumber": "LN2025001234",
+        "status": "FETCHED",
+        "requestedAt": "2025-11-04T10:30:00Z",
+        "balanceUrl": "https://api.finaxis.com/balance/ACC001234"
+      },
+      {
+        "accessId": "ACC001235",
+        "consentId": "CNS001234",
+        "loanNumber": "LN2025001234",
+        "status": "INITIATED",
+        "requestedAt": "2025-11-04T11:00:00Z",
+        "balanceUrl": null
+      },
+      {
+        "accessId": "ACC001236",
+        "consentId": "CNS001234",
+        "loanNumber": "LN2025001234",
+        "status": "FAILED",
+        "requestedAt": "2025-11-03T14:20:00Z",
+        "balanceUrl": null
+      }
+    ]
+  },
+  {
+    "applicant": {
+      "cif": "CIF005139",
+      "name": "Abdul Harthi",
+      "dateOfBirth": "",
+      "email": "",
+      "pan": "",
+      "ckycCompliance": "",
+      "mobile": "",
+      "bankName": "",
+      "branch": "",
+      "accountNumber": "",
+      "accountType": "",
+      "accountOpeningDate": "",
+      "closingBalance": "",
+      "averageQuarterlyBalanceLatest": "",
+      "averageQuarterlyBalancePrevious": "",
+      "odCcLimit": "",
+      "loanType": "",
+      "employmentType": "",
+      "creditScore": 530,
+      "riskScore": 520,
+      "ragStatus": "",
+      "lastUpdated": "2025-11-10T10:30:00Z"
     },
-    {
-      "accessId": "ACC001235",
-      "consentId": "CNS001234",
-      "loanNumber": "LN2025001234",
-      "status": "INITIATED",
-      "requestedAt": "2025-11-04T11:00:00Z",
-      "balanceUrl": null
+    "affordability": {
+      "affordabilityRatio": 0.68,
+      "creditUtilizationRatio": 0.42
     },
-    {
-      "accessId": "ACC001236",
-      "consentId": "CNS001234",
-      "loanNumber": "LN2025001234",
-      "status": "FAILED",
-      "requestedAt": "2025-11-03T14:20:00Z",
-      "balanceUrl": null
-    }
-  ]
-}
+    "balanceTrends": [
+      {"date": "2023-11-01", "balance": 45000.0, "marker": null},
+      {"date": "2023-12-01", "balance": 52000.0, "marker": "Salary Credit"},
+      {"date": "2024-01-01", "balance": 48000.0, "marker": null},
+      {"date": "2024-02-01", "balance": 55000.0, "marker": "Salary Credit"},
+      {"date": "2024-03-01", "balance": 51000.0, "marker": "Loan Repayment"},
+      {"date": "2024-04-01", "balance": 58000.0, "marker": "Salary Credit"},
+      {"date": "2024-05-01", "balance": 54000.0, "marker": null},
+      {"date": "2024-06-01", "balance": 61000.0, "marker": "Salary Credit"},
+      {"date": "2024-07-01", "balance": 57000.0, "marker": null},
+      {"date": "2024-08-01", "balance": 63000.0, "marker": "Salary Credit"},
+      {"date": "2024-09-01", "balance": 59000.0, "marker": null},
+      {"date": "2024-10-01", "balance": 65000.0, "marker": "Salary Credit"}
+    ],
+    "spendData": [
+      {"category": "Card Payment", "amount": 25000.0, "channel": "UPI"},
+      {"category": "Edutech", "amount": 15000.0, "channel": "EFT"},
+      {"category": "Loan Repayment", "amount": 18000.0, "channel": "EFT"},
+      {"category": "Utilities", "amount": 8000.0, "channel": "UPI"},
+      {"category": "Groceries", "amount": 12000.0, "channel": "Card"},
+      {"category": "Entertainment", "amount": 5000.0, "channel": "UPI"},
+      {"category": "Cash Withdrawal", "amount": 10000.0, "channel": "Cash"},
+      {"category": "Investment", "amount": 20000.0, "channel": "Cheque"}
+    ],
+    "keyFeatures": [
+      {"name": "Alarming Transactions", "value": 2, "trend": "down", "ragStatus": "green"},
+      {"name": "Payment Revoke", "value": 0, "trend": "stable", "ragStatus": "green"},
+      {"name": "Avg Balance Repayment Week", "value": 45000, "trend": "up", "ragStatus": "green"},
+      {"name": "Earning to Spend Ratio", "value": 1.8, "trend": "up", "ragStatus": "green"},
+      {"name": "Investment Analysis", "value": 0.25, "trend": "up", "ragStatus": "green"},
+      {"name": "Loan Enquiry Count", "value": 3, "trend": "stable", "ragStatus": "amber"},
+      {"name": "Credit Utilization", "value": 1500, "trend": "down", "ragStatus": "green"},
+      {"name": "Debt to Income", "value": 0.35, "trend": "down", "ragStatus": "green"},
+      {"name": "Monthly Savings", "value": 15000, "trend": "up", "ragStatus": "green"},
+      {"name": "EMI Bounce Rate", "value": 0, "trend": "stable", "ragStatus": "green"},
+      {"name": "Cash Dependency", "value": 0.12, "trend": "down", "ragStatus": "green"},
+      {"name": "Financial Discipline Score", "value": 8.5, "trend": "up", "ragStatus": "green"}
+    ],
+    "otherLoans": [
+      {
+        "loanType": "Home Loan",
+        "lender": "HDFC Bank",
+        "sanctionedAmount": 5000000.0,
+        "outstandingAmount": 3200000.0,
+        "tenure": 240,
+        "status": "ACTIVE",
+        "startDate": "2020-06-15"
+      },
+      {
+        "loanType": "Car Loan",
+        "lender": "ICICI Bank",
+        "sanctionedAmount": 800000.0,
+        "outstandingAmount": 250000.0,
+        "tenure": 84,
+        "status": "ACTIVE",
+        "startDate": "2021-03-20"
+      }
+    ],
+    "creditCards": [
+      {
+        "cardProvider": "HDFC Regalia",
+        "creditLimit": 500000.0,
+        "outstandingAmount": 85000.0,
+        "utilizationRate": 17.0,
+        "status": "ACTIVE"
+      },
+      {
+        "cardProvider": "ICICI Platinum",
+        "creditLimit": 300000.0,
+        "outstandingAmount": 42000.0,
+        "utilizationRate": 14.0,
+        "status": "ACTIVE"
+      }
+    ],
+    "inquiries": [
+      {
+        "inquiryType": "Hard Inquiry",
+        "lender": "HDFC Bank",
+        "date": "2025-10-15",
+        "purpose": "Personal Loan"
+      },
+      {
+        "inquiryType": "Soft Inquiry",
+        "lender": "Axis Bank",
+        "date": "2025-09-20",
+        "purpose": "Credit Card"
+      },
+      {
+        "inquiryType": "Hard Inquiry",
+        "lender": "SBI",
+        "date": "2025-08-10",
+        "purpose": "Business Loan"
+      }
+    ],
+    "accessRequests": [
+      {
+        "accessId": "ACC001234",
+        "consentId": "CNS001234",
+        "loanNumber": "LN2025001234",
+        "status": "FETCHED",
+        "requestedAt": "2025-11-04T10:30:00Z",
+        "balanceUrl": "https://api.finaxis.com/balance/ACC001234"
+      },
+      {
+        "accessId": "ACC001235",
+        "consentId": "CNS001234",
+        "loanNumber": "LN2025001234",
+        "status": "INITIATED",
+        "requestedAt": "2025-11-04T11:00:00Z",
+        "balanceUrl": null
+      },
+      {
+        "accessId": "ACC001236",
+        "consentId": "CNS001234",
+        "loanNumber": "LN2025001234",
+        "status": "FAILED",
+        "requestedAt": "2025-11-03T14:20:00Z",
+        "balanceUrl": null
+      }
+    ]
+  }
+]

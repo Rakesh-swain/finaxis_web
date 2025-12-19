@@ -43,7 +43,7 @@ class _PowerBIEmbedViewState extends State<PowerBIEmbedView> {
   Widget build(BuildContext context) {
     return SizedBox(
       width: widget.width ?? double.infinity,
-      height: widget.height ?? double.infinity,
+      height: 700,
       child: HtmlElementView(viewType: viewId),
     );
   }

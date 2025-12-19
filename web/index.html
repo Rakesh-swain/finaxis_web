@@ -33,28 +33,14 @@
   <link rel="manifest" href="manifest.json">
 </head>
 <body>
-  <script src="flutter_bootstrap.js" async></script>
   <script>
-function embedPowerBIReport(divId, token, embedUrl) {
-    const models = window['powerbi-client'].models;
-
-    const embedConfig = {
-        type: 'report',
-        tokenType: models.TokenType.Embed,
-        accessToken: token,
-        embedUrl: embedUrl,
-        settings: {
-            panes: {
-                filters: { visible: false },
-                pageNavigation: { visible: true }
-            }
-        }
-    };
-
-    const container = document.getElementById(divId);
-    powerbi.reset(container);
-    powerbi.embed(container, embedConfig);
-}
+  // 🚨 Prevent Flutter from loading on powerbi.html
+  if (!window.location.pathname.endsWith("powerbi.html")) {
+    const script = document.createElement("script");
+    script.src = "flutter_bootstrap.js";
+    script.async = true;
+    document.body.appendChild(script);
+  }
 </script>
 
 </body>

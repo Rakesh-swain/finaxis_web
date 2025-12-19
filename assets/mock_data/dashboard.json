@@ -1,16 +1,17 @@
 {
   "kpis": {
     "activeCustomers": 1,
-    "activeConsents": 8,
-    "expiringConsents": 0,
-    "totalTransactions": 48300,
+    "activeConsents": 1,
+    "expiringConsents": 1,
+    "totalTransactions": 1,
+    "totalAmount": 150000,
     "failedTxnPercent": 1.2,
-    "openAlerts": 4
+    "openAlerts": 1
   },
   "ragSummary": {
-    "red": 156,
-    "amber": 421,
-    "green": 670
+    "red": 1,
+    "amber": 1,
+    "green": 0
   },
   "funnelStages": [
     { "stage": "New Inquiries", "count": 1850 },

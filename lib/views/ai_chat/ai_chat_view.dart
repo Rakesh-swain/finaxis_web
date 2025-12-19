@@ -19,7 +19,7 @@ class AiChatView extends StatelessWidget {
 
     return FuturisticLayout(
       selectedIndex: 0,
-      pageTitle: 'AI Chat Hub',
+      pageTitle: 'Finaxis AI',
       child: GetBuilder<AiController>(
         init: controller,
         builder: (ctrl) => _buildChatInterface(context, themeController, ctrl),
@@ -438,12 +438,7 @@ Widget _buildMessageContent(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: isUser
-                ? [
-                    themeController.getThemeData().primaryColor.withOpacity(0.15),
-                    themeController.getThemeData().primaryColor.withOpacity(0.08),
-                  ]
-                : isDark
+            colors:  isDark
                     ? [
                         Colors.grey.shade800,
                         Colors.grey.shade900,
@@ -780,8 +775,8 @@ Widget _buildOptionChip(
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          _buildVoiceButton(themeController),
-          const SizedBox(width: 12),
+          // _buildVoiceButton(themeController),
+          // const SizedBox(width: 12),
           _buildPdfUploadButton(themeController, controller),
           const SizedBox(width: 12),
           Expanded(

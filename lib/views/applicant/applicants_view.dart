@@ -1,3 +1,5 @@
+import 'package:finaxis_web/controllers/applicant_detail_controller.dart';
+import 'package:finaxis_web/controllers/platform_controller.dart';
 import 'package:finaxis_web/views/dashboard/dashboard_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -45,100 +47,102 @@ class ApplicantsController extends GetxController {
     'Credit Card',
     'Business Loan',
   ];
- final selectedDateFilter = DateFilterType.month.obs;
-  final fromDate = Rx<DateTime>(DateTime.now().subtract(const Duration(days: 30)));
+  final selectedDateFilter = DateFilterType.month.obs;
+  final fromDate = Rx<DateTime>(
+    DateTime.now().subtract(const Duration(days: 30)),
+  );
   final toDate = Rx<DateTime>(DateTime.now());
   @override
   void onInit() {
     super.onInit();
-     setDateFilter(DateFilterType.month);
+    setDateFilter(DateFilterType.month);
     fetchApplicants();
   }
-void setDateFilter(DateFilterType filterType) {
-  selectedDateFilter.value = filterType;
 
-  final now = DateTime.now();
+  void setDateFilter(DateFilterType filterType) {
+    selectedDateFilter.value = filterType;
 
-  switch (filterType) {
-    case DateFilterType.today:
-      final today = DateTime(now.year, now.month, now.day);
-      fromDate.value = today;
-      toDate.value = today;
-      break;
+    final now = DateTime.now();
 
-    case DateFilterType.week:
-      final endDate = DateTime(now.year, now.month, now.day);
-      final startDate = endDate.subtract(const Duration(days: 6));
-      fromDate.value = startDate;
-      toDate.value = endDate;
-      break;
+    switch (filterType) {
+      case DateFilterType.today:
+        final today = DateTime(now.year, now.month, now.day);
+        fromDate.value = today;
+        toDate.value = today;
+        break;
 
-    case DateFilterType.month:
-      final endDate = DateTime(now.year, now.month, now.day);
-      final startDate = endDate.subtract(const Duration(days: 30));
-      fromDate.value = startDate;
-      toDate.value = endDate;
-      break;
+      case DateFilterType.week:
+        final endDate = DateTime(now.year, now.month, now.day);
+        final startDate = endDate.subtract(const Duration(days: 6));
+        fromDate.value = startDate;
+        toDate.value = endDate;
+        break;
 
-    case DateFilterType.calendar:
-      if (fromDate.value.isAfter(toDate.value)) {
+      case DateFilterType.month:
         final endDate = DateTime(now.year, now.month, now.day);
         final startDate = endDate.subtract(const Duration(days: 30));
         fromDate.value = startDate;
         toDate.value = endDate;
-      }
-      break;
-  }
+        break;
 
-  fetchApplicants();
-}
-
-/// Set From Date
-void setFromDate(DateTime date) {
-  fromDate.value = date;
-
-  // Validation: Ensure from date is not after to date
-  if (date.isAfter(toDate.value)) {
-    toDate.value = date;
-  }
-
-  // Only apply restrictions for non-calendar filters
-  if (selectedDateFilter.value == DateFilterType.week) {
-    // Limit to 7 days
-    if (toDate.value.difference(date).inDays > 7) {
-      toDate.value = date.add(const Duration(days: 7));
+      case DateFilterType.calendar:
+        if (fromDate.value.isAfter(toDate.value)) {
+          final endDate = DateTime(now.year, now.month, now.day);
+          final startDate = endDate.subtract(const Duration(days: 30));
+          fromDate.value = startDate;
+          toDate.value = endDate;
+        }
+        break;
     }
-  } else if (selectedDateFilter.value == DateFilterType.month) {
-    // Limit to 30 days
-    if (toDate.value.difference(date).inDays > 30) {
-      toDate.value = date.add(const Duration(days: 30));
-    }
+
+    fetchApplicants();
   }
-  // For calendar mode, allow any range without restrictions
-}
 
-/// Set To Date - UPDATED
-void setToDate(DateTime date) {
-  toDate.value = date;
-
-  // Validation: Ensure to date is not before from date
-  if (date.isBefore(fromDate.value)) {
+  /// Set From Date
+  void setFromDate(DateTime date) {
     fromDate.value = date;
+
+    // Validation: Ensure from date is not after to date
+    if (date.isAfter(toDate.value)) {
+      toDate.value = date;
+    }
+
+    // Only apply restrictions for non-calendar filters
+    if (selectedDateFilter.value == DateFilterType.week) {
+      // Limit to 7 days
+      if (toDate.value.difference(date).inDays > 7) {
+        toDate.value = date.add(const Duration(days: 7));
+      }
+    } else if (selectedDateFilter.value == DateFilterType.month) {
+      // Limit to 30 days
+      if (toDate.value.difference(date).inDays > 30) {
+        toDate.value = date.add(const Duration(days: 30));
+      }
+    }
+    // For calendar mode, allow any range without restrictions
   }
 
-  // Only apply restrictions for non-calendar filters
-  if (selectedDateFilter.value == DateFilterType.week) {
-    // Limit to 7 days
-    if (date.difference(fromDate.value).inDays > 7) {
-      fromDate.value = date.subtract(const Duration(days: 7));
+  /// Set To Date - UPDATED
+  void setToDate(DateTime date) {
+    toDate.value = date;
+
+    // Validation: Ensure to date is not before from date
+    if (date.isBefore(fromDate.value)) {
+      fromDate.value = date;
     }
-  } else if (selectedDateFilter.value == DateFilterType.month) {
-    // Limit to 30 days
-    if (date.difference(fromDate.value).inDays > 30) {
-      fromDate.value = date.subtract(const Duration(days: 30));
+    // Only apply restrictions for non-calendar filters
+    if (selectedDateFilter.value == DateFilterType.week) {
+      // Limit to 7 days
+      if (date.difference(fromDate.value).inDays > 7) {
+        fromDate.value = date.subtract(const Duration(days: 7));
+      }
+    } else if (selectedDateFilter.value == DateFilterType.month) {
+      // Limit to 30 days
+      if (date.difference(fromDate.value).inDays > 30) {
+        fromDate.value = date.subtract(const Duration(days: 30));
+      }
     }
-  }}
- 
+  }
 
   Future<void> fetchApplicants() async {
     try {
@@ -204,16 +208,19 @@ void setToDate(DateTime date) {
 
     // RAG filter
     if (ragFilter.value != 'all') {
-      result =
-          result.where((a) => a.ragStatus.toLowerCase() == ragFilter.value);
+      result = result.where(
+        (a) => a.ragStatus.toLowerCase() == ragFilter.value,
+      );
     }
 
     // Date range filter
     final range = dateRange.value;
     if (range != null) {
-      result = result.where((a) =>
-          !a.lastUpdated.isBefore(range.start) &&
-          !a.lastUpdated.isAfter(range.end));
+      result = result.where(
+        (a) =>
+            !a.lastUpdated.isBefore(range.start) &&
+            !a.lastUpdated.isAfter(range.end),
+      );
     }
 
     filtered.assignAll(result.toList());
@@ -267,7 +274,16 @@ void setToDate(DateTime date) {
   }
 
   void navigateToDetail(String cif) {
-    Get.toNamed('/applicant/$cif');
+    //  Get.toNamed('/assessment/:caseId');
+    // Check if we're already on detail page
+    if (Get.currentRoute.contains('/applicant/')) {
+      // We're already on detail page, just switch applicant
+      final detailController = Get.find<ApplicantDetailController>();
+      detailController.switchToApplicant(cif);
+    } else {
+      // Navigate to detail page with CIF
+      Get.toNamed('/applicant/$cif');
+    }
   }
 }
 
@@ -277,200 +293,201 @@ class ApplicantsView extends GetView<ApplicantsController> {
   @override
   Widget build(BuildContext context) {
     final themeController = Get.find<ThemeController>();
-
+    final platformController = Get.find<PlatformController>();
     return FuturisticLayout(
-      selectedIndex: 2,
+      selectedIndex: 3,
       pageTitle: 'Applicant Portfolio',
-      headerActions: [
-         _buildDateFilterSection(context, themeController),
-      ],
+      headerActions: [_buildDateFilterSection(context, themeController)],
       child: Obx(() {
         if (controller.isLoading.value) {
           return Center(child: _buildLoadingState(context, themeController));
         }
-        return _buildFloatingCardShelf(context, themeController);
+        return _buildFloatingCardShelf(
+          context,
+          themeController,
+          platformController,
+        );
       }),
     );
   }
-Widget _buildDateFilterSection(
-  BuildContext context,
-  ThemeController themeController,
-) {
-  return Obx(() {
-    final selectedFilter = controller.selectedDateFilter.value;
-    final fromDate = controller.fromDate.value;
-    final toDate = controller.toDate.value;
 
-    return Container(
-      // padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        // color: Theme.of(context).cardColor,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // 🔹 Filter buttons row
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              ToggleButtons(
-                isSelected: [
-                  selectedFilter == DateFilterType.today,
-                  selectedFilter == DateFilterType.week,
-                  selectedFilter == DateFilterType.month,
-                  selectedFilter == DateFilterType.calendar,
-                ],
-                onPressed: (index) {
-                  final filterType = DateFilterType.values[index];
-                  controller.setDateFilter(filterType);
+  Widget _buildDateFilterSection(
+    BuildContext context,
+    ThemeController themeController,
+  ) {
+    return Obx(() {
+      final selectedFilter = controller.selectedDateFilter.value;
+      final fromDate = controller.fromDate.value;
+      final toDate = controller.toDate.value;
 
-                  if (filterType == DateFilterType.calendar) {
-                    _showCalendarPicker(context);
-                  }
-                },
-                borderRadius: BorderRadius.circular(12),
-                selectedColor: Colors.white,
-                fillColor: themeController.getThemeData().primaryColor,
-                color: themeController.getThemeData().primaryColor,
-                constraints: const BoxConstraints(
-                  minHeight: 36.0,
-                  minWidth: 70.0,
+      return Container(
+        // padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          // color: Theme.of(context).cardColor,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // 🔹 Filter buttons row
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                ToggleButtons(
+                  isSelected: [
+                    selectedFilter == DateFilterType.today,
+                    selectedFilter == DateFilterType.week,
+                    selectedFilter == DateFilterType.month,
+                    selectedFilter == DateFilterType.calendar,
+                  ],
+                  onPressed: (index) {
+                    final filterType = DateFilterType.values[index];
+                    controller.setDateFilter(filterType);
+
+                    if (filterType == DateFilterType.calendar) {
+                      _showCalendarPicker(context);
+                    }
+                  },
+                  borderRadius: BorderRadius.circular(12),
+                  selectedColor: Colors.white,
+                  fillColor: themeController.getThemeData().primaryColor,
+                  color: themeController.getThemeData().primaryColor,
+                  constraints: const BoxConstraints(
+                    minHeight: 36.0,
+                    minWidth: 70.0,
+                  ),
+                  children: const [
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 12),
+                      child: Text('Today'),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 12),
+                      child: Text('Week'),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 12),
+                      child: Text('Month'),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 12),
+                      child: Text('Calendar'),
+                    ),
+                  ],
                 ),
-                children: const [
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 12),
-                    child: Text('Today'),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 12),
-                    child: Text('Week'),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 12),
-                    child: Text('Month'),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 12),
-                    child: Text('Calendar'),
-                  ),
-                ],
-              ),
-            ],
-          ),
+              ],
+            ),
 
-          const SizedBox(height: 12),
+            const SizedBox(height: 12),
 
-          // 🔹 Compact From-To Row (aligned to right)
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              _buildDatePickerCard(
-                context,
-                themeController,
-                'From',
-                fromDate,
-                isEnabled: selectedFilter != DateFilterType.today,
-                onTap: selectedFilter != DateFilterType.today
-                    ? () => _showDatePicker(context, true)
-                    : null,
-                small: true, // custom flag for smaller size
-              ),
-              const SizedBox(width: 10),
-              Icon(
-                Icons.arrow_forward,
-                color: themeController.getThemeData().primaryColor,
-                size: 20,
-              ),
-              const SizedBox(width: 10),
-              _buildDatePickerCard(
-                context,
-                themeController,
-                'To',
-                toDate,
-                isEnabled: selectedFilter != DateFilterType.today,
-                onTap: selectedFilter != DateFilterType.today
-                    ? () => _showDatePicker(context, false)
-                    : null,
-                small: true,
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  });
-}
-
+            // 🔹 Compact From-To Row (aligned to right)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                _buildDatePickerCard(
+                  context,
+                  themeController,
+                  'From',
+                  fromDate,
+                  isEnabled: selectedFilter != DateFilterType.today,
+                  onTap: selectedFilter != DateFilterType.today
+                      ? () => _showDatePicker(context, true)
+                      : null,
+                  small: true, // custom flag for smaller size
+                ),
+                const SizedBox(width: 10),
+                Icon(
+                  Icons.arrow_forward,
+                  color: themeController.getThemeData().primaryColor,
+                  size: 20,
+                ),
+                const SizedBox(width: 10),
+                _buildDatePickerCard(
+                  context,
+                  themeController,
+                  'To',
+                  toDate,
+                  isEnabled: selectedFilter != DateFilterType.today,
+                  onTap: selectedFilter != DateFilterType.today
+                      ? () => _showDatePicker(context, false)
+                      : null,
+                  small: true,
+                ),
+              ],
+            ),
+          ],
+        ),
+      );
+    });
+  }
 
   /// Build Date Picker Card
   Widget _buildDatePickerCard(
-  BuildContext context,
-  ThemeController themeController,
-  String label,
-  DateTime date, {
-  bool isEnabled = true,
-  VoidCallback? onTap,
-  bool small = false, // new flag
-}) {
-  final textTheme = Theme.of(context).textTheme;
+    BuildContext context,
+    ThemeController themeController,
+    String label,
+    DateTime date, {
+    bool isEnabled = true,
+    VoidCallback? onTap,
+    bool small = false, // new flag
+  }) {
+    final textTheme = Theme.of(context).textTheme;
 
-  return GestureDetector(
-    onTap: isEnabled ? onTap : null,
-    child: Container(
-      padding: EdgeInsets.symmetric(
-        vertical: small ? 6 : 12,
-        horizontal: small ? 10 : 16,
-      ),
-      decoration: BoxDecoration(
-        color: isEnabled
-            ? Theme.of(context).cardColor
-            : Colors.grey.shade200,
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(
-          color: themeController.getThemeData().primaryColor.withOpacity(0.3),
+    return GestureDetector(
+      onTap: isEnabled ? onTap : null,
+      child: Container(
+        padding: EdgeInsets.symmetric(
+          vertical: small ? 6 : 12,
+          horizontal: small ? 10 : 16,
+        ),
+        decoration: BoxDecoration(
+          color: isEnabled ? Theme.of(context).cardColor : Colors.grey.shade200,
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(
+            color: themeController.getThemeData().primaryColor.withOpacity(0.3),
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.calendar_today,
+              size: small ? 14 : 18,
+              color: themeController.getThemeData().primaryColor,
+            ),
+            const SizedBox(width: 6),
+            Text(
+              '${label}: ${DateFormat('dd MMM').format(date)}',
+              style: textTheme.bodyMedium?.copyWith(
+                fontSize: small ? 13 : 15,
+                color: isEnabled
+                    ? themeController.getThemeData().primaryColor
+                    : Colors.grey,
+              ),
+            ),
+          ],
         ),
       ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            Icons.calendar_today,
-            size: small ? 14 : 18,
-            color: themeController.getThemeData().primaryColor,
-          ),
-          const SizedBox(width: 6),
-          Text(
-            '${label}: ${DateFormat('dd MMM').format(date)}',
-            style: textTheme.bodyMedium?.copyWith(
-              fontSize: small ? 13 : 15,
-              color: isEnabled
-                  ? themeController.getThemeData().primaryColor
-                  : Colors.grey,
-            ),
-          ),
-        ],
-      ),
-    ),
-  );
-}
-
+    );
+  }
 
   /// Show Date Picker
   Future<void> _showDatePicker(BuildContext context, bool isFromDate) async {
     final selectedFilter = controller.selectedDateFilter.value;
-    final currentDate = isFromDate ? controller.fromDate.value : controller.toDate.value;
-    
+    final currentDate = isFromDate
+        ? controller.fromDate.value
+        : controller.toDate.value;
+
     DateTime? firstDate;
     DateTime? lastDate;
-    
+
     // Set constraints based on filter type
     if (selectedFilter == DateFilterType.week) {
       // For week, limit to 7 days range
@@ -485,7 +502,7 @@ Widget _buildDateFilterSection(
       firstDate = DateTime(2020);
       lastDate = DateTime.now().add(const Duration(days: 365));
     }
-    
+
     final picked = await showDatePicker(
       context: context,
       initialDate: currentDate,
@@ -502,11 +519,11 @@ Widget _buildDateFilterSection(
         );
       },
     );
-    
+
     if (picked != null) {
       if (isFromDate) {
         controller.setFromDate(picked);
-        
+
         // Auto-adjust toDate for week filter
         if (selectedFilter == DateFilterType.week) {
           final newToDate = picked.add(const Duration(days: 6));
@@ -519,64 +536,67 @@ Widget _buildDateFilterSection(
       } else {
         controller.setToDate(picked);
       }
-      
+
       controller.fetchApplicants();
     }
   }
 
   /// Show Calendar Range Picker
- Future<void> _showCalendarPicker(BuildContext context) async {
-  final theme = Get.find<ThemeController>().getThemeData();
+  Future<void> _showCalendarPicker(BuildContext context) async {
+    final theme = Get.find<ThemeController>().getThemeData();
 
-  // Use Flutter's built-in date range picker wrapped in a Dialog
-  final DateTimeRange? picked = await showDateRangePicker(
-    context: context,
-    firstDate: DateTime(2020),
-    lastDate: DateTime.now().add(const Duration(days: 365)),
-    initialDateRange: DateTimeRange(
-      start: controller.fromDate.value,
-      end: controller.toDate.value,
-    ),
-    builder: (context, child) {
-      return Dialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        insetPadding: const EdgeInsets.all(20),
-        child: Container(
-          constraints: const BoxConstraints(
-            maxWidth: 450,
-            maxHeight: 600,
+    // Use Flutter's built-in date range picker wrapped in a Dialog
+    final DateTimeRange? picked = await showDateRangePicker(
+      context: context,
+      firstDate: DateTime(2020),
+      lastDate: DateTime.now().add(const Duration(days: 365)),
+      initialDateRange: DateTimeRange(
+        start: controller.fromDate.value,
+        end: controller.toDate.value,
+      ),
+      builder: (context, child) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
           ),
-          child: Theme(
-            data: Theme.of(context).copyWith(
-              colorScheme: ColorScheme.light(
-                primary: theme.primaryColor,
-                onPrimary: Colors.white,
-                onSurface: theme.textTheme.bodyLarge?.color ?? Colors.black,
-              ),
-              dialogTheme: DialogThemeData(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
+          insetPadding: const EdgeInsets.all(20),
+          child: Container(
+            constraints: const BoxConstraints(maxWidth: 450, maxHeight: 600),
+            child: Theme(
+              data: Theme.of(context).copyWith(
+                colorScheme: ColorScheme.light(
+                  primary: theme.primaryColor,
+                  onPrimary: Colors.white,
+                  onSurface: theme.textTheme.bodyLarge?.color ?? Colors.black,
+                ),
+                dialogTheme: DialogThemeData(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
                 ),
               ),
+              child: child!,
             ),
-            child: child!,
           ),
-        ),
-      );
-    },
-  );
+        );
+      },
+    );
 
-  // Update dates if user selected a range
-  if (picked != null) {
-    controller.setFromDate(picked.start);
-    controller.setToDate(picked.end);
-    controller.fetchApplicants();
+    // Update dates if user selected a range
+    if (picked != null) {
+      controller.setFromDate(picked.start);
+      controller.setToDate(picked.end);
+      controller.fetchApplicants();
+    }
   }
-}
+
   Widget _buildFloatingCardShelf(
     BuildContext context,
     ThemeController themeController,
+    PlatformController platformController,
   ) {
+    final platform = platformController.currentPlatform.value;
+    final isLending = platform == PlatformType.lending;
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -586,354 +606,351 @@ Widget _buildDateFilterSection(
           _buildSearchAndFilters(context, themeController),
           const SizedBox(height: 24),
           Obx(
-              () => SizedBox(
-                height: 600,
-                child: FuturisticTable(
-                  columns: [
-                    const FuturisticTableColumn(
-                      title: 'Application No.',
-                      // icon: Icons.fingerprint_rounded,
-                    ),
-                    const FuturisticTableColumn(
-                      title: 'Name',
-                      // icon: Icons.person_rounded,
-                    ),
-                    const FuturisticTableColumn(
-                      title: 'AECB Score',
-                      // icon: Icons.star_rounded,
-                    ),
-                    const FuturisticTableColumn(
-                      title: 'Finaxis Credit Score',
-                      // icon: Icons.analytics_rounded,
-                    ),
-                    const FuturisticTableColumn(
-                      title: 'Risk Status',
-                      // icon: Icons.security_rounded,
-                    ),
-                    const FuturisticTableColumn(
-                      title: 'Bank',
-                      // icon: Icons.account_balance_rounded,
-                    ),
-                    // const FuturisticTableColumn(
-                    //   title: 'Loan Type',
-                    //   // icon: Icons.category_rounded,
-                    // ),
-                    const FuturisticTableColumn(
-                      title: 'Last Updated',
-                      // icon: Icons.schedule_rounded,
-                    ),
-                    const FuturisticTableColumn(
-                      title: '',
-                      sortable: false,
-                    ),
-                  ],
-                  rows: controller.filtered
-                      .map(
-                        (applicant) => FuturisticTableRow(
-                          cells: [
-                            FuturisticTableCell(text: applicant.cif),
-                            FuturisticTableCell(text: applicant.name),
-                            FuturisticTableCell(
-                              text: applicant.creditScore.toString() == '0'
-                                  ? ''
-                                  : applicant.creditScore.toString(),
-                              widget: applicant.creditScore.toString() == '0'
-                                  ? Container(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 8,
-                                        vertical: 4,
-                                      ),
+            () => SizedBox(
+              height: 600,
+              child: FuturisticTable(
+                columns: [
+                  const FuturisticTableColumn(
+                    title: 'Application No.',
+                    // icon: Icons.fingerprint_rounded,
+                  ),
+                  const FuturisticTableColumn(
+                    title: 'Name',
+                    // icon: Icons.person_rounded,
+                  ),
+                  // const FuturisticTableColumn(
+                  //   title: 'AECB Score',
+                  //   // icon: Icons.star_rounded,
+                  // ),
+                  const FuturisticTableColumn(
+                    title: 'Finaxis Credit Score',
+                    // icon: Icons.analytics_rounded,
+                  ),
+                  const FuturisticTableColumn(
+                    title: 'Risk Status',
+                    // icon: Icons.security_rounded,
+                  ),
+                  const FuturisticTableColumn(
+                    title: 'Loan Amount',
+                    // icon: Icons.account_balance_rounded,
+                  ),
+                  // const FuturisticTableColumn(
+                  //   title: 'Loan Type',
+                  //   // icon: Icons.category_rounded,
+                  // ),
+                  const FuturisticTableColumn(
+                    title: 'DateTime',
+                    // icon: Icons.schedule_rounded,
+                  ),
+                  const FuturisticTableColumn(title: 'Status', sortable: false),
+                ],
+                rows: controller.filtered
+                    .map(
+                      (applicant) => FuturisticTableRow(
+                        cells: [
+                          FuturisticTableCell(text: applicant.cif),
+                          FuturisticTableCell(text: applicant.name),
+                          // FuturisticTableCell(
+                          //   text: applicant.creditScore.toString() == '0'
+                          //       ? ''
+                          //       : applicant.creditScore.toString(),
+                          //   widget: applicant.creditScore.toString() == '0'
+                          //       ? Container(
+                          //           padding: const EdgeInsets.symmetric(
+                          //             horizontal: 8,
+                          //             vertical: 4,
+                          //           ),
 
-                                      child: Text(
-                                        applicant.creditScore.toString() == '0'
-                                            ? '_'
-                                            : applicant.creditScore.toString(),
-                                        style: const TextStyle(
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 13,
-                                        ),
-                                      ),
-                                    )
-                                  : Container(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 8,
-                                        vertical: 4,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        gradient: themeController
-                                            .getPrimaryGradient(),
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                      child: Text(
-                                        applicant.creditScore.toString(),
-                                        style: const TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 13,
-                                        ),
-                                      ),
+                          //           child: Text(
+                          //             applicant.creditScore.toString() == '0'
+                          //                 ? '_'
+                          //                 : applicant.creditScore.toString(),
+                          //             style:  TextStyle(
+                          //               color: isLending
+                          //                 ? const Color(0xFF1E3A8A)
+                          //                 : const Color(0xFFFFFFFF),
+                          //               fontWeight: FontWeight.w600,
+                          //               fontSize: 13,
+                          //             ),
+                          //           ),
+                          //         )
+                          //       : Container(
+                          //           padding: const EdgeInsets.symmetric(
+                          //             horizontal: 8,
+                          //             vertical: 4,
+                          //           ),
+                          //           decoration: BoxDecoration(
+                          //             gradient: themeController
+                          //                 .getPrimaryGradient(),
+                          //             borderRadius: BorderRadius.circular(8),
+                          //           ),
+                          //           child: Text(
+                          //             applicant.creditScore.toString(),
+                          //             style: const TextStyle(
+                          //               color: Colors.white,
+                          //               fontWeight: FontWeight.w600,
+                          //               fontSize: 13,
+                          //             ),
+                          //           ),
+                          //         ),
+                          // ),
+                          FuturisticTableCell(
+                            text: applicant.riskScore.toString() == '0'
+                                ? ''
+                                : applicant.riskScore.toString(),
+                            widget: applicant.riskScore.toString() == '0'
+                                ? Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 8,
+                                      vertical: 4,
                                     ),
-                            ),
-                                                        FuturisticTableCell(
-                              text: applicant.riskScore.toString() == '0'
-                                  ? ''
-                                  : applicant.riskScore.toString(),
-                              widget: applicant.riskScore.toString() == '0'
-                                  ? Container(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 8,
-                                        vertical: 4,
-                                      ),
 
-                                      child: Text(
-                                        applicant.riskScore.toString() == '0'
-                                            ? '_'
-                                            : applicant.riskScore.toString(),
-                                        style: const TextStyle(
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 13,
-                                        ),
-                                      ),
-                                    )
-                                  : Container(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 8,
-                                        vertical: 4,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        gradient: themeController
-                                            .getPrimaryGradient(),
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                      child: Text(
-                                        applicant.riskScore.toString(),
-                                        style: const TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 13,
-                                        ),
-                                      ),
-                                    ),
-                            ),
-                            // FuturisticTableCell(
-                            //   text: applicant.riskScore.toStringAsFixed(1),
-                            //   widget: Container(
-                            //     padding: const EdgeInsets.symmetric(
-                            //       horizontal: 8,
-                            //       vertical: 4,
-                            //     ),
-                            //     decoration: BoxDecoration(
-                            //       color: AppTheme.getRagColor(
-                            //         applicant.ragStatus,
-                            //       ).withOpacity(0.2),
-                            //       borderRadius: BorderRadius.circular(8),
-                            //       border: Border.all(
-                            //         color: AppTheme.getRagColor(
-                            //           applicant.ragStatus,
-                            //         ),
-                            //         width: 1,
-                            //       ),
-                            //     ),
-                            //     child: Text(
-                            //       applicant.riskScore.toStringAsFixed(1),
-                            //       style: TextStyle(
-                            //         color: AppTheme.getRagColor(
-                            //           applicant.ragStatus,
-                            //         ),
-                            //         fontWeight: FontWeight.w600,
-                            //         fontSize: 13,
-                            //       ),
-                            //     ),
-                            //   ),
-                            // ),
-                            FuturisticTableCell(
-                              text: applicant.ragStatus.isEmpty
-                                  ? ''
-                                  : applicant.ragStatus,
-                              widget: applicant.ragStatus.isEmpty
-                                  ? Text(
-                                      applicant.ragStatus.isEmpty
+                                    child: Text(
+                                      applicant.riskScore.toString() == '0'
                                           ? '_'
-                                          : applicant.ragStatus,
-                                      style: const TextStyle(
-                                        color: Colors.black,
+                                          : applicant.riskScore.toString(),
+                                      style: TextStyle(
+                                        color: isLending
+                                            ? const Color(0xFF1E3A8A)
+                                            : const Color(0xFFFFFFFF),
                                         fontWeight: FontWeight.w600,
                                         fontSize: 13,
                                       ),
-                                    )
-                                  : Container(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 10,
-                                        vertical: 6,
+                                    ),
+                                  )
+                                : Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 8,
+                                      vertical: 4,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      gradient: themeController
+                                          .getPrimaryGradient(),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Text(
+                                      applicant.riskScore.toString(),
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 13,
                                       ),
-                                      decoration: BoxDecoration(
+                                    ),
+                                  ),
+                          ),
+                          // FuturisticTableCell(
+                          //   text: applicant.riskScore.toStringAsFixed(1),
+                          //   widget: Container(
+                          //     padding: const EdgeInsets.symmetric(
+                          //       horizontal: 8,
+                          //       vertical: 4,
+                          //     ),
+                          //     decoration: BoxDecoration(
+                          //       color: AppTheme.getRagColor(
+                          //         applicant.ragStatus,
+                          //       ).withOpacity(0.2),
+                          //       borderRadius: BorderRadius.circular(8),
+                          //       border: Border.all(
+                          //         color: AppTheme.getRagColor(
+                          //           applicant.ragStatus,
+                          //         ),
+                          //         width: 1,
+                          //       ),
+                          //     ),
+                          //     child: Text(
+                          //       applicant.riskScore.toStringAsFixed(1),
+                          //       style: TextStyle(
+                          //         color: AppTheme.getRagColor(
+                          //           applicant.ragStatus,
+                          //         ),
+                          //         fontWeight: FontWeight.w600,
+                          //         fontSize: 13,
+                          //       ),
+                          //     ),
+                          //   ),
+                          // ),
+                          FuturisticTableCell(
+                            text: applicant.ragStatus.isEmpty
+                                ? ''
+                                : applicant.ragStatus,
+                            widget: applicant.ragStatus.isEmpty
+                                ? Text(
+                                    applicant.ragStatus.isEmpty
+                                        ? '_'
+                                        : applicant.ragStatus,
+                                    style: TextStyle(
+                                      color: isLending
+                                          ? const Color(0xFF1E3A8A)
+                                          : const Color(0xFFFFFFFF),
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 13,
+                                    ),
+                                  )
+                                : Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 10,
+                                      vertical: 6,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: AppTheme.getRagColor(
+                                        applicant.ragStatus,
+                                      ),
+                                      // borderRadius: BorderRadius.circular(50),
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
                                         color: AppTheme.getRagColor(
                                           applicant.ragStatus,
-                                        ).withOpacity(0.2),
-                                        borderRadius: BorderRadius.circular(12),
-                                        border: Border.all(
-                                          color: AppTheme.getRagColor(
-                                            applicant.ragStatus,
-                                          ),
-                                          width: 1.5,
                                         ),
-                                      ),
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Container(
-                                            width: 8,
-                                            height: 8,
-                                            decoration: BoxDecoration(
-                                              color: AppTheme.getRagColor(
-                                                applicant.ragStatus,
-                                              ),
-                                              shape: BoxShape.circle,
-                                            ),
-                                          ),
-                                          const SizedBox(width: 6),
-                                          Text(
-                                            applicant.ragStatus.toUpperCase() ==
-                                                    "GREEN"
-                                                ? "Low"
-                                                : applicant.ragStatus
-                                                          .toUpperCase() ==
-                                                      "AMBER"
-                                                ? "Medium"
-                                                : "High",
-                                            style: TextStyle(
-                                              color: AppTheme.getRagColor(
-                                                applicant.ragStatus,
-                                              ),
-                                              fontWeight: FontWeight.w700,
-                                              fontSize: 11,
-                                            ),
-                                          ),
-                                        ],
+                                        width: 1.5,
                                       ),
                                     ),
-                            ),
-                            FuturisticTableCell(
-                              text: applicant.bankName.isEmpty
-                                  ? ''
-                                  : applicant.bankName,
-                              widget: applicant.creditScore.toString() == '0'
-                                  ? Container(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 8,
-                                        vertical: 4,
-                                      ),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Container(
+                                          width: 8,
+                                          height: 8,
+                                          decoration: BoxDecoration(
+                                            color: AppTheme.getRagColor(
+                                              applicant.ragStatus,
+                                            ),
+                                            shape: BoxShape.circle,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 6),
+                                        // Text(
+                                        //   applicant.ragStatus.toUpperCase() ==
+                                        //           "GREEN"
+                                        //       ? "Low"
+                                        //       : applicant.ragStatus
+                                        //                 .toUpperCase() ==
+                                        //             "AMBER"
+                                        //       ? "Medium"
+                                        //       : "High",
+                                        //   style: TextStyle(
+                                        //     color: AppTheme.getRagColor(
+                                        //       applicant.ragStatus,
+                                        //     ),
+                                        //     fontWeight: FontWeight.w700,
+                                        //     fontSize: 11,
+                                        //   ),
+                                        // ),
+                                      ],
+                                    ),
+                                  ),
+                          ),
+                          FuturisticTableCell(
+                            text: applicant.bankName.isEmpty ? '' : '5,00,000',
+                            widget: applicant.creditScore.toString() == '0'
+                                ? Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 8,
+                                      vertical: 4,
+                                    ),
 
-                                      child: Text(
-                                        applicant.bankName.toString() == ''
-                                            ? '_'
-                                            : applicant.bankName.toString(),
-                                        style: const TextStyle(
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 13,
-                                        ),
-                                      ),
-                                    )
-                                  : Container(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 8,
-                                        vertical: 4,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        gradient: themeController
-                                            .getPrimaryGradient(),
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                      child: Text(
-                                        applicant.bankName.toString(),
-                                        style: const TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 13,
-                                        ),
+                                    child: Text(
+                                      applicant.bankName.toString() == ''
+                                          ? '_'
+                                          : applicant.bankName.toString(),
+                                      style: TextStyle(
+                                        color: isLending
+                                            ? const Color(0xFF1E3A8A)
+                                            : const Color(0xFFFFFFFF),
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 13,
                                       ),
                                     ),
-                            ),
-                            // FuturisticTableCell(
-                            //   text:
-                            //       controller.loanTypeByCif[applicant.cif] ??
-                            //       'Unknown',
-                            //   widget: Container(
-                            //     padding: const EdgeInsets.symmetric(
-                            //       horizontal: 8,
-                            //       vertical: 4,
-                            //     ),
-                            //     decoration: BoxDecoration(
-                            //       color: Theme.of(
-                            //         context,
-                            //       ).primaryColor.withOpacity(0.1),
-                            //       borderRadius: BorderRadius.circular(8),
-                            //       border: Border.all(
-                            //         color: Theme.of(
-                            //           context,
-                            //         ).primaryColor.withOpacity(0.3),
-                            //         width: 1,
-                            //       ),
-                            //     ),
-                            //     child: Text(
-                            //       controller.loanTypeByCif[applicant.cif] ??
-                            //           'Unknown',
-                            //       style: TextStyle(
-                            //         color: Theme.of(context).primaryColor,
-                            //         fontWeight: FontWeight.w500,
-                            //         fontSize: 12,
-                            //       ),
-                            //     ),
-                            //   ),
-                            // ),
-                            FuturisticTableCell(
-                              text: DateFormat(
+                                  )
+                                : Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 8,
+                                      vertical: 4,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      gradient: themeController
+                                          .getPrimaryGradient(),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Text(
+                                      '150,000.00',
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 13,
+                                      ),
+                                    ),
+                                  ),
+                          ),
+                          // FuturisticTableCell(
+                          //   text:
+                          //       controller.loanTypeByCif[applicant.cif] ??
+                          //       'Unknown',
+                          //   widget: Container(
+                          //     padding: const EdgeInsets.symmetric(
+                          //       horizontal: 8,
+                          //       vertical: 4,
+                          //     ),
+                          //     decoration: BoxDecoration(
+                          //       color: Theme.of(
+                          //         context,
+                          //       ).primaryColor.withOpacity(0.1),
+                          //       borderRadius: BorderRadius.circular(8),
+                          //       border: Border.all(
+                          //         color: Theme.of(
+                          //           context,
+                          //         ).primaryColor.withOpacity(0.3),
+                          //         width: 1,
+                          //       ),
+                          //     ),
+                          //     child: Text(
+                          //       controller.loanTypeByCif[applicant.cif] ??
+                          //           'Unknown',
+                          //       style: TextStyle(
+                          //         color: Theme.of(context).primaryColor,
+                          //         fontWeight: FontWeight.w500,
+                          //         fontSize: 12,
+                          //       ),
+                          //     ),
+                          //   ),
+                          // ),
+                          FuturisticTableCell(
+                            text: DateFormat(
+                              'MMM dd, yy',
+                            ).format(applicant.lastUpdated),
+                            widget: Text(
+                              DateFormat(
                                 'MMM dd, yy',
                               ).format(applicant.lastUpdated),
-                              widget: Text(
-                                DateFormat(
-                                  'MMM dd, yy',
-                                ).format(applicant.lastUpdated),
-                                style: TextStyle(
-                                  color: Theme.of(context)
-                                      .textTheme
-                                      .bodyMedium
-                                      ?.color
-                                      ?.withOpacity(0.7),
-                                  fontSize: 13,
-                                ),
+                              style: TextStyle(
+                                color: Theme.of(
+                                  context,
+                                ).textTheme.bodyMedium?.color?.withOpacity(0.7),
+                                fontSize: 13,
                               ),
                             ),
-                            FuturisticTableCell(
-                              text: applicant.mobile?.isEmpty ?? true
-                                  ? 'Pending'
-                                  : 'Open',
-                              widget: ElevatedButton.icon(
-                                onPressed: (applicant.mobile?.isEmpty ?? true)
-                                    ? null // disable button if mobile is empty
-                                    : () =>
-                                          controller.navigateToDetail(
-                                            applicant.cif,
-                                          ),
+                          ),
+                         FuturisticTableCell(
+                            text: applicant.status,
+                            widget: SizedBox(
+                              width: 105, 
+                              child: ElevatedButton.icon(
+                                onPressed: () =>
+                                    () => controller.navigateToDetail(
+                                      applicant.cif,
+                                    ),
                                 icon: Icon(
-                                  (applicant.mobile?.isEmpty ?? true)
+                                  applicant.status == "Approved"
+                                      ? Icons.check_box
+                                      : applicant.status == "Pending"
                                       ? Icons.hourglass_empty_rounded
-                                      : Icons.auto_stories_rounded,
+                                      : applicant.status == "New"?Icons.new_label:Icons.cancel,
                                   size: 16,
                                 ),
-                                label: Text(
-                                  (applicant.mobile?.isEmpty ?? true)
-                                      ? 'Pending'
-                                      : 'Open',
-                                ),
+                                label: Text(applicant.status),
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor:
-                                      (applicant.mobile?.isEmpty ?? true)
+                                  backgroundColor: applicant.status == "Pending"
                                       ? Colors.grey
-                                      : themeController
+                                      : applicant.status == "Rejected"?Colors.red:themeController
                                             .getThemeData()
                                             .primaryColor,
                                   foregroundColor: Colors.white,
@@ -948,31 +965,32 @@ Widget _buildDateFilterSection(
                                 ),
                               ),
                             ),
-                          ],
-                        ),
-                      )
-                      .toList(),
-                  onRowTap: (index) => controller.navigateToDetail(
-                    controller.filtered[index].cif,
-                  ),
-                  isLoading: controller.isLoading.value,
-                  emptyMessage: 'No applicants found',
-                  sortColumnIndex: controller.sortColumnIndex.value,
-                  sortAscending: controller.sortAscending.value,
-                  onSort: (columnIndex, ascending) {
-                    controller.sortColumnIndex.value = columnIndex;
-                    controller.sortAscending.value = ascending;
-                    controller._sortByIndex(columnIndex, ascending);
-                  },
-                ),
+                          ),
+                        ],
+                      ),
+                    )
+                    .toList(),
+                onRowTap: (index) =>
+                    controller.navigateToDetail(controller.filtered[index].cif),
+                isLoading: controller.isLoading.value,
+                emptyMessage: 'No applicants found',
+                sortColumnIndex: controller.sortColumnIndex.value,
+                sortAscending: controller.sortAscending.value,
+                onSort: (columnIndex, ascending) {
+                  controller.sortColumnIndex.value = columnIndex;
+                  controller.sortAscending.value = ascending;
+                  controller._sortByIndex(columnIndex, ascending);
+                },
               ),
             ),
+          ),
         ],
       ),
     );
   }
 
   Widget _buildStatsRow(BuildContext context, ThemeController themeController) {
+    final platformController = Get.find<PlatformController>();
     final total = controller.filtered.length;
     final greenCount = controller.filtered
         .where((a) => a.ragStatus.toLowerCase() == 'green')
@@ -986,26 +1004,72 @@ Widget _buildDateFilterSection(
 
     return Row(
       children: [
+        platformController.isBilling
+            ? Expanded(
+                child: _buildStatCardWithInfo(
+                  'Total EMIs',
+                  '8',
+                  Icons.people,
+                  themeController.getPrimaryGradient(),
+                  'Count of all EMI transactions currently in the system.',
+                ),
+              )
+            : Expanded(
+                child: _buildStatCardWithInfo(
+                  'Total Applicants',
+                  total.toString(),
+                  Icons.people,
+                  themeController.getPrimaryGradient(),
+                  'Count of all applicants currently in the system.',
+                ),
+              ),
+        const SizedBox(width: 16),
         Expanded(
-          child: _buildStatCard('Total Applicants', total.toString(),
-              Icons.people, themeController.getPrimaryGradient()),
+          child: _buildStatCardWithInfo(
+            'Low Risk',
+            greenCount.toString(),
+            Icons.check_circle,
+            const LinearGradient(colors: [Colors.green, Colors.teal]),
+            'Applicants with strong financial health; consent is automatically triggered.',
+          ),
         ),
         const SizedBox(width: 16),
         Expanded(
-          child: _buildStatCard('Low Risk', greenCount.toString(),
-              Icons.check_circle, const LinearGradient(colors: [Colors.green, Colors.teal])),
+          child: _buildStatCardWithInfo(
+            'Medium Risk',
+            amberCount.toString(),
+            Icons.warning,
+            const LinearGradient(colors: [Colors.amber, Colors.orange]),
+            'Applicants requiring manual review; consent must be sent manually.',
+          ),
         ),
         const SizedBox(width: 16),
         Expanded(
-          child: _buildStatCard('Medium Risk', amberCount.toString(),
-              Icons.warning, const LinearGradient(colors: [Colors.amber, Colors.orange])),
-        ),
-        const SizedBox(width: 16),
-        Expanded(
-          child: _buildStatCard('High Risk', redCount.toString(),
-              Icons.error, const LinearGradient(colors: [Colors.red, Colors.deepOrange])),
+          child: _buildStatCardWithInfo(
+            'High Risk',
+            redCount.toString(),
+            Icons.error,
+            const LinearGradient(colors: [Colors.red, Colors.deepOrange]),
+            'Applicants with weak credit or high DSR; the system auto-rejects their requests.',
+          ),
         ),
       ],
+    );
+  }
+
+  Widget _buildStatCardWithInfo(
+    String title,
+    String value,
+    IconData icon,
+    LinearGradient gradient,
+    String infoText,
+  ) {
+    return _buildStatCard(
+      title,
+      value,
+      icon,
+      gradient,
+      infoText,
     );
   }
 
@@ -1014,35 +1078,90 @@ Widget _buildDateFilterSection(
     String value,
     IconData icon,
     LinearGradient gradient,
+    String infoText,
   ) {
     return FuturisticCard(
       height: 130,
       gradient: gradient,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+      child: Stack(
         children: [
-          Icon(icon, color: Colors.white, size: 26),
-          const SizedBox(height: 8),
-          Text(value,
-              style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold)),
-          Text(title,
-              style: const TextStyle(
-                  color: Colors.white70,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500)),
+          // Main content - centered
+          Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(icon, color: Colors.white, size: 26),
+                const SizedBox(height: 8),
+                Text(
+                  value,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  title,
+                  style: const TextStyle(
+                    color: Colors.white70,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          // Info icon in top-right with tooltip only on hover
+          Positioned(
+            top: 8,
+            right: 8,
+            child: Tooltip(
+              message: infoText,
+              padding: const EdgeInsets.all(12),
+              margin: const EdgeInsets.only(top: 12),
+              textStyle: const TextStyle(
+                color: Colors.white,
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+                height: 1.4,
+              ),
+              decoration: BoxDecoration(
+                color: Colors.grey[800],
+                borderRadius: BorderRadius.circular(8),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.3),
+                    blurRadius: 8,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: MouseRegion(
+                cursor: SystemMouseCursors.click,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.2),
+                    shape: BoxShape.circle,
+                  ),
+                  padding: const EdgeInsets.all(4),
+                  child: const Icon(
+                    Icons.info_outlined,
+                    color: Colors.white,
+                    size: 16,
+                  ),
+                ),
+              ),
+            ),
+          ),
         ],
       ),
-    )
-        .animate()
-        .fadeIn(duration: 600.ms)
-        .slideY(begin: 0.3, end: 0);
+    ).animate().fadeIn(duration: 600.ms).slideY(begin: 0.3, end: 0);
   }
 
   Widget _buildSearchAndFilters(
-      BuildContext context, ThemeController themeController) {
+    BuildContext context,
+    ThemeController themeController,
+  ) {
     return Row(
       children: [
         // 🔍 Search bar
@@ -1053,15 +1172,18 @@ Widget _buildDateFilterSection(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
             child: Row(
               children: [
-                Icon(Icons.search_rounded,
-                    color: themeController.getThemeData().primaryColor),
+                Icon(
+                  Icons.search_rounded,
+                  color: themeController.getThemeData().primaryColor,
+                ),
                 const SizedBox(width: 16),
                 Expanded(
                   child: TextField(
                     onChanged: controller.setSearchQuery,
                     decoration: const InputDecoration(
-                        border: InputBorder.none,
-                        hintText: 'Search by CIF, Name or Bank'),
+                      border: InputBorder.none,
+                      hintText: 'Search by CIF, Name or Bank',
+                    ),
                   ),
                 ),
               ],
@@ -1069,9 +1191,7 @@ Widget _buildDateFilterSection(
           ),
         ),
         const SizedBox(width: 16),
-        Expanded(
-          flex: 2,
-          child:   Container())
+        Expanded(flex: 2, child: Container()),
         // Expanded(
         //   flex: 3,
         //   child: Obx(() {
@@ -1166,8 +1286,9 @@ Widget _buildDateFilterSection(
         decoration: BoxDecoration(
           color: selected ? chipColor.withOpacity(0.2) : Colors.transparent,
           border: Border.all(
-              color: selected ? chipColor : chipColor.withOpacity(0.3),
-              width: 1.5),
+            color: selected ? chipColor : chipColor.withOpacity(0.3),
+            width: 1.5,
+          ),
           borderRadius: BorderRadius.circular(20),
         ),
         child: Text(
@@ -1182,17 +1303,22 @@ Widget _buildDateFilterSection(
   }
 
   Widget _buildLoadingState(
-      BuildContext context, ThemeController themeController) {
+    BuildContext context,
+    ThemeController themeController,
+  ) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         CircularProgressIndicator(
           valueColor: AlwaysStoppedAnimation<Color>(
-              themeController.getThemeData().primaryColor),
+            themeController.getThemeData().primaryColor,
+          ),
         ),
         const SizedBox(height: 16),
-        const Text('Loading Applicant Portfolio...',
-            style: TextStyle(fontWeight: FontWeight.w600)),
+        const Text(
+          'Loading Applicant Portfolio...',
+          style: TextStyle(fontWeight: FontWeight.w600),
+        ),
       ],
     );
   }

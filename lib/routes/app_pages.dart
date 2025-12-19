@@ -1,4 +1,11 @@
+import 'package:finaxis_web/bindings/dashboard2_binding.dart';
 import 'package:finaxis_web/views/consent/add_consent_page.dart';
+import 'package:finaxis_web/views/consent/select_bank_page.dart';
+import 'package:finaxis_web/views/consent/transaction_auth_page.dart';
+import 'package:finaxis_web/views/dashboard/assessment_dashboard_view.dart';
+import 'package:finaxis_web/views/transactions/add_transaction_page.dart';
+import 'package:finaxis_web/views/transactions/transaction_detail_page.dart';
+import 'package:finaxis_web/views/transactions/transactions_page.dart';
 import 'package:get/get.dart';
 import '../bindings/login_binding.dart';
 import '../bindings/dashboard_binding.dart';
@@ -68,6 +75,33 @@ class AppPages {
     GetPage(
       name: '/add-consent',
       page: () => const AddConsentPage(),
+    ),
+    GetPage(
+      name: '/assessment',
+      page: () => const AssessmentDashboardView(name: ''),
+      binding: AssessmentDashboardBinding(),
+      transition: Transition.fadeIn,
+      transitionDuration: const Duration(milliseconds: 300),
+    ),
+      GetPage(
+      name: '/transactions',
+      page: () => const TransactionsPage(),
+    ),
+     GetPage(
+      name: '/transactions/:ref',
+      page: () => const TransactionsDetailPage(),
+    ),
+     GetPage(
+      name: '/add-transaction',
+      page: () => const PaymentAuthorizationPage(),
+    ),
+     GetPage(
+      name: '/customer-auth',
+      page: () => const LoanApplicationScreen(),
+    ),
+    GetPage(
+      name: '/customer-transaction',
+      page: () => const TransactionAuthPage(),
     ),
   ];
 }

@@ -10,9 +10,9 @@ Widget spendPatternCharts() {
           data: {
             'CHEQUE': 0,
             'EFT': 3259,
-            'RTGS': 4500,
-            'IMPS': 0,
-            'UPI': 1018,
+            'FTS': 4500,
+            'WAPI': 0,
+            'ITR': 1018,
             'CASH': 0,
             'OTHERS': 21194,
           },

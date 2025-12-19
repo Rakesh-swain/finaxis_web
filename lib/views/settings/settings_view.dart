@@ -1,4 +1,3 @@
-import 'package:finaxis_web/widgets/animated_sidebar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

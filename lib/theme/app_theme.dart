@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-/// Futuristic 2050 Theme System - Gen-Z AI-First Design Language
-/// Themes: Classic Light, Emerald Luxe, Royal Gold, Aurora Green, Cyber Violet
+/// Updated Theme System with HTML-Inspired Dark Theme
+/// New Dark Theme: Deep Navy (#0f172a) + Electric Blue (#0066cc)
 class AppTheme {
-  // ==================== THEME 1: CLASSIC LIGHT (White + Mist Gray / Navy + Deep Blue) ====================
+  // ==================== EXISTING LIGHT THEME (Classic Light) ====================
   static const Color classicLightPrimary = Color(0xFF1E3A8A); // Deep Navy Blue
   static const Color classicLightSecondary = Color(0xFF64748B); // Mist Gray
   static const Color classicLightAccent = Color(0xFF3B82F6); // Electric Blue
@@ -12,45 +12,52 @@ class AppTheme {
   static const Color classicLightSurface = Color(0xFFFFFFFF); // Clean White
   static const Color classicLightCardBg = Color(0xFFF8FAFC); // Soft White
 
-  // ==================== THEME 2: EMERALD LUXE (Mint + Emerald / Teal + Black Jade) ====================
-  static const Color emeraldLuxePrimary = Color(0xFF0F766E); // Deep Teal
-  static const Color emeraldLuxeSecondary = Color(0xFF14B8A6); // Mint Emerald
-  static const Color emeraldLuxeAccent = Color(0xFF10B981); // Bright Green
-  static const Color emeraldLuxeBackground = Color(0xFFF0FDF4); // Mint White
-  static const Color emeraldLuxeSurface = Color(0xFFECFDF5); // Light Mint
-  static const Color emeraldLuxeCardBg = Color(0xFFD1FAE5); // Jade Card
-
-  // ==================== THEME 3: ROYAL GOLD (Cream + Gold / Charcoal + Amber) ====================
-  static const Color royalGoldPrimary = Color(0xFFD97706); // Rich Amber
-  static const Color royalGoldSecondary = Color(0xFFEAB308); // Golden Yellow
-  static const Color royalGoldAccent = Color(0xFFFBBF24); // Bright Gold
-  static const Color royalGoldBackground = Color(0xFFFEFCF3); // Cream
-  static const Color royalGoldSurface = Color(0xFFFEF3C7); // Light Cream
-  static const Color royalGoldCardBg = Color(0xFFFEF3C7); // Gold Card
-
-  // ==================== THEME 4: AURORA GREEN (Ice Blue + Jade / Deep Teal + Green Glow) ====================
-  static const Color auroraGreenPrimary = Color(0xFF059669); // Deep Teal Green
-  static const Color auroraGreenSecondary = Color(0xFF06B6D4); // Ice Blue
-  static const Color auroraGreenAccent = Color(0xFF10B981); // Aurora Green
-  static const Color auroraGreenBackground = Color(0xFFECFEFF); // Ice White
-  static const Color auroraGreenSurface = Color(0xFFCFFAFE); // Light Ice Blue
-  static const Color auroraGreenCardBg = Color(0xFFA7F3D0); // Green Aurora Card
-
-  // ==================== THEME 5: CYBER VIOLET (Lilac + Silver / Midnight + Electric Violet) ====================
-  static const Color cyberVioletPrimary = Color(0xFF7C3AED); // Electric Violet
-  static const Color cyberVioletSecondary = Color(0xFFA855F7); // Bright Violet
-  static const Color cyberVioletAccent = Color(0xFF8B5CF6); // Cyber Purple
-  static const Color cyberVioletBackground = Color(0xFFFAF5FF); // Lilac White
-  static const Color cyberVioletSurface = Color(0xFFF3E8FF); // Light Lilac
-  static const Color cyberVioletCardBg = Color(0xFFE9D5FF); // Violet Card
+  // ==================== NEW DARK THEME (HTML-Inspired) ====================
+  // Background: Deep Navy (#0f172a)
+  // Cards/Surface: Slate (#1e293b)
+  // Accents: Electric Blue (#0066cc, #0052a3)
+  // Borders: #334155
   
+  static const Color deepNavyPrimary = Color(0xFF0066CC); // Electric Blue (Primary)
+  static const Color deepNavySecondary = Color(0xFF0052A3); // Deep Blue
+  static const Color deepNavyAccent = Color(0xFF3B82F6); // Bright Blue
+  static const Color deepNavyBackground = Color(0xFF0F172A); // Deep Navy (Main BG)
+  static const Color deepNavySurface = Color(0xFF1E293B); // Slate (Card BG)
+  static const Color deepNavyCardBg = Color(0xFF1E2A3A); // Navy Card (Darker)
+  static const Color deepNavyBorder = Color(0xFF334155); // Border Color
+  
+  // Text colors for dark theme
+  static const Color deepNavyTextPrimary = Color(0xFFCBD5E1); // Light slate text
+  static const Color deepNavyTextSecondary = Color(0xFF94A3B8); // Slate secondary text
+  
+  // ==================== OTHER EXISTING THEMES ====================
+  static const Color emeraldLuxePrimary = Color(0xFF0F766E);
+  static const Color emeraldLuxeSecondary = Color(0xFF14B8A6);
+  static const Color emeraldLuxeAccent = Color(0xFF10B981);
+  static const Color emeraldLuxeBackground = Color(0xFFF0FDF4);
+  static const Color emeraldLuxeSurface = Color(0xFFECFDF5);
+  static const Color emeraldLuxeCardBg = Color(0xFFD1FAE5);
+
+  static const Color royalGoldPrimary = Color(0xFFD97706);
+  static const Color royalGoldSecondary = Color(0xFFEAB308);
+  static const Color royalGoldAccent = Color(0xFFFBBF24);
+  static const Color royalGoldBackground = Color(0xFFFEFCF3);
+  static const Color royalGoldSurface = Color(0xFFFEF3C7);
+  static const Color royalGoldCardBg = Color(0xFFFEF3C7);
+
+  static const Color auroraGreenPrimary = Color(0xFF059669);
+  static const Color auroraGreenSecondary = Color(0xFF06B6D4);
+  static const Color auroraGreenAccent = Color(0xFF10B981);
+  static const Color auroraGreenBackground = Color(0xFFECFEFF);
+  static const Color auroraGreenSurface = Color(0xFFCFFAFE);
+  static const Color auroraGreenCardBg = Color(0xFFA7F3D0);
+
   // ==================== RAG STATUS COLORS ====================
-  static const Color ragRed = Color(0xFFDC2626); // High Risk
-  static const Color ragAmber = Color(0xFFF59E0B); // Medium Risk
-  static const Color ragGreen = Color(0xFF10B981); // Low Risk
+  static const Color ragRed = Color(0xFFDC2626);
+  static const Color ragAmber = Color(0xFFF59E0B);
+  static const Color ragGreen = Color(0xFF10B981);
   
-  // ==================== BACKWARD COMPATIBILITY COLORS ====================
-  // Legacy color properties for existing components
+  // ==================== BACKWARD COMPATIBILITY ====================
   static const Color lightPrimary = classicLightPrimary;
   static const Color lightSecondary = classicLightSecondary;
   static const Color lightAccent = classicLightAccent;
@@ -58,89 +65,53 @@ class AppTheme {
   static const Color lightSurface = classicLightSurface;
   static const Color lightCardBg = classicLightCardBg;
   
-  static const Color darkPrimary = Color(0xFF0A1F3D); // Dark Navy
-  static const Color darkSecondary = Color(0xFFB87333); // Copper
-  static const Color darkAccent = Color(0xFF06B6D4); // Cyan/Turquoise
-  static const Color darkBackground = Color(0xFF0F172A); // Deep Navy
-  static const Color darkSurface = Color(0xFF1E293B); // Slate
-  static const Color darkCardBg = Color(0xFF1E2A3A); // Navy Card
+  // Updated: Dark theme now uses Deep Navy colors
+  static const Color darkPrimary = deepNavyPrimary;
+  static const Color darkSecondary = deepNavySecondary;
+  static const Color darkAccent = deepNavyAccent;
+  static const Color darkBackground = deepNavyBackground;
+  static const Color darkSurface = deepNavySurface;
+  static const Color darkCardBg = deepNavyCardBg;
   
-  static const Color goldPrimary = royalGoldPrimary;
-  static const Color goldSecondary = royalGoldSecondary;
-  static const Color goldAccent = royalGoldAccent;
-  static const Color goldBackground = royalGoldBackground;
-  static const Color goldSurface = royalGoldSurface;
-  static const Color goldCardBg = royalGoldCardBg;
-  
-  static const Color emeraldPrimary = emeraldLuxePrimary;
-  static const Color emeraldSecondary = emeraldLuxeSecondary;
-  static const Color emeraldAccent = emeraldLuxeAccent;
-  static const Color emeraldBackground = emeraldLuxeBackground;
-  static const Color emeraldSurface = emeraldLuxeSurface;
-  static const Color emeraldCardBg = emeraldLuxeCardBg;
-  
-  static const Color royalPrimary = Color(0xFF14213D); // Deep Navy Blue
-  static const Color royalSecondary = Color(0xFF1F2A44); // Dark Blue
-  static const Color royalAccent = Color(0xFF5B7BB4); // Royal Blue
-  static const Color royalBackground = Color(0xFFE5E5E5); // Light Gray
-  static const Color royalSurface = Color(0xFFF5F6FA); // Almost White
-  static const Color royalCardBg = Color(0xFFF5F6FA); // White Card
-  
-  // ==================== FUTURISTIC 2050 GRADIENT DEFINITIONS ====================
+  // ==================== GRADIENT DEFINITIONS ====================
   static const LinearGradient classicLightGradient = LinearGradient(
-    colors: [Color(0xFF1E3A8A), Color(0xFF3B82F6)], // Navy to Electric Blue
+    colors: [Color(0xFF1E3A8A), Color(0xFF3B82F6)],
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+  );
+  
+  // New: Deep Navy Dark Gradient
+  static const LinearGradient deepNavyGradient = LinearGradient(
+    colors: [Color(0xFF0066CC), Color(0xFF0052A3)], // Electric Blue to Deep Blue
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
   
   static const LinearGradient emeraldLuxeGradient = LinearGradient(
-    colors: [Color(0xFF0F766E), Color(0xFF10B981)], // Deep Teal to Bright Green
+    colors: [Color(0xFF0F766E), Color(0xFF10B981)],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
   
   static const LinearGradient royalGoldGradient = LinearGradient(
-    colors: [Color(0xFFD97706), Color(0xFFFBBF24)], // Rich Amber to Bright Gold
+    colors: [Color(0xFFD97706), Color(0xFFFBBF24)],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
 
   static const LinearGradient auroraGreenGradient = LinearGradient(
-    colors: [Color(0xFF059669), Color(0xFF06B6D4)], // Deep Teal Green to Ice Blue
+    colors: [Color(0xFF059669), Color(0xFF06B6D4)],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
 
-  static const LinearGradient cyberVioletGradient = LinearGradient(
-    colors: [Color(0xFF7C3AED), Color(0xFF8B5CF6)], // Electric Violet to Cyber Purple
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
-  );
-  
-  static const LinearGradient copperGradient = LinearGradient(
-    colors: [Color(0xFFB87333), Color(0xFFCD7F32)],
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
-  );
-  
-  // Legacy gradient names for backward compatibility
+  // Legacy gradient names
   static const LinearGradient lightPrimaryGradient = classicLightGradient;
-  static const LinearGradient darkPrimaryGradient = LinearGradient(
-    colors: [Color(0xFF0A1F3D), Color(0xFF06B6D4)],
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
-  );
-  static const LinearGradient goldGradient = royalGoldGradient;
-  static const LinearGradient emeraldGradient = emeraldLuxeGradient;
-  static const LinearGradient royalGradient = LinearGradient(
-    colors: [Color(0xFF14213D), Color(0xFF5B7BB4)],
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
-  );
+  static const LinearGradient darkPrimaryGradient = deepNavyGradient; // Updated
   
   // ==================== TEXT COLORS ====================
   static const Color textDark = Color(0xFF0F172A);
-  static const Color textLight = Color(0xFFF8FAFC);
+  static const Color textLight = Color(0xFFCBD5E1);
   static const Color textSecondaryLight = Color(0xFF64748B);
   static const Color textSecondaryDark = Color(0xFF94A3B8);
   
@@ -175,49 +146,26 @@ class AppTheme {
       offset: const Offset(0, 8),
     ),
   ];
-  
-  static List<BoxShadow> get hoverGlowLight => [
-    BoxShadow(
-      color: lightAccent.withOpacity(0.3),
-      blurRadius: 30,
-      spreadRadius: 2,
-    ),
-  ];
-  
-  static List<BoxShadow> get hoverGlowDark => [
-    BoxShadow(
-      color: darkAccent.withOpacity(0.4),
-      blurRadius: 30,
-      spreadRadius: 2,
-    ),
-  ];
 
   // ==================== THEME BUILDERS ====================
 
   /// Get theme by name
   static ThemeData getThemeByName(String themeName) {
-    switch (themeName) {
-      case 'Classic Light':
-        return lightTheme; // Using backward compatible theme
-      case 'Emerald Luxe':
-        return emeraldTheme; // Using backward compatible theme
-      case 'Royal Gold':
-        return goldTheme; // Using backward compatible theme
-      case 'Aurora Green':
-        return emeraldTheme; // Fallback to emerald for now
-      case 'Cyber Violet':
-        return royalTheme; // Fallback to royal for now
-      // Legacy theme names
-      case 'Light':
+    switch (themeName.toLowerCase()) {
+      case 'classic light':
+      case 'light':
         return lightTheme;
-      case 'Dark':
-        return darkTheme;
-      case 'Gold':
-        return goldTheme;
-      case 'Emerald':
+      case 'deep navy':
+      case 'dark':
+        return deepNavyTheme; // NEW
+      case 'emerald luxe':
+      case 'emerald':
         return emeraldTheme;
-      case 'Royal':
-        return royalTheme;
+      case 'royal gold':
+      case 'gold':
+        return goldTheme;
+      case 'aurora green':
+        return auroraTheme;
       default:
         return lightTheme;
     }
@@ -225,17 +173,21 @@ class AppTheme {
 
   /// Get gradient by theme name
   static LinearGradient getGradientByTheme(String themeName) {
-    switch (themeName) {
-      case 'Light':
+    switch (themeName.toLowerCase()) {
+      case 'light':
+      case 'classic light':
         return lightPrimaryGradient;
-      case 'Dark':
-        return darkPrimaryGradient;
-      case 'Gold':
-        return goldGradient;
-      case 'Emerald':
-        return emeraldGradient;
-      case 'Royal':
-        return royalGradient;
+      case 'dark':
+      case 'deep navy':
+        return deepNavyGradient; // NEW
+      case 'gold':
+      case 'royal gold':
+        return royalGoldGradient;
+      case 'emerald':
+      case 'emerald luxe':
+        return emeraldLuxeGradient;
+      case 'aurora green':
+        return auroraGreenGradient;
       default:
         return lightPrimaryGradient;
     }
@@ -243,23 +195,27 @@ class AppTheme {
 
   /// Get chart colors by theme name
   static List<Color> getChartColorsByTheme(String themeName) {
-    switch (themeName) {
-      case 'Light':
+    switch (themeName.toLowerCase()) {
+      case 'light':
+      case 'classic light':
         return [lightPrimary, lightAccent, Color(0xFF059669), Color(0xFF0891B2)];
-      case 'Dark':
-        return [darkAccent, Color(0xFF0EA5E9), Color(0xFF3B82F6), Color(0xFF6366F1)];
-      case 'Gold':
-        return [goldPrimary, goldSecondary, goldAccent, Color(0xFFD4AF37)];
-      case 'Emerald':
-        return [emeraldPrimary, emeraldSecondary, emeraldAccent, Color(0xFF059669)];
-      case 'Royal':
-        return [royalPrimary, royalAccent, Color(0xFF3B5998), Color(0xFF8E9AAF)];
+      case 'dark':
+      case 'deep navy':
+        return [deepNavyPrimary, deepNavyAccent, Color(0xFF0EA5E9), Color(0xFF6366F1)];
+      case 'gold':
+      case 'royal gold':
+        return [royalGoldPrimary, royalGoldSecondary, royalGoldAccent, Color(0xFFD4AF37)];
+      case 'emerald':
+      case 'emerald luxe':
+        return [emeraldLuxePrimary, emeraldLuxeSecondary, emeraldLuxeAccent, Color(0xFF059669)];
+      case 'aurora green':
+        return [auroraGreenPrimary, auroraGreenSecondary, auroraGreenAccent, Color(0xFF06B6D4)];
       default:
         return [lightPrimary, lightAccent];
     }
   }
 
-  // ==================== THEME 1: LIGHT ====================
+  // ==================== THEME 1: CLASSIC LIGHT ====================
   static ThemeData get lightTheme {
     return _buildTheme(
       brightness: Brightness.light,
@@ -274,63 +230,67 @@ class AppTheme {
     );
   }
 
-  // ==================== THEME 2: DARK ====================
-  static ThemeData get darkTheme {
+  // ==================== THEME 2: DEEP NAVY (NEW DARK THEME) ====================
+  static ThemeData get deepNavyTheme {
     return _buildTheme(
       brightness: Brightness.dark,
-      primary: darkAccent,
-      secondary: darkSecondary,
-      tertiary: darkAccent,
-      background: darkBackground,
-      surface: darkSurface,
-      cardBg: darkCardBg,
-      textColor: textLight,
-      textSecondary: textSecondaryDark,
+      primary: deepNavyPrimary,
+      secondary: deepNavySecondary,
+      tertiary: deepNavyAccent,
+      background: deepNavyBackground,
+      surface: deepNavySurface,
+      cardBg: deepNavyCardBg,
+      textColor: deepNavyTextPrimary,
+      textSecondary: deepNavyTextSecondary,
+      borderColor: deepNavyBorder,
     );
   }
 
-  // ==================== THEME 3: GOLD ====================
-  static ThemeData get goldTheme {
-    return _buildTheme(
-      brightness: Brightness.light,
-      primary: goldPrimary,
-      secondary: goldSecondary,
-      tertiary: goldAccent,
-      background: goldBackground,
-      surface: goldSurface,
-      cardBg: goldCardBg,
-      textColor: Color(0xFF5A4A2A),
-      textSecondary: Color(0xFF8B7355),
-    );
-  }
+  // Legacy: DARK (maps to Deep Navy)
+  static ThemeData get darkTheme => deepNavyTheme;
 
-  // ==================== THEME 4: EMERALD ====================
+  // ==================== THEME 3: EMERALD ====================
   static ThemeData get emeraldTheme {
     return _buildTheme(
       brightness: Brightness.light,
-      primary: emeraldPrimary,
-      secondary: emeraldSecondary,
-      tertiary: emeraldAccent,
-      background: emeraldBackground,
-      surface: emeraldSurface,
-      cardBg: emeraldCardBg,
+      primary: emeraldLuxePrimary,
+      secondary: emeraldLuxeSecondary,
+      tertiary: emeraldLuxeAccent,
+      background: emeraldLuxeBackground,
+      surface: emeraldLuxeSurface,
+      cardBg: emeraldLuxeCardBg,
       textColor: Color(0xFF1C4532),
       textSecondary: Color(0xFF5A7C6A),
     );
   }
 
-  // ==================== THEME 5: ROYAL ====================
-  static ThemeData get royalTheme {
+  // ==================== THEME 4: GOLD ====================
+  static ThemeData get goldTheme {
     return _buildTheme(
       brightness: Brightness.light,
-      primary: royalPrimary,
-      secondary: royalSecondary,
-      tertiary: royalAccent,
-      background: royalBackground,
-      surface: royalSurface,
-      cardBg: royalCardBg,
-      textColor: royalPrimary,
-      textSecondary: Color(0xFF64748B),
+      primary: royalGoldPrimary,
+      secondary: royalGoldSecondary,
+      tertiary: royalGoldAccent,
+      background: royalGoldBackground,
+      surface: royalGoldSurface,
+      cardBg: royalGoldCardBg,
+      textColor: Color(0xFF5A4A2A),
+      textSecondary: Color(0xFF8B7355),
+    );
+  }
+
+  // ==================== THEME 5: AURORA GREEN ====================
+  static ThemeData get auroraTheme {
+    return _buildTheme(
+      brightness: Brightness.light,
+      primary: auroraGreenPrimary,
+      secondary: auroraGreenSecondary,
+      tertiary: auroraGreenAccent,
+      background: auroraGreenBackground,
+      surface: auroraGreenSurface,
+      cardBg: auroraGreenCardBg,
+      textColor: Color(0xFF0D9488),
+      textSecondary: Color(0xFF0891B2),
     );
   }
 
@@ -345,7 +305,10 @@ class AppTheme {
     required Color cardBg,
     required Color textColor,
     required Color textSecondary,
+    Color? borderColor,
   }) {
+    final effectiveBorderColor = borderColor ?? textSecondary.withOpacity(0.3);
+    
     return ThemeData(
       useMaterial3: true,
       brightness: brightness,
@@ -354,9 +317,9 @@ class AppTheme {
       colorScheme: ColorScheme(
         brightness: brightness,
         primary: primary,
-        onPrimary: brightness == Brightness.light ? Colors.white : textColor,
+        onPrimary: Colors.white,
         secondary: secondary,
-        onSecondary: brightness == Brightness.light ? Colors.white : textColor,
+        onSecondary: Colors.white,
         tertiary: tertiary,
         onTertiary: Colors.white,
         error: ragRed,
@@ -365,6 +328,7 @@ class AppTheme {
         onBackground: textColor,
         surface: surface,
         onSurface: textColor,
+        outline: effectiveBorderColor,
       ),
       
       // Typography
@@ -427,6 +391,10 @@ class AppTheme {
         shadowColor: primary.withOpacity(0.1),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
+          side: BorderSide(
+            color: effectiveBorderColor,
+            width: 1,
+          ),
         ),
       ),
       
@@ -469,11 +437,11 @@ class AppTheme {
         contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: textSecondary.withOpacity(0.3)),
+          borderSide: BorderSide(color: effectiveBorderColor),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: textSecondary.withOpacity(0.3)),
+          borderSide: BorderSide(color: effectiveBorderColor),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
@@ -489,35 +457,10 @@ class AppTheme {
         ),
       ),
       
-      // Chip Theme
-      chipTheme: ChipThemeData(
-        backgroundColor: tertiary.withOpacity(0.1),
-        labelStyle: GoogleFonts.inter(
-          fontSize: 12,
-          fontWeight: FontWeight.w600,
-        ),
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
-      ),
-      
-      // Data Table Theme
-      dataTableTheme: DataTableThemeData(
-        headingTextStyle: GoogleFonts.inter(
-          fontSize: 13,
-          fontWeight: FontWeight.w700,
-          color: textColor,
-          letterSpacing: 0.5,
-        ),
-        dataTextStyle: GoogleFonts.inter(
-          fontSize: 14,
-          color: textColor,
-        ),
-        decoration: BoxDecoration(
-          color: surface,
-          borderRadius: BorderRadius.circular(12),
-        ),
+      // Divider Theme
+      dividerTheme: DividerThemeData(
+        color: effectiveBorderColor,
+        thickness: 1,
       ),
       
       // Icon Theme
@@ -530,7 +473,6 @@ class AppTheme {
 
   // ==================== UTILITY FUNCTIONS ====================
   
-  /// Get RAG Color based on status
   static Color getRagColor(String status) {
     switch (status.toLowerCase()) {
       case 'red':
@@ -548,7 +490,6 @@ class AppTheme {
     }
   }
 
-  /// Get Status Color
   static Color getStatusColor(String status) {
     switch (status.toUpperCase()) {
       case 'INITIATED':
@@ -566,74 +507,4 @@ class AppTheme {
         return Colors.grey;
     }
   }
-  
-  /// Get Gradient for Risk Score
-  static LinearGradient getRiskGradient(double riskScore) {
-    if (riskScore <= 0.33) {
-      return const LinearGradient(
-        colors: [ragGreen, Color(0xFF059669)],
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-      );
-    } else if (riskScore <= 0.66) {
-      return const LinearGradient(
-        colors: [ragAmber, Color(0xFFF97316)],
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-      );
-    } else {
-      return const LinearGradient(
-        colors: [ragRed, Color(0xFFB91C1C)],
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-      );
-    }
-  }
-
-  // Inside AppTheme class
-static Color getIconColorByTheme(String themeName) {
-  switch (themeName) {
-    case 'Dark':
-      return Colors.white;
-    case 'Gold':
-      return const Color(0xFF5A4A00);
-    case 'Emerald':
-      return const Color(0xFF064E3B);
-    case 'Royal':
-      return const Color(0xFF1A237E);
-    default: // Light
-      return Colors.black87;
-  }
-}
-
-static Color getAccentColorByTheme(String themeName) {
-  switch (themeName) {
-    case 'Gold':
-      return const Color(0xFFFFC107);
-    case 'Emerald':
-      return const Color(0xFF00C853);
-    case 'Royal':
-      return const Color(0xFF3D5AFE);
-    case 'Dark':
-      return const Color(0xFF80CBC4);
-    default: // Light
-      return const Color(0xFF1976D2);
-  }
-}
-
-static Color getHoverColorByTheme(String themeName) {
-  switch (themeName) {
-    case 'Gold':
-      return const Color(0xFFFFD54F);
-    case 'Emerald':
-      return const Color(0xFF26A69A);
-    case 'Royal':
-      return const Color(0xFF5C6BC0);
-    case 'Dark':
-      return const Color(0xFF90A4AE);
-    default: // Light
-      return const Color(0xFF64B5F6);
-  }
-}
-
 }
